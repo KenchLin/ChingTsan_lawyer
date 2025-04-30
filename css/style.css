@@ -55,21 +55,31 @@ body {
     color: #007BFF;
 }
 
-/* 首頁大圖區 */
+/* Hero Section: 大圖背景 */
 .hero {
-    background: linear-gradient(to right, #4facfe, #00f2fe);
-    color: white;
-    padding: 120px 0;
+    background: url('../images/hero-image.jpg') center/cover no-repeat;
+    height: 500px; /* 可以調整高度 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.hero-text {
     text-align: center;
+    color: white;
+    position: absolute;
 }
 
-.hero h2 {
-    font-size: 48px;
-    margin-bottom: 20px;
+.hero-text h2 {
+    font-size: 50px;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
 
-.hero p {
-    font-size: 20px;
+.hero-text p {
+    font-size: 24px;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 /* 區塊 */
