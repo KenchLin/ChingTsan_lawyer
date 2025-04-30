@@ -141,3 +141,56 @@ body {
     opacity: 1;
     transform: translateY(0);
 }
+
+  /*圖左文右1*/
+  .two-columns {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+  }
+  
+  .text-column {
+    flex: 1;
+  }
+  
+  .image-column {
+    flex: 2.5; /* 讓圖片欄變寬 */
+  }
+  
+  .image-column img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px; /* 圓角，讓圖片更柔和 */
+  }
+  
+  /* 手機版自動堆疊 */
+  @media (max-width: 768px) {
+    .two-columns {
+      flex-direction: column;
+    }
+  }
+  /*圖左文右2*/
+
+.overlay {
+    background-color: rgba(0, 0, 0, 0.5); /* 黑色半透明 */
+    padding: 60px 20px;
+    color: white;
+  }
+  
+  #cases h2, #cases p {
+    text-align: center;
+  }
+
+  .service-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .contact-img {
+    max-width: 300px; /* 限制QR code最大寬度 */
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto; /* 置中 */
+  }
