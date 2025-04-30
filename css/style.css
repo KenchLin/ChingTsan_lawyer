@@ -9,7 +9,7 @@
 body {
     font-family: 'Noto Sans TC', sans-serif;
     line-height: 1.6;
-    color: #333;
+    color: #1e1d1d;
     background: #f8f9fa;
 }
 
@@ -21,7 +21,7 @@ body {
 
 /* 導覽列 */
 .navbar {
-    background: transparent;
+    background-color: rgba(190, 190, 190, 0.5);
     position: absolute;
     width: 100%;
     top: 0;
@@ -31,10 +31,17 @@ body {
 }
 
 .logo {
-    font-size: 28px; /* ← 字體再大一點 */
+    font-size: 50px; /* ← 字體再大一點 */
     font-weight: bold;
     color: #fff; /* ← Logo字也改成淺色 */
 }
+
+@media (max-width: 768px) {
+    .logo {
+      font-size: 24px; /* 手機版小一點 */
+    }
+  }
+
 
 .navbar nav ul {
     list-style: none;
@@ -154,7 +161,7 @@ body {
   }
   
   .image-column {
-    flex: 2.5; /* 讓圖片欄變寬 */
+    flex: 1.5; /* 讓圖片欄變寬 */
   }
   
   .image-column img {
