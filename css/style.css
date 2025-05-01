@@ -237,7 +237,9 @@ body {
 
 .case-panel.show {
     display: block;
-}
+    min-height: 600px;    
+    padding-bottom: 80px;  
+  }
 
 .case-img {
     max-width: 50%;
@@ -277,10 +279,12 @@ body {
 }
 
 .carousel-wrapper,
+
 .carousel-container {
     position: relative;
     overflow: hidden;
-}
+    min-height: 520px;  /* ⬅︎ 根據實際內容高度可調整，例如原本約 400，可增至 520~600 */
+  }
 
 .carousel-container {
     display: flex;
@@ -309,6 +313,7 @@ body {
     border-radius: 8px;
     position: relative;
     z-index: 2;
+    margin-top: 8px;
 }
 
 .carousel-item img {
