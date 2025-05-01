@@ -19,6 +19,12 @@ body {
     margin: 0 auto;
 }
 
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 /* 導覽列 */
 .navbar {
     background-color: rgba(190, 190, 190, 0.5);
@@ -31,7 +37,7 @@ body {
 }
 
 .logo {
-    font-size: 50px; /* ← 字體再大一點 */
+    font-size: 58px; /* ← 字體再大一點 */
     font-weight: bold;
     color: #fff; /* ← Logo字也改成淺色 */
 }
@@ -44,9 +50,12 @@ body {
 
 
 .navbar nav ul {
-    list-style: none;
-    display: flex;
-    align-items: center; /* 垂直置中 */
+    list-style: none; /* 移除點點 */
+    margin: 0; /* 清掉預設外距 */
+    padding: 0; /* 清掉預設內距（很重要！） */
+    display: flex; /* 讓索引水平排列 */
+    gap: 18px; /* 每個索引間隔一點距離，可調整 */
+    align-items: center; /* 垂直置中（搭配flex效果） */
 }
 
 .navbar nav ul li {
@@ -56,7 +65,7 @@ body {
 .navbar nav ul li a {
     text-decoration: none;
     color: #eee; /* ← 字體顏色改很淺 */
-    font-size: 18px; /* ← 字體加大 */
+    font-size: 22px; /* ← 字體加大 */
     font-weight: 500; /* ← 字稍微加粗一點 */
     transition: color 0.3s;
 }
