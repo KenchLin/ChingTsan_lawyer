@@ -37,9 +37,15 @@ body {
 }
 
 .logo {
+    /*font-family: 'LXGW WenKai TC', serif;*/
     font-size: 58px; /* ← 字體再大一點 */
     font-weight: bold;
     color: #fff; /* ← Logo字也改成淺色 */
+}
+
+.logo-img {
+    height: 60px; /* 你可以自己調整高度，讓圖片跟其他索引標籤看起來協調 */
+    width: auto;  /* 自動算寬度，避免圖片被拉扁 */
 }
 
 @media (max-width: 768px) {
@@ -64,7 +70,7 @@ body {
 
 .navbar nav ul li a {
     text-decoration: none;
-    color: #ffffff; /* ← 字體顏色改很淺 */
+    color: #000000; /* ← 字體顏色改很淺 */
     font-size: 22px; /* ← 字體加大 */
     font-weight: 500; /* ← 字稍微加粗一點 */
     transition: color 0.3s;
@@ -215,26 +221,37 @@ body {
   /* 手機版專用樣式 */
 @media (max-width: 768px) {
 
-    /* 1. Navbar 區塊 - logo 和索引調整 */
+    /* 手機版 navbar 調整 */
     .navbar .container {
-      flex-direction: column; /* 改成垂直排列 */
-      align-items: center; /* 水平置中 */
-      text-align: center;
+        flex-direction: column; /* 改成垂直排列（Logo一行，索引一行） */
+        align-items: center; /* 水平置中 */
+    }
+
+    .navbar nav ul {
+        flex-direction: row; /* ul 裡的索引改回橫向排列 */
+        flex-wrap: wrap; /* 如果太擠可以自動換行（防止超出） */
+        justify-content: center; /* 水平置中 */
+        gap: 9px; /* 間隔可以小一點 */
+    }
+
+    .navbar nav ul li {
+        margin: 0; /* 清掉左右 margin */
+    }
+
+    .navbar nav ul li a {
+        font-size: 16px; /* ← 字體加大 */
+        font-weight: 400; /* ← 字稍微加粗一點 */
     }
   
     .logo {
       font-size: 24px; /* logo字體縮小 */
-      margin-bottom: 10px; /* 跟下面的索引拉開一點距離 */
     }
-  
-    .navbar nav ul {
-      flex-direction: column; /* 索引也改成直式排列 */
-      gap: 10px; /* 每個索引項目間隔縮小 */
+
+    .logo-img {
+        height: 40px; /* 你可以自己調整高度，讓圖片跟其他索引標籤看起來協調 */
+        width: auto;  /* 自動算寬度，避免圖片被拉扁 */
     }
-  
-    .navbar nav ul li a {
-      font-size: 16px; /* 索引字體縮小 */
-    }
+
   
     /* 2. Hero 區塊 - 標題、副標題調整 */
     .hero-title {
@@ -248,7 +265,7 @@ body {
     }
   
     .hero {
-      padding-top: 80px; /* 整個 hero 區塊上方留白變大，讓文字往下 */
+      padding-top: 75px; /* 整個 hero 區塊上方留白變大，讓文字往下 */
     }
 
     @media (max-width: 768px) {
