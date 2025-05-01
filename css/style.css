@@ -7,7 +7,7 @@
 
 /* 通用設定 */
 body {
-    font-family: 'Noto Sans TC', sans-serif;
+    font-family: 'LXGW WenKai TC', sans-serif;
     line-height: 1.6;
     color: #1e1d1d;
     background: #f8f9fa;
@@ -33,7 +33,14 @@ body {
     top: 0;
     left: 0;
     z-index: 1000;
-    font-family: 'Noto Sans TC', sans-serif;
+    font-family: 'LXGW WenKai TC', sans-serif;
+}
+
+.navbar .container {
+    display: flex;
+    align-items: center; /* 垂直置中 logo 與 nav */
+    justify-content: space-between; /* 左右分開 */
+    padding: 0px 0px; /* 你可以微調這邊的上下距離 */
 }
 
 .logo {
@@ -46,6 +53,7 @@ body {
 .logo-img {
     height: 60px; /* 你可以自己調整高度，讓圖片跟其他索引標籤看起來協調 */
     width: auto;  /* 自動算寬度，避免圖片被拉扁 */
+    margin-top: 10px; /* ← 可以微調，看起來更平衡 */
 }
 
 @media (max-width: 768px) {
@@ -265,7 +273,7 @@ body {
     }
   
     .hero {
-      padding-top: 75px; /* 整個 hero 區塊上方留白變大，讓文字往下 */
+      padding-top: 60px; /* 整個 hero 區塊上方留白變大，讓文字往下 */
     }
 
     @media (max-width: 768px) {
