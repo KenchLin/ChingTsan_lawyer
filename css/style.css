@@ -226,6 +226,77 @@ body {
     margin: 0 auto; /* 置中 */
   }
 
+  /*勝訴案例區域*/
+  .case-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .case-tab {
+    background-color: #ffffffdd;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 24px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .case-tab:hover,
+  .case-tab.active {
+    background-color: #ffd700;
+    color: #000;
+    transform: translateY(-2px);
+  }
+
+  .case-panel {
+    display: none;
+    animation: fadeSlide 0.4s ease forwards;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .case-panel.show {
+    display: block;
+  }
+
+  .case-img {
+    max-width: 25%;
+    margin-top: 10px;
+    border-radius: 8px;
+  }
+
+  .more-cases {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .more-btn {
+    background-color: #ffffffcc;
+    padding: 10px 20px;
+    border-radius: 24px;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+
+  .more-btn:hover {
+    background-color: #ffd700;
+    color: #000;
+  }
+
+  @keyframes fadeSlide {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+
+  /**/
+
   /* 手機版專用樣式 */
 @media (max-width: 768px) {
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>林景贊律師</title>
+    <title>台中家事案件 - 林景贊律師</title>
     <meta name="description" content="專業律師服務，勝訴案例豐富，誠信為本，為您爭取最大權益。">
     <meta name="robots" content="index, follow">
     
@@ -69,12 +69,48 @@
     </div>
 </section>
 
-<!-- 勝訴案例 Section -->
+<!-- 勝訴案例區塊：精選 + 折疊 + 更多按鈕 -->
 <section id="cases" class="section fade-in" style="background-image: url('images/勝訴案例背景.jpg'); background-size: cover; background-position: center;">
     <div class="overlay">
       <div class="container">
-        <h2>勝訴案例</h2>
-        <p>多年累積的勝訴案例，為您提供信心保障。</p>
+        <h2>精選勝訴案例</h2>
+  
+        <!-- 類別按鈕（可摺疊展開） -->
+        <div class="case-tabs">
+          <button class="case-tab" data-target="family">家事案件</button>
+          <button class="case-tab" data-target="criminal">刑事案件</button>
+          <button class="case-tab" data-target="civil">民事案件</button>
+          <button class="case-tab" data-target="other">其他案件</button>
+        </div>
+  
+        <!-- 摺疊內容區域 -->
+        <div id="case-panels">
+          <div class="case-panel" id="panel-family">
+            <h3>家事案件</h3>
+            <p>範例：成功協助當事人取得子女監護權...</p>
+            <img src="images/家事精選案例1.jpg" alt="家事案件" class="case-img">
+          </div>
+          <div class="case-panel" id="panel-criminal">
+            <h3>刑事案件</h3>
+            <p>範例：辯護無罪獲判，協助當事人洗清冤屈...</p>
+            <img src="images/criminal_case1.jpg" alt="刑事案件" class="case-img">
+          </div>
+          <div class="case-panel" id="panel-civil">
+            <h3>民事案件</h3>
+            <p>範例：成功爭取高額損害賠償金...</p>
+            <img src="images/civil_case1.jpg" alt="民事案件" class="case-img">
+          </div>
+          <div class="case-panel" id="panel-other">
+            <h3>其他案件</h3>
+            <p>範例：法律諮詢案件獲得客戶高度評價...</p>
+            <img src="images/other_case1.jpg" alt="其他案件" class="case-img">
+          </div>
+        </div>
+  
+        <!-- 更多案件按鈕 -->
+        <div class="more-cases">
+          <a href="cases.html" class="more-btn">查看更多案件</a>
+        </div>
       </div>
     </div>
   </section>
@@ -97,7 +133,7 @@
 <footer class="footer">
     <div class="container">
         <p>© 2025 林景贊律師. All Rights Reserved.</p>
-        <p>website ver:　0.0.0.13</p>
+        <p>website ver: 0.0.0.15</p>
     </div>
 </footer>
 
