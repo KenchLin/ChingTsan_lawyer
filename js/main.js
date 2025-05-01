@@ -79,7 +79,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 } else {
                     lightboxImg.src = img.src;
                     lightbox.classList.remove('hidden');
-                    lightbox.classList.add('show');
+                    requestAnimationFrame(() => {
+                        lightbox.classList.add('show');
+                    });
                 }
             });
         });

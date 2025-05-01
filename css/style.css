@@ -390,6 +390,20 @@ body {
     transform: scale(1.02);
 }
 
+/* 加入過渡動畫 */
+#lightbox-img {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  
+  /* 顯示時的動畫效果 */
+#lightbox.show #lightbox-img {
+transform: scale(1);
+opacity: 1;
+}
+
+
 /* 手機版樣式 */
 @media (max-width: 768px) {
     .navbar .container {
