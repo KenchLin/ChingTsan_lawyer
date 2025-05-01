@@ -64,7 +64,7 @@ body {
 
 .navbar nav ul li a {
     text-decoration: none;
-    color: #eee; /* ← 字體顏色改很淺 */
+    color: #ffffff; /* ← 字體顏色改很淺 */
     font-size: 22px; /* ← 字體加大 */
     font-weight: 500; /* ← 字稍微加粗一點 */
     transition: color 0.3s;
@@ -76,7 +76,7 @@ body {
 
 /* Hero Section */
 .hero {
-    background-image: url('../images/形象照2.jpg');
+    background-image: url('../images/封面背景.jpg');
     background-size: cover;
     background-position: center 30%;
     background-repeat: no-repeat;
@@ -85,7 +85,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
+    color: #eee;
     text-align: center;
 }
 
@@ -105,14 +105,16 @@ body {
     opacity: 0;
     animation: fadeIn 2s forwards;
     text-align: left; /* <<< 保險：文字本身也左對齊 */
+    color: #ffffffd6;
 }
 
 .hero-subtitle {
-    font-size: 1.5rem;
+    font-size: 1.7rem;
     opacity: 0;
     animation: fadeIn 2s forwards;
     animation-delay: 1s;
     text-align: left; /* <<< 同上 */
+    color: #ffffffd6;
 }
 
 
@@ -180,12 +182,11 @@ body {
   }
   
   /* 手機版自動堆疊 */
-  @media (max-width: 768px) {
+  /*@media (max-width: 768px) {
     .two-columns {
       flex-direction: column;
     }
-  }
-  /*圖左文右2*/
+  }*/
 
 .overlay {
     background-color: rgba(0, 0, 0, 0.5); /* 黑色半透明 */
@@ -209,4 +210,49 @@ body {
     height: auto;
     display: block;
     margin: 0 auto; /* 置中 */
+  }
+
+  /* 手機版專用樣式 */
+@media (max-width: 768px) {
+
+    /* 1. Navbar 區塊 - logo 和索引調整 */
+    .navbar .container {
+      flex-direction: column; /* 改成垂直排列 */
+      align-items: center; /* 水平置中 */
+      text-align: center;
+    }
+  
+    .logo {
+      font-size: 24px; /* logo字體縮小 */
+      margin-bottom: 10px; /* 跟下面的索引拉開一點距離 */
+    }
+  
+    .navbar nav ul {
+      flex-direction: column; /* 索引也改成直式排列 */
+      gap: 10px; /* 每個索引項目間隔縮小 */
+    }
+  
+    .navbar nav ul li a {
+      font-size: 16px; /* 索引字體縮小 */
+    }
+  
+    /* 2. Hero 區塊 - 標題、副標題調整 */
+    .hero-title {
+      font-size: 32px; /* 標題縮小 */
+      margin-top: 40px; /* 整個往下移動一點 */
+    }
+  
+    .hero-subtitle {
+      font-size: 18px; /* 副標題縮小 */
+      margin-top: 10px;
+    }
+  
+    .hero {
+      padding-top: 80px; /* 整個 hero 區塊上方留白變大，讓文字往下 */
+    }
+
+    @media (max-width: 768px) {
+    .two-columns {
+      flex-direction: column;
+    }
   }
