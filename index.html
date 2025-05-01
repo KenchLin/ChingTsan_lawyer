@@ -5,72 +5,94 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>林景贊律師</title>
     <meta name="description" content="專業律師服務，勝訴案例豐富，誠信為本，為您爭取最大權益。">
+    <meta name="robots" content="index, follow">
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <style>
+        /* 加上平滑滾動效果 */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
 </head>
 <body>
 
-    <header class="navbar">
-        <div class="container">
-            <h1 class="logo">林景贊律師</h1>
-            <nav>
-                <ul>
-                    <li><a href="#about">關於我們</a></li>
-                    <li><a href="#services">服務項目</a></li>
-                    <li><a href="#cases">勝訴案例</a></li>
-                    <li><a href="#contact">聯絡我們</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <section class="hero">
-        <div class="container">
-            <h2>為您的權益，堅持到底</h2>
-            <p>提供專業法律服務，讓正義為您伸張。</p>
-        </div>
-    </section>
-
-    <section id="about" class="section fade-in">
-        <div class="container">
-            <h2>關於我們</h2>
-            <p>林景贊律師擁有多年專業經驗，致力於為客戶提供高品質、有效率的法律服務。</p>
-        </div>
-    </section>
-
-    <section id="services" class="section fade-in">
-        <div class="container">
-            <h2>服務項目</h2>
+<header class="navbar">
+    <div class="container header-container">
+        <h1 class="logo">林景贊律師</h1>
+        <nav>
             <ul>
-                <li>民事訴訟</li>
-                <li>刑事辯護</li>
-                <li>家事法律諮詢</li>
-                <li>智慧財產權</li>
+                <li><a href="#about">關於我</a></li>
+                <li><a href="#services">服務項目</a></li>
+                <li><a href="#cases">勝訴案例</a></li>
+                <li><a href="#contact">聯絡我</a></li>
             </ul>
-        </div>
-    </section>
+        </nav>
+    </div>
+</header>
 
-    <section id="cases" class="section fade-in">
+<!-- Hero Section: 主題圖片區 -->
+<section class="hero">
+    <div class="hero-overlay">
         <div class="container">
-            <h2>勝訴案例</h2>
-            <p>成功協助客戶解決複雜民事與刑事案件，實績卓越。</p>
+            <h2 class="hero-title fade-in">為您的權益，堅持到底</h2>
+            <p class="hero-subtitle">提供專業法律服務，讓正義為您伸張。</p>
         </div>
-    </section>
+    </div>
+</section>
 
-    <section id="contact" class="section fade-in">
-        <div class="container">
-            <h2>聯絡我們</h2>
-            <p>Email: example@lawfirm.com</p>
-            <p>電話: (02) 1234-5678</p>
-        </div>
-    </section>
+<!-- 關於我 Section -->
+<section id="about" class="section fade-in">
+    <div class="container two-columns">
+        <div class="image-column">
+            <img src="images/形象照1.jpg" alt="關於我們">
+            </div>
+        <div class="text-column">
+            <h2>關於我</h2>
+            <p>林景贊律師擁有多年專業經驗，致力於為客戶提供高品質、有效率的法律服務。</p>
+            </div>
+    </div>
+  </section>
 
-    <footer class="footer">
-        <div class="container">
-            <p>© 2025 林景贊律師. All Rights Reserved.</p>
-        </div>
-    </footer>
+<!-- 服務項目 Section -->
+<section id="services" class="section fade-in">
+    <div class="container">
+        <h2>服務項目</h2>
+        <p>家事案件、刑事辯護、民事訴訟、勞資爭議等。</p>
+    </div>
+</section>
 
-    <script src="js/main.js"></script>
+<!-- 勝訴案例 Section -->
+<section id="cases" class="section fade-in" style="background-image: url('images/判決槌示意照片.jpg'); background-size: cover; background-position: center;">
+    <div class="overlay">
+      <div class="container">
+        <h2>勝訴案例</h2>
+        <p>多年累積的勝訴案例，為您提供信心保障。</p>
+      </div>
+    </div>
+  </section>
+
+<!-- 聯絡我們 Section -->
+<section id="contact" class="section fade-in">
+    <div class="container two-columns">
+      <div class="text-column">
+        <h2>聯絡我</h2>
+        <p>歡迎透過Line官方帳號聯繫，我們將盡速回覆您的需求。</p>
+        <p>聯絡電話：0905670527</p>
+        <p>Email：sabr890512@gmail.com</p>
+      </div>
+      <div class="image-column">
+        <img src="images/Line_QRcode.png" alt="LINE" class="contact-img">
+      </div>
+    </div>
+  </section>
+
+<footer class="footer">
+    <div class="container">
+        <p>© 2025 林景贊律師. All Rights Reserved.</p>
+    </div>
+</footer>
+
+<script src="js/main.js"></script>
 </body>
 </html>

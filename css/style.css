@@ -1,4 +1,4 @@
-/* Reset 部分 */
+/* Reset */
 * {
     margin: 0;
     padding: 0;
@@ -9,7 +9,7 @@
 body {
     font-family: 'Noto Sans TC', sans-serif;
     line-height: 1.6;
-    color: #333;
+    color: #1e1d1d;
     background: #f8f9fa;
 }
 
@@ -19,60 +19,116 @@ body {
     margin: 0 auto;
 }
 
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 /* 導覽列 */
 .navbar {
-    background: #fff;
-    padding: 20px 0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    position: sticky;
+    background-color: rgba(190, 190, 190, 0.5);
+    position: absolute;
+    width: 100%;
     top: 0;
-    z-index: 999;
+    left: 0;
+    z-index: 1000;
+    font-family: 'Noto Sans TC', sans-serif;
 }
 
-.navbar .logo {
-    float: left;
-    font-size: 24px;
+.logo {
+    font-size: 58px; /* ← 字體再大一點 */
     font-weight: bold;
+    color: #fff; /* ← Logo字也改成淺色 */
 }
+
+@media (max-width: 768px) {
+    .logo {
+      font-size: 24px; /* 手機版小一點 */
+    }
+  }
+
 
 .navbar nav ul {
-    list-style: none;
-    float: right;
+    list-style: none; /* 移除點點 */
+    margin: 0; /* 清掉預設外距 */
+    padding: 0; /* 清掉預設內距（很重要！） */
+    display: flex; /* 讓索引水平排列 */
+    gap: 18px; /* 每個索引間隔一點距離，可調整 */
+    align-items: center; /* 垂直置中（搭配flex效果） */
 }
 
 .navbar nav ul li {
-    display: inline-block;
-    margin-left: 20px;
+    margin-left: 30px; /* ← 空間拉大一點，變得更高級 */
 }
 
 .navbar nav ul li a {
     text-decoration: none;
-    color: #333;
+    color: #eee; /* ← 字體顏色改很淺 */
+    font-size: 22px; /* ← 字體加大 */
+    font-weight: 500; /* ← 字稍微加粗一點 */
     transition: color 0.3s;
 }
 
 .navbar nav ul li a:hover {
-    color: #007BFF;
+    color: #FFD700; /* ← hover時變成金色感覺 (或你可以自訂) */
 }
 
-/* 首頁大圖區 */
+/* Hero Section */
 .hero {
-    background: linear-gradient(to right, #4facfe, #00f2fe);
-    color: white;
-    padding: 120px 0;
+    background-image: url('../images/形象照2.jpg');
+    background-size: cover;
+    background-position: center 30%;
+    background-repeat: no-repeat;
+    height: 100vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
     text-align: center;
 }
 
-.hero h2 {
-    font-size: 48px;
-    margin-bottom: 20px;
+.hero-overlay {
+    background-color: rgba(0, 0, 0, 0.3);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column; /* 改成直向排列 */
+    align-items: flex-start; /* <<< 左對齊關鍵！ */
+    justify-content: center; /* 垂直置中沒變 */
+    padding-left: 0%; /* <<< 加一點左側間距，讓字不要緊貼邊緣 */
 }
 
-.hero p {
-    font-size: 20px;
+.hero-title {
+    font-size: 3rem;
+    opacity: 0;
+    animation: fadeIn 2s forwards;
+    text-align: left; /* <<< 保險：文字本身也左對齊 */
 }
 
-/* 區塊 */
+.hero-subtitle {
+    font-size: 1.5rem;
+    opacity: 0;
+    animation: fadeIn 2s forwards;
+    animation-delay: 1s;
+    text-align: left; /* <<< 同上 */
+}
+
+
+/* Animation */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Section */
 .section {
     padding: 80px 0;
 }
@@ -90,15 +146,67 @@ body {
     padding: 20px 0;
 }
 
-/* Fade In 效果 */
+/* Fade In 滾動效果 */
 .fade-in {
     opacity: 0;
     transform: translateY(30px);
     transition: opacity 1s ease-out, transform 1s ease-out;
 }
 
-/* 滾動時顯示 */
 .fade-in.show {
     opacity: 1;
     transform: translateY(0);
 }
+
+  /*圖左文右1*/
+  .two-columns {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+  }
+  
+  .text-column {
+    flex: 1;
+  }
+  
+  .image-column {
+    flex: 1.5; /* 讓圖片欄變寬 */
+  }
+  
+  .image-column img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px; /* 圓角，讓圖片更柔和 */
+  }
+  
+  /* 手機版自動堆疊 */
+  @media (max-width: 768px) {
+    .two-columns {
+      flex-direction: column;
+    }
+  }
+  /*圖左文右2*/
+
+.overlay {
+    background-color: rgba(0, 0, 0, 0.5); /* 黑色半透明 */
+    padding: 60px 20px;
+    color: white;
+  }
+  
+  #cases h2, #cases p {
+    text-align: center;
+  }
+
+  .service-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .contact-img {
+    max-width: 300px; /* 限制QR code最大寬度 */
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto; /* 置中 */
+  }
