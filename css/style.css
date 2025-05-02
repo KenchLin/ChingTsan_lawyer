@@ -11,6 +11,7 @@ body {
     line-height: 1.6;
     color: #1e1d1d;
     background: #f8f9fa;
+    overflow-x: hidden; /* ⬅︎ 防止極小誤差導致水平滾動條 */
 }
 
 .container {
@@ -237,9 +238,9 @@ body {
 
 .case-panel.show {
     display: block;
-    min-height: 600px;    
-    padding-bottom: 10px;  
-  }
+    min-height: 600px;
+    padding-bottom: 10px;
+}
 
 .case-img {
     max-width: 50%;
@@ -279,12 +280,13 @@ body {
 }
 
 .carousel-wrapper,
-
 .carousel-container {
     position: relative;
-    overflow: hidden;
-    min-height: 620px;  /* ⬅︎ 根據實際內容高度可調整，例如原本約 400，可增至 520~600 */
-  }
+    overflow: hidden; /* ⭐ 改為 visible 以顯示放大後的元素，不被裁切 */
+    min-height: 680px;  /* ⭐ 增加最小高度以容納放大效果 */
+    padding-top: 40px;  /* ⭐ 預留上下空間避免放大後超出 */
+    padding-bottom: 40px;
+}
 
 .carousel-container {
     display: flex;
@@ -297,6 +299,7 @@ body {
     display: flex;
     gap: 80px;
     transition: transform 0.5s ease;
+    align-items: flex-start; /* ⭐ 防止垂直對齊出錯 */
 }
 
 .carousel-item {
@@ -304,6 +307,8 @@ body {
     text-align: center;
     transition: transform 0.3s ease;
     margin-top: 20px;
+    transform-origin: center center;
+    z-index: 0;
 }
 
 .carousel-item p {
@@ -322,7 +327,7 @@ body {
     border-radius: 12px;
     cursor: pointer;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    margin-top: clamp(8px, 2vw, 16px); /* 若你覺得需要更多距離可以調高這個數值 */
+    margin-top: clamp(8px, 2vw, 16px);
 }
 
 .carousel-item img:hover {
@@ -332,7 +337,8 @@ body {
 
 .carousel-item.active {
     transform: scale(1.15);
-    opacity: 1;
+    z-index: 1;
+    margin-bottom: 40px; /* ⬅︎ 放大時給額外空間，避免下方裁切 */
 }
 
 .carousel-btn {
