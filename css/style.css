@@ -504,7 +504,7 @@ opacity: 1;
     .notice-box {
         position: static; /* 移除絕對定位，避免脫離文件流 */
         margin: 110px auto 10px; /* 垂直外距 + 水平置中 */
-        max-width: 60%;
+        max-width: 65%;
         text-align: center;
         padding: 9px;
     }
