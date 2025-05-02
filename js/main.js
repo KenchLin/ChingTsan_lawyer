@@ -47,12 +47,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // 更新滑軌位置與 active 樣式
         function updateCarousel() {
-            const itemWidth = items[0].offsetWidth + 40;
+            const itemWidth = items[0].offsetWidth;
+            const gap = parseInt(getComputedStyle(track).gap) || 0;
+            const fullItemWidth = itemWidth + gap;
+        
             const containerWidth = container.offsetWidth;
-            const offset = (itemWidth * currentIndex) - (containerWidth - itemWidth) / 2;
-
+            const offset = (fullItemWidth * currentIndex) - (containerWidth / 2) + (itemWidth / 2);
+        
             track.style.transform = `translateX(${-offset}px)`;
-
+        
             items.forEach((item, index) => {
                 item.classList.toggle('active', index === currentIndex);
             });

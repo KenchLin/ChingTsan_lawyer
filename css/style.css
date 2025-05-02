@@ -207,7 +207,7 @@ body {
     display: flex;
     justify-content: center;
     gap: 16px;
-    margin-bottom: 20px;
+    margin-bottom: 8px;
     flex-wrap: wrap;
 }
 
@@ -232,13 +232,13 @@ body {
     display: none;
     animation: fadeSlide 0.4s ease forwards;
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 5px;
 }
 
 .case-panel.show {
     display: block;
     min-height: 600px;    
-    padding-bottom: 80px;  
+    padding-bottom: 10px;  
   }
 
 .case-img {
@@ -249,7 +249,7 @@ body {
 
 .more-cases {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 0px;
 }
 
 .more-btn {
@@ -283,19 +283,19 @@ body {
 .carousel-container {
     position: relative;
     overflow: hidden;
-    min-height: 520px;  /* ⬅︎ 根據實際內容高度可調整，例如原本約 400，可增至 520~600 */
+    min-height: 620px;  /* ⬅︎ 根據實際內容高度可調整，例如原本約 400，可增至 520~600 */
   }
 
 .carousel-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 20px 0;
+    margin: 8px 0;
 }
 
 .carousel-track {
     display: flex;
-    gap: 40px;
+    gap: 80px;
     transition: transform 0.5s ease;
 }
 
@@ -303,6 +303,7 @@ body {
     flex: 0 0 300px;
     text-align: center;
     transition: transform 0.3s ease;
+    margin-top: 20px;
 }
 
 .carousel-item p {
@@ -313,7 +314,7 @@ body {
     border-radius: 8px;
     position: relative;
     z-index: 2;
-    margin-top: 8px;
+    margin-top: 0px;
 }
 
 .carousel-item img {
@@ -321,6 +322,7 @@ body {
     border-radius: 12px;
     cursor: pointer;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-top: clamp(8px, 2vw, 16px); /* 若你覺得需要更多距離可以調高這個數值 */
 }
 
 .carousel-item img:hover {
