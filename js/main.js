@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // ===== 勝訴案例 tab 切換邏輯 =====
     const tabs = document.querySelectorAll('.case-tab');
     const panels = document.querySelectorAll('.case-panel');
+    const casesSection = document.getElementById('cases'); // 精選勝訴案例區塊
 
     tabs.forEach(tab => {
         tab.addEventListener('click', function () {
@@ -24,7 +25,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const targetId = 'panel-' + this.dataset.target;
             this.classList.add('active');
-            document.getElementById(targetId)?.classList.add('show');
+            const targetPanel = document.getElementById(targetId);
+            targetPanel?.classList.add('show');
+
+            // 動態調整背景圖片與區塊高度
+            const newHeight = targetPanel ? targetPanel.offsetHeight : 600; // 根據顯示區域調整
+            casesSection.style.minHeight = `${newHeight + 100}px`; // 留下足夠的空間以容納動畫
+
+            // 進行背景圖片縮放
+            if (targetPanel) {
+                casesSection.style.backgroundSize = '110%'; // 放大背景圖片
+            } else {
+                casesSection.style.backgroundSize = 'cover'; // 回到原來大小
+            }
         });
     });
 

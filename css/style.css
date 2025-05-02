@@ -185,6 +185,12 @@ body {
     color: white;
 }
 
+#cases {
+    background-size: cover;
+    background-position: center;
+    transition: background-size 0.5s ease, min-height 0.5s ease; /* 背景縮放與高度變動 */
+}
+
 #cases h2, #cases p {
     text-align: center;
 }
@@ -234,13 +240,16 @@ body {
     animation: fadeSlide 0.4s ease forwards;
     text-align: center;
     margin-bottom: 5px;
+    transition: min-height 0.5s ease; /* 使區塊高度變動有平滑動畫 */
 }
 
 .case-panel.show {
     display: block;
-    min-height: 600px;
+    min-height: 700px;
     padding-bottom: 10px;
 }
+
+
 
 .case-img {
     max-width: 50%;
@@ -324,10 +333,16 @@ body {
 
 .carousel-item img {
     width: 100%;
+    height: auto;
     border-radius: 12px;
     cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
     margin-top: clamp(8px, 2vw, 16px);
+}
+
+.carousel-item.active img {
+    transform: scale(1.1); /* 使圖片稍微放大 */
+    opacity: 0.9; /* 增加輕微的透明度 */
 }
 
 .carousel-item img:hover {
