@@ -188,7 +188,6 @@ body {
 #cases {
     background-size: cover;
     background-position: center;
-    transition: background-size 0.5s ease, min-height 0.5s ease; /* 背景縮放與高度變動 */
 }
 
 #cases h2, #cases p {
