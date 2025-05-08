@@ -46,6 +46,14 @@ body {
     font-size: 58px;
     font-weight: bold;
     color: #fff;
+    margin-right: auto; /* 把 logo 推到最左，強制靠左 */
+    padding-left: 0px; /* 可調整這個數值讓它「往左一點」 */
+}
+
+.logo-icon {
+    height: 60px; /* 或指定高度，例如 40px */
+    width: auto;
+    margin-top: 10px;
 }
 
 .logo-img {
@@ -476,6 +484,11 @@ opacity: 1;
 
     .logo {
         font-size: 24px;
+    }
+
+    .logo-icon {
+        height: 40px; /* 或指定高度，例如 40px */
+        width: auto;
     }
 
     .logo-img {
