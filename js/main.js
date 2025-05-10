@@ -57,6 +57,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const rightBtn = container.querySelector('.carousel-btn.right');
 
         let currentIndex = 0;
+        let startX = 0;
+        let currentX = 0;
+        let isDragging = false;
 
         // 更新滑軌位置與 active 樣式
         function updateCarousel() {
@@ -65,7 +68,16 @@ document.addEventListener('DOMContentLoaded', function () {
             const fullItemWidth = itemWidth + gap;
         
             const containerWidth = container.offsetWidth;
-            const offset = (fullItemWidth * currentIndex) - (containerWidth / 2) + (itemWidth / 2);
+            
+            // 修改置中計算邏輯
+            let offset;
+            if (window.innerWidth <= 768) {
+                // 手機版：直接使用項目寬度計算
+                offset = fullItemWidth * currentIndex;
+            } else {
+                // 電腦版：保持原有的置中邏輯
+                offset = (fullItemWidth * currentIndex) - (containerWidth / 2) + (itemWidth / 2);
+            }
         
             track.style.transform = `translateX(${-offset}px)`;
         
@@ -74,7 +86,63 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-        // 左右按鈕
+        // 觸控事件處理
+        function handleTouchStart(e) {
+            startX = e.touches[0].clientX;
+            isDragging = true;
+            track.style.transition = 'none';
+        }
+
+        function handleTouchMove(e) {
+            if (!isDragging) return;
+            
+            currentX = e.touches[0].clientX;
+            const diff = currentX - startX;
+            const itemWidth = items[0].offsetWidth;
+            const gap = parseInt(getComputedStyle(track).gap) || 0;
+            const fullItemWidth = itemWidth + gap;
+            
+            // 計算當前位置
+            let currentOffset;
+            if (window.innerWidth <= 768) {
+                currentOffset = currentIndex * fullItemWidth;
+            } else {
+                currentOffset = (fullItemWidth * currentIndex) - (containerWidth / 2) + (itemWidth / 2);
+            }
+            
+            const newOffset = currentOffset - diff;
+            track.style.transform = `translateX(${-newOffset}px)`;
+        }
+
+        function handleTouchEnd(e) {
+            if (!isDragging) return;
+            
+            isDragging = false;
+            track.style.transition = 'transform 0.3s ease-out';
+            
+            const diff = currentX - startX;
+            const itemWidth = items[0].offsetWidth;
+            const gap = parseInt(getComputedStyle(track).gap) || 0;
+            const fullItemWidth = itemWidth + gap;
+            
+            // 判斷滑動方向
+            if (Math.abs(diff) > itemWidth * 0.3) {
+                if (diff > 0 && currentIndex > 0) {
+                    currentIndex--;
+                } else if (diff < 0 && currentIndex < items.length - 1) {
+                    currentIndex++;
+                }
+            }
+            
+            updateCarousel();
+        }
+
+        // 加入觸控事件監聽
+        track.addEventListener('touchstart', handleTouchStart, { passive: true });
+        track.addEventListener('touchmove', handleTouchMove, { passive: true });
+        track.addEventListener('touchend', handleTouchEnd);
+
+        // 保留原有的點擊事件處理
         leftBtn?.addEventListener('click', () => {
             currentIndex = (currentIndex - 1 + items.length) % items.length;
             updateCarousel();
@@ -85,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function () {
             updateCarousel();
         });
 
-        // 點擊圖片：若未選中先置中，若已選中開啟燈箱
+        // 點擊圖片處理
         items.forEach((item, index) => {
             const img = item.querySelector('img');
             img?.addEventListener('click', () => {
