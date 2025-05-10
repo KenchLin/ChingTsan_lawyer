@@ -47,12 +47,41 @@ body {
     font-size: 58px;
     font-weight: bold;
     color: #fff;
+    margin-right: auto;
+    padding-left: 0px;
+    display: flex;
+    align-items: center;
+    height: 60px;
+    padding-top: 40px;   /* 或你想要的數值 */
+    padding-bottom: 40px;
+}
+
+.logo-icon {
+    height: 60px;
+    width: auto;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 .logo-img {
     height: 60px;
     width: auto;
     margin-top: 10px;
+}
+
+/* 修改：logo1 到 logo5 的共同樣式 */
+.logo1-img,
+.logo2-img,
+.logo3-img,
+.logo4-img,
+.logo5-img {
+    height: 60px;
+    width: auto;
+    margin: 0;
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+    z-index: 1;
 }
 
 .navbar nav ul {
@@ -425,6 +454,53 @@ transform: scale(1);
 opacity: 1;
 }
 
+.notice-box {
+    position: absolute;
+    bottom: 80px;
+    right: 120px;
+    width: 300px;
+    padding: 16px;
+    background-color: #fffbeac5;
+    border: 2px solid #f2d4798d;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    z-index: 20;
+    animation: fadeIn 0.8s ease-out;
+    text-align: left;
+    font-size: 0.9em;
+  }
+  
+  .notice-box h2 {
+    font-size: 1.1em;
+    margin: 0 0 6px;
+    color: #d4a106;
+  }
+  
+  .notice-box p {
+    margin: 0 0 10px;
+    color: #333;
+  }
+  
+  .notice-btn {
+    display: inline-block;
+    background-color: #d4a106;
+    color: white;
+    padding: 6px 10px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 0.85em;
+    transition: background-color 0.3s ease;
+  }
+  
+  .notice-btn:hover {
+    background-color: #b88d04;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
 
 /* 手機版樣式 */
 @media (max-width: 768px) {
@@ -451,6 +527,14 @@ opacity: 1;
 
     .logo {
         font-size: 24px;
+        padding: 0px;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .logo-icon {
+        height: 40px; /* 或指定高度，例如 40px */
+        width: auto;
     }
 
     .logo-img {
@@ -458,9 +542,18 @@ opacity: 1;
         width: auto;
     }
 
+    .logo1-img,
+    .logo2-img,
+    .logo3-img,
+    .logo4-img,
+    .logo5-img {
+        height: 40px;
+        width: auto;
+    }
+
     .hero-title {
         font-size: 32px;
-        margin-top: 40px;
+        margin-top: 0px;
     }
 
     .hero-subtitle {
@@ -474,5 +567,32 @@ opacity: 1;
 
     .two-columns {
         flex-direction: column;
+    }
+
+    .notice-box {
+        position: static; /* 移除絕對定位，避免脫離文件流 */
+        margin: 160px auto 10px; /* 垂直外距 + 水平置中 */
+        max-width: 65%;
+        text-align: center;
+        padding: 9px;
+    }
+    
+      .notice-box h2 {
+        font-size: 14px;
+      }
+    
+      .notice-box p {
+        font-size: 11px;
+      }
+    
+      .notice-box .notice-btn {
+        font-size: 11px;
+        padding: 4px 9px;
+      }
+    
+    .image-column img {
+        width: 70%;
+        height: auto;
+        border-radius: 8px;
     }
 }
