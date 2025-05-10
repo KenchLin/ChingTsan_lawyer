@@ -273,7 +273,6 @@ body {
 
 .case-panel.show {
     display: block;
-    /*min-height: 700px;*/
     padding-bottom: 10px;
 }
 
@@ -677,5 +676,10 @@ opacity: 1;
         max-width: 100%;
         max-height: 80vh;
         object-fit: contain;
+    }
+
+    /* 隱藏滑軌左右按鍵 */
+    .carousel-btn {
+        display: none;
     }
 }
