@@ -46,20 +46,41 @@ body {
     font-size: 58px;
     font-weight: bold;
     color: #fff;
-    margin-right: auto; /* 把 logo 推到最左，強制靠左 */
-    padding-left: 0px; /* 可調整這個數值讓它「往左一點」 */
+    margin-right: auto;
+    padding-left: 0px;
+    display: flex;
+    align-items: center;
+    height: 60px;
+    padding-top: 40px;   /* 或你想要的數值 */
+    padding-bottom: 40px;
 }
 
 .logo-icon {
-    height: 60px; /* 或指定高度，例如 40px */
+    height: 60px;
     width: auto;
-    margin-top: 10px;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 .logo-img {
     height: 60px;
     width: auto;
     margin-top: 10px;
+}
+
+/* 修改：logo1 到 logo5 的共同樣式 */
+.logo1-img,
+.logo2-img,
+.logo3-img,
+.logo4-img,
+.logo5-img {
+    height: 60px;
+    width: auto;
+    margin: 0;
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+    z-index: 1;
 }
 
 .navbar nav ul {
@@ -484,6 +505,9 @@ opacity: 1;
 
     .logo {
         font-size: 24px;
+        padding: 0px;
+        justify-content: center;
+        width: 100%;
     }
 
     .logo-icon {
@@ -492,6 +516,15 @@ opacity: 1;
     }
 
     .logo-img {
+        height: 40px;
+        width: auto;
+    }
+
+    .logo1-img,
+    .logo2-img,
+    .logo3-img,
+    .logo4-img,
+    .logo5-img {
         height: 40px;
         width: auto;
     }
