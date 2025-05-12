@@ -53,35 +53,47 @@ document.addEventListener('DOMContentLoaded', function () {
     const lightboxDescription = document.querySelector('.lightbox-description');
     const lightboxClose = document.querySelector('.lightbox-close');
 
-    // 案例資料（示範用）
-    const caseDetails = {
-        'case1.jpg': {
-            title: '案例一：民事訴訟',
-            description: '這是一個示範案例的詳細說明。在這裡，我們可以放置更多關於案例的詳細資訊。\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
-        },
-        'case2.jpg': {
-            title: '案例二：刑事訴訟',
-            description: '這是另一個示範案例的詳細說明。\n\nSed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.\n\nNemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.'
-        }
-        // 可以繼續添加更多案例
-    };
-
     // 開啟燈箱
     function openLightbox(imgSrc) {
-        const imgName = imgSrc.split('/').pop();
-        const details = caseDetails[imgName] || {
-            title: '案例詳情',
-            description: '這是一個示範案例的詳細說明。'
-        };
+        console.log('openLightbox called with:', imgSrc); // 調試日誌
+        
+        // 從完整路徑中提取文件名並解碼
+        const imgName = decodeURIComponent(imgSrc.split('/').pop());
+        console.log('Decoded image name:', imgName); // 調試日誌
+        
+        // 使用解碼後的文件名來查找圖片元素
+        const img = document.querySelector(`img[src*="${imgName}"]`);
+        console.log('Found image element:', img); // 調試日誌
+        
+        if (!img) {
+            console.log('Image not found, trying alternative method...'); // 調試日誌
+            // 嘗試使用更寬鬆的匹配方式
+            const allImages = document.querySelectorAll('.carousel-item img');
+            const clickedImg = Array.from(allImages).find(img => 
+                decodeURIComponent(img.src).includes(imgName)
+            );
+            console.log('Found image using alternative method:', clickedImg); // 調試日誌
+            if (!clickedImg) return;
+            
+            const title = clickedImg.dataset.caseTitle || '案例詳情';
+            const description = clickedImg.dataset.caseDescription || '<p>這是一個示範案例的詳細說明。</p>';
 
-        lightboxImg.src = imgSrc;
-        lightboxTitle.textContent = details.title;
-        lightboxDescription.innerHTML = details.description.split('\n\n').map(p => `<p>${p}</p>`).join('');
+            lightboxImg.src = clickedImg.src;
+            lightboxTitle.textContent = title;
+            lightboxDescription.innerHTML = description;
+        } else {
+            const title = img.dataset.caseTitle || '案例詳情';
+            const description = img.dataset.caseDescription || '<p>這是一個示範案例的詳細說明。</p>';
+
+            lightboxImg.src = img.src;
+            lightboxTitle.textContent = title;
+            lightboxDescription.innerHTML = description;
+        }
         
         lightbox.classList.remove('hidden');
-        setTimeout(() => {
+        requestAnimationFrame(() => {
             lightbox.classList.add('show');
-        }, 10);
+        });
     }
 
     // 關閉燈箱
@@ -92,10 +104,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 300);
     }
 
-    // 點擊圖片開啟燈箱
+    // 簡化事件監聽器
     document.querySelectorAll('.carousel-item img').forEach(img => {
-        img.addEventListener('click', () => {
-            openLightbox(img.src);
+        console.log('Adding click listener to image:', img.src); // 調試日誌
+        img.addEventListener('click', function(e) {
+            console.log('Image clicked:', this.src); // 調試日誌
+            e.preventDefault();
+            e.stopPropagation();
+            openLightbox(this.src);
         });
     });
 
@@ -229,11 +245,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 
                 updateCarousel();
-            } else if (!hasMoved && touchDuration < 10) {
+            } else if (!hasMoved && touchDuration < 300) {
                 // 短時間觸摸且沒有明顯移動時，顯示燈箱
                 const activeItem = items[currentIndex];
                 const activeImg = activeItem.querySelector('img');
                 if (activeImg) {
+                    e.preventDefault();
+                    e.stopPropagation();
                     openLightbox(activeImg.src);
                 }
             }
