@@ -59,7 +59,12 @@ document.addEventListener('DOMContentLoaded', function () {
         let currentIndex = 0;
         let startX = 0;
         let currentX = 0;
+        let startY = 0;
+        let currentY = 0;
         let isDragging = false;
+        let touchStartTime = 0;
+        let touchEndTime = 0;
+        let hasMoved = false;
 
         // 更新滑軌位置與 active 樣式
         function updateCarousel() {
@@ -69,13 +74,10 @@ document.addEventListener('DOMContentLoaded', function () {
         
             const containerWidth = container.offsetWidth;
             
-            // 修改置中計算邏輯
             let offset;
             if (window.innerWidth <= 768) {
-                // 手機版：直接使用項目寬度計算
                 offset = fullItemWidth * currentIndex;
             } else {
-                // 電腦版：保持原有的置中邏輯
                 offset = (fullItemWidth * currentIndex) - (containerWidth / 2) + (itemWidth / 2);
             }
         
@@ -86,61 +88,125 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-        // 觸控事件處理
+        // 顯示燈箱
+        function showLightbox(img) {
+            lightboxImg.src = img.src;
+            lightbox.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                lightbox.classList.add('show');
+            });
+        }
+
+        // 點擊圖片處理（電腦版）
+        items.forEach((item, index) => {
+            const img = item.querySelector('img');
+            img?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (currentIndex !== index) {
+                    currentIndex = index;
+                    updateCarousel();
+                } else {
+                    showLightbox(img);
+                }
+            });
+        });
+
+        // 修改觸控事件處理（手機版）
         function handleTouchStart(e) {
             startX = e.touches[0].clientX;
-            isDragging = true;
+            startY = e.touches[0].clientY;
+            currentX = startX;
+            currentY = startY;
+            touchStartTime = Date.now();
+            isDragging = false;
+            hasMoved = false;
             track.style.transition = 'none';
         }
 
         function handleTouchMove(e) {
-            if (!isDragging) return;
+            if (!startX) return;
             
             currentX = e.touches[0].clientX;
-            const diff = currentX - startX;
-            const itemWidth = items[0].offsetWidth;
-            const gap = parseInt(getComputedStyle(track).gap) || 0;
-            const fullItemWidth = itemWidth + gap;
+            currentY = e.touches[0].clientY;
             
-            // 計算當前位置
-            let currentOffset;
-            if (window.innerWidth <= 768) {
-                currentOffset = currentIndex * fullItemWidth;
-            } else {
-                currentOffset = (fullItemWidth * currentIndex) - (containerWidth / 2) + (itemWidth / 2);
+            const diffX = currentX - startX;
+            const diffY = currentY - startY;
+            
+            // 計算移動距離
+            const distance = Math.sqrt(diffX * diffX + diffY * diffY);
+            
+            // 如果移動距離超過閾值，則視為滑動
+            if (distance > 10) {
+                hasMoved = true;
+                isDragging = true;
             }
             
-            const newOffset = currentOffset - diff;
-            track.style.transform = `translateX(${-newOffset}px)`;
+            if (isDragging) {
+                const itemWidth = items[0].offsetWidth;
+                const gap = parseInt(getComputedStyle(track).gap) || 0;
+                const fullItemWidth = itemWidth + gap;
+                
+                let currentOffset;
+                if (window.innerWidth <= 768) {
+                    currentOffset = currentIndex * fullItemWidth;
+                } else {
+                    currentOffset = (fullItemWidth * currentIndex) - (containerWidth / 2) + (itemWidth / 2);
+                }
+                
+                const newOffset = currentOffset - diffX;
+                track.style.transform = `translateX(${-newOffset}px)`;
+            }
         }
 
         function handleTouchEnd(e) {
-            if (!isDragging) return;
+            if (!startX) return;
             
-            isDragging = false;
-            track.style.transition = 'transform 0.3s ease-out';
+            touchEndTime = Date.now();
+            const touchDuration = touchEndTime - touchStartTime;
+            const diffX = currentX - startX;
             
-            const diff = currentX - startX;
-            const itemWidth = items[0].offsetWidth;
-            const gap = parseInt(getComputedStyle(track).gap) || 0;
-            const fullItemWidth = itemWidth + gap;
+            // 重置起始位置
+            startX = 0;
+            currentX = 0;
+            startY = 0;
+            currentY = 0;
             
-            // 判斷滑動方向
-            if (Math.abs(diff) > itemWidth * 0.3) {
-                if (diff > 0 && currentIndex > 0) {
-                    currentIndex--;
-                } else if (diff < 0 && currentIndex < items.length - 1) {
-                    currentIndex++;
+            if (isDragging) {
+                // 處理滑動結束
+                track.style.transition = 'transform 0.3s ease-out';
+                
+                const itemWidth = items[0].offsetWidth;
+                const gap = parseInt(getComputedStyle(track).gap) || 0;
+                const fullItemWidth = itemWidth + gap;
+                
+                if (Math.abs(diffX) > itemWidth * 0.3) {
+                    if (diffX > 0 && currentIndex > 0) {
+                        currentIndex--;
+                    } else if (diffX < 0 && currentIndex < items.length - 1) {
+                        currentIndex++;
+                    }
+                }
+                
+                updateCarousel();
+            } else if (!hasMoved && touchDuration < 10) {
+                // 短時間觸摸且沒有明顯移動時，顯示燈箱
+                const activeItem = items[currentIndex];
+                const activeImg = activeItem.querySelector('img');
+                if (activeImg) {
+                    showLightbox(activeImg);
                 }
             }
             
-            updateCarousel();
+            isDragging = false;
+            hasMoved = false;
         }
 
-        // 加入觸控事件監聽
-        track.addEventListener('touchstart', handleTouchStart, { passive: true });
-        track.addEventListener('touchmove', handleTouchMove, { passive: true });
-        track.addEventListener('touchend', handleTouchEnd);
+        // 加入觸控事件監聽（僅在手機版）
+        if (window.innerWidth <= 768) {
+            track.addEventListener('touchstart', handleTouchStart, { passive: true });
+            track.addEventListener('touchmove', handleTouchMove, { passive: true });
+            track.addEventListener('touchend', handleTouchEnd);
+        }
 
         // 保留原有的點擊事件處理
         leftBtn?.addEventListener('click', () => {
@@ -153,31 +219,14 @@ document.addEventListener('DOMContentLoaded', function () {
             updateCarousel();
         });
 
-        // 點擊圖片處理
-        items.forEach((item, index) => {
-            const img = item.querySelector('img');
-            img?.addEventListener('click', () => {
-                if (currentIndex !== index) {
-                    currentIndex = index;
-                    updateCarousel();
-                } else {
-                    lightboxImg.src = img.src;
-                    lightbox.classList.remove('hidden');
-                    requestAnimationFrame(() => {
-                        lightbox.classList.add('show');
-                    });
-                }
-            });
+        // 燈箱關閉處理
+        lightbox?.addEventListener('click', () => {
+            lightbox.classList.remove('show');
+            setTimeout(() => {
+                lightbox.classList.add('hidden');
+            }, 300);
         });
 
         updateCarousel();
-    });
-
-    // 點擊燈箱背景關閉
-    lightbox?.addEventListener('click', () => {
-        lightbox.classList.remove('show');
-        setTimeout(() => {
-            lightbox.classList.add('hidden');
-        }, 300);
     });
 });
