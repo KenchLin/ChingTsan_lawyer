@@ -49,6 +49,70 @@ document.addEventListener('DOMContentLoaded', function () {
     // ===== 案例滑軌與燈箱互動邏輯 =====
     const lightbox = document.getElementById('lightbox');
     const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxTitle = document.querySelector('.lightbox-title');
+    const lightboxDescription = document.querySelector('.lightbox-description');
+    const lightboxClose = document.querySelector('.lightbox-close');
+
+    // 案例資料（示範用）
+    const caseDetails = {
+        'case1.jpg': {
+            title: '案例一：民事訴訟',
+            description: '這是一個示範案例的詳細說明。在這裡，我們可以放置更多關於案例的詳細資訊。\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+        },
+        'case2.jpg': {
+            title: '案例二：刑事訴訟',
+            description: '這是另一個示範案例的詳細說明。\n\nSed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.\n\nNemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.'
+        }
+        // 可以繼續添加更多案例
+    };
+
+    // 開啟燈箱
+    function openLightbox(imgSrc) {
+        const imgName = imgSrc.split('/').pop();
+        const details = caseDetails[imgName] || {
+            title: '案例詳情',
+            description: '這是一個示範案例的詳細說明。'
+        };
+
+        lightboxImg.src = imgSrc;
+        lightboxTitle.textContent = details.title;
+        lightboxDescription.innerHTML = details.description.split('\n\n').map(p => `<p>${p}</p>`).join('');
+        
+        lightbox.classList.remove('hidden');
+        setTimeout(() => {
+            lightbox.classList.add('show');
+        }, 10);
+    }
+
+    // 關閉燈箱
+    function closeLightbox() {
+        lightbox.classList.remove('show');
+        setTimeout(() => {
+            lightbox.classList.add('hidden');
+        }, 300);
+    }
+
+    // 點擊圖片開啟燈箱
+    document.querySelectorAll('.carousel-item img').forEach(img => {
+        img.addEventListener('click', () => {
+            openLightbox(img.src);
+        });
+    });
+
+    // 點擊關閉按鈕
+    lightboxClose.addEventListener('click', closeLightbox);
+
+    // 點擊燈箱背景關閉
+    lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) {
+            closeLightbox();
+        }
+    });
+
+    // 防止燈箱內容區域的點擊事件冒泡
+    document.querySelector('.lightbox-content').addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
 
     document.querySelectorAll('.carousel-container').forEach(container => {
         const track = container.querySelector('.carousel-track');
@@ -87,29 +151,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 item.classList.toggle('active', index === currentIndex);
             });
         }
-
-        // 顯示燈箱
-        function showLightbox(img) {
-            lightboxImg.src = img.src;
-            lightbox.classList.remove('hidden');
-            requestAnimationFrame(() => {
-                lightbox.classList.add('show');
-            });
-        }
-
-        // 點擊圖片處理（電腦版）
-        items.forEach((item, index) => {
-            const img = item.querySelector('img');
-            img?.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (currentIndex !== index) {
-                    currentIndex = index;
-                    updateCarousel();
-                } else {
-                    showLightbox(img);
-                }
-            });
-        });
 
         // 修改觸控事件處理（手機版）
         function handleTouchStart(e) {
@@ -193,7 +234,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const activeItem = items[currentIndex];
                 const activeImg = activeItem.querySelector('img');
                 if (activeImg) {
-                    showLightbox(activeImg);
+                    openLightbox(activeImg.src);
                 }
             }
             
@@ -217,14 +258,6 @@ document.addEventListener('DOMContentLoaded', function () {
         rightBtn?.addEventListener('click', () => {
             currentIndex = (currentIndex + 1) % items.length;
             updateCarousel();
-        });
-
-        // 燈箱關閉處理
-        lightbox?.addEventListener('click', () => {
-            lightbox.classList.remove('show');
-            setTimeout(() => {
-                lightbox.classList.add('hidden');
-            }, 300);
         });
 
         updateCarousel();
