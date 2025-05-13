@@ -441,6 +441,11 @@ body {
     padding: 20px;
     background-color: #f8f9fa;
     overflow: hidden;
+    cursor: grab;
+}
+
+.lightbox-image-container:active {
+    cursor: grabbing;
 }
 
 .lightbox-image-container img {
@@ -448,6 +453,13 @@ body {
     max-height: 100%;
     object-fit: contain;
     border-radius: 8px;
+    user-select: none;
+    -webkit-user-drag: none;
+    cursor: grab;
+}
+
+.lightbox-image-container:active img {
+    cursor: grabbing;
 }
 
 .lightbox-details {
@@ -698,7 +710,7 @@ body {
     }
 
     .carousel-item img {
-        width: 85%;
+        width: 100%;
         height: auto;
         object-fit: contain;
         max-width: 100%;
@@ -772,6 +784,25 @@ body {
         flex: none;
         height: 50vh;
         padding: 10px;
+        overflow: hidden;
+        position: relative;
+        touch-action: none; /* 防止瀏覽器預設的觸控行為 */
+    }
+
+    .lightbox-image-container img {
+        max-width: none;
+        max-height: none;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        transform-origin: center center;
+        transition: transform 0.1s ease-out;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    .lightbox-image-container.zoomed img {
+        cursor: move;
     }
 
     .lightbox-details {
