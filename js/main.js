@@ -366,26 +366,59 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 300);
     }
 
-    // 點擊圖片開啟燈箱
-    document.querySelectorAll('.carousel-item img').forEach(img => {
-        img.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
+    // 電腦版的點擊處理
+    function handleDesktopClick(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const img = e.target;
+        const carouselItem = img.closest('.carousel-item');
+        const isActive = carouselItem.classList.contains('active');
+        const container = carouselItem.closest('.carousel-container');
+        const items = container.querySelectorAll('.carousel-item');
+        const index = parseInt(carouselItem.dataset.index);
+        
+        if (isActive) {
+            // 如果是 active 案例，開啟燈箱
+            openLightbox(img.src);
+        } else {
+            // 如果不是 active 案例，切換到該案例
+            const track = container.querySelector('.carousel-track');
+            const itemWidth = items[0].offsetWidth;
+            const gap = parseInt(getComputedStyle(track).gap) || 0;
+            const fullItemWidth = itemWidth + gap;
+            const containerWidth = container.offsetWidth;
             
-            const carouselItem = this.closest('.carousel-item');
-            const isActive = carouselItem.classList.contains('active');
+            // 計算新的偏移量
+            const offset = (fullItemWidth * index) - (containerWidth / 2) + (itemWidth / 2);
             
-            if (isActive) {
-                // 如果是 active 案例，開啟燈箱
-                openLightbox(this.src);
-            } else {
-                // 如果不是 active 案例，切換到該案例
-                const index = parseInt(carouselItem.dataset.index);
-                currentIndex = index;
-                updateCarousel();
-            }
-        });
-    });
+            // 添加過渡效果
+            track.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+            track.style.transform = `translateX(${-offset}px)`;
+            
+            // 更新 active 狀態
+            items.forEach(item => item.classList.remove('active'));
+            carouselItem.classList.add('active');
+        }
+    }
+
+    // 手機版的觸控處理
+    function handleMobileTouch(e) {
+        const touch = e.touches[0];
+        const activeItem = items[currentIndex];
+        const activeImg = activeItem.querySelector('img');
+        if (activeImg) {
+            const rect = activeImg.getBoundingClientRect();
+            const isClickOnActiveImg = 
+                touch.clientX >= rect.left && 
+                touch.clientX <= rect.right && 
+                touch.clientY >= rect.top && 
+                touch.clientY <= rect.bottom;
+            
+            // 儲存點擊位置資訊
+            e.target.dataset.clickedOnActive = isClickOnActiveImg;
+        }
+    }
 
     // 點擊關閉按鈕
     lightboxClose.addEventListener('click', closeLightbox);
@@ -419,10 +452,19 @@ document.addEventListener('DOMContentLoaded', function () {
             offset = (fullItemWidth * currentIndex) - (containerWidth / 2) + (itemWidth / 2);
         }
     
-        track.style.transform = `translateX(${-offset}px)`;
-    
-        items.forEach((item, index) => {
-            item.classList.toggle('active', index === currentIndex);
+        // 先移除所有項目的 active 類別
+        items.forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        // 使用 requestAnimationFrame 確保動畫流暢
+        requestAnimationFrame(() => {
+            track.style.transform = `translateX(${-offset}px)`;
+            
+            // 在 transform 動畫開始後，添加 active 類別
+            setTimeout(() => {
+                items[currentIndex].classList.add('active');
+            }, 50);
         });
     }
 
@@ -441,28 +483,137 @@ document.addEventListener('DOMContentLoaded', function () {
         let touchStartTime = 0;
         let touchEndTime = 0;
         let hasMoved = false;
+        let touchStartTarget = null;
+        let touchStartActiveImg = null;
 
-        // 點擊圖片開啟燈箱
-        items.forEach(item => {
-            const img = item.querySelector('img');
-            img.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                const isActive = item.classList.contains('active');
-                
-                if (isActive) {
-                    // 如果是 active 案例，開啟燈箱
-                    openLightbox(this.src);
-                } else {
-                    // 如果不是 active 案例，切換到該案例
-                    currentIndex = parseInt(item.dataset.index);
-                    updateCarousel(container, currentIndex);
-                }
+        // 根據螢幕寬度設置事件監聽器
+        if (window.innerWidth > 768) {
+            // 電腦版：使用點擊事件
+            items.forEach(item => {
+                const img = item.querySelector('img');
+                img.addEventListener('click', handleDesktopClick);
             });
-        });
+        } else {
+            // 手機版：使用觸控事件
+            track.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                currentX = startX;
+                currentY = startY;
+                touchStartTime = Date.now();
+                isDragging = false;
+                hasMoved = false;
+                track.style.transition = 'none';
+                touchStartTarget = e.target;
 
-        // 保留原有的點擊事件處理
+                // 檢查點擊位置是否在 active case 上
+                const touch = e.touches[0];
+                const activeItem = items[currentIndex];
+                const activeImg = activeItem.querySelector('img');
+                if (activeImg) {
+                    const rect = activeImg.getBoundingClientRect();
+                    touchStartActiveImg = 
+                        touch.clientX >= rect.left && 
+                        touch.clientX <= rect.right && 
+                        touch.clientY >= rect.top && 
+                        touch.clientY <= rect.bottom;
+                }
+            }, { passive: true });
+
+            track.addEventListener('touchmove', (e) => {
+                if (!startX) return;
+                
+                currentX = e.touches[0].clientX;
+                currentY = e.touches[0].clientY;
+                
+                const diffX = currentX - startX;
+                const diffY = currentY - startY;
+                
+                const distance = Math.sqrt(diffX * diffX + diffY * diffY);
+                
+                if (distance > 10) {
+                    hasMoved = true;
+                    isDragging = true;
+                    touchStartActiveImg = false;
+                }
+                
+                if (isDragging) {
+                    const itemWidth = items[0].offsetWidth;
+                    const gap = parseInt(getComputedStyle(track).gap) || 0;
+                    const fullItemWidth = itemWidth + gap;
+                    const containerWidth = container.offsetWidth;
+                    
+                    let currentOffset = currentIndex * fullItemWidth;
+                    const newOffset = currentOffset - diffX;
+                    track.style.transform = `translateX(${-newOffset}px)`;
+                }
+            }, { passive: true });
+
+            track.addEventListener('touchend', (e) => {
+                if (!startX) return;
+                
+                touchEndTime = Date.now();
+                const touchDuration = touchEndTime - touchStartTime;
+                const diffX = currentX - startX;
+                
+                startX = 0;
+                currentX = 0;
+                startY = 0;
+                currentY = 0;
+                
+                if (isDragging) {
+                    track.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                    
+                    const itemWidth = items[0].offsetWidth;
+                    const gap = parseInt(getComputedStyle(track).gap) || 0;
+                    const fullItemWidth = itemWidth + gap;
+                    
+                    if (Math.abs(diffX) > itemWidth * 0.3) {
+                        if (diffX > 0 && currentIndex > 0) {
+                            currentIndex--;
+                        } else if (diffX < 0 && currentIndex < items.length - 1) {
+                            currentIndex++;
+                        }
+                    }
+                    
+                    updateCarousel(container, currentIndex);
+                } else if (!hasMoved && touchDuration < 300 && touchStartTarget === e.target) {
+                    if (touchStartActiveImg) {
+                        const activeItem = items[currentIndex];
+                        const activeImg = activeItem.querySelector('img');
+                        if (activeImg) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            openLightbox(activeImg.src);
+                        }
+                    } else {
+                        const touch = e.changedTouches[0];
+                        const containerRect = container.getBoundingClientRect();
+                        const containerCenter = containerRect.left + containerRect.width / 2;
+                        
+                        let newIndex = currentIndex;
+                        if (touch.clientX < containerCenter && currentIndex > 0) {
+                            newIndex = currentIndex - 1;
+                        } else if (touch.clientX > containerCenter && currentIndex < items.length - 1) {
+                            newIndex = currentIndex + 1;
+                        }
+                        
+                        if (newIndex !== currentIndex) {
+                            currentIndex = newIndex;
+                            track.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                            updateCarousel(container, currentIndex);
+                        }
+                    }
+                }
+                
+                touchStartActiveImg = null;
+                touchStartTarget = null;
+                isDragging = false;
+                hasMoved = false;
+            });
+        }
+
+        // 保留原有的按鈕點擊事件
         leftBtn?.addEventListener('click', () => {
             currentIndex = (currentIndex - 1 + items.length) % items.length;
             updateCarousel(container, currentIndex);
@@ -473,107 +624,36 @@ document.addEventListener('DOMContentLoaded', function () {
             updateCarousel(container, currentIndex);
         });
 
-        // 修改觸控事件處理（手機版）
-        function handleTouchStart(e) {
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-            currentX = startX;
-            currentY = startY;
-            touchStartTime = Date.now();
-            isDragging = false;
-            hasMoved = false;
-            track.style.transition = 'none';
-        }
-
-        function handleTouchMove(e) {
-            if (!startX) return;
-            
-            currentX = e.touches[0].clientX;
-            currentY = e.touches[0].clientY;
-            
-            const diffX = currentX - startX;
-            const diffY = currentY - startY;
-            
-            // 計算移動距離
-            const distance = Math.sqrt(diffX * diffX + diffY * diffY);
-            
-            // 如果移動距離超過閾值，則視為滑動
-            if (distance > 10) {
-                hasMoved = true;
-                isDragging = true;
-            }
-            
-            if (isDragging) {
-                const itemWidth = items[0].offsetWidth;
-                const gap = parseInt(getComputedStyle(track).gap) || 0;
-                const fullItemWidth = itemWidth + gap;
-                
-                let currentOffset;
-                if (window.innerWidth <= 768) {
-                    currentOffset = currentIndex * fullItemWidth;
-                } else {
-                    currentOffset = (fullItemWidth * currentIndex) - (containerWidth / 2) + (itemWidth / 2);
-                }
-                
-                const newOffset = currentOffset - diffX;
-                track.style.transform = `translateX(${-newOffset}px)`;
-            }
-        }
-
-        function handleTouchEnd(e) {
-            if (!startX) return;
-            
-            touchEndTime = Date.now();
-            const touchDuration = touchEndTime - touchStartTime;
-            const diffX = currentX - startX;
-            
-            // 重置起始位置
-            startX = 0;
-            currentX = 0;
-            startY = 0;
-            currentY = 0;
-            
-            if (isDragging) {
-                // 處理滑動結束
-                track.style.transition = 'transform 0.3s ease-out';
-                
-                const itemWidth = items[0].offsetWidth;
-                const gap = parseInt(getComputedStyle(track).gap) || 0;
-                const fullItemWidth = itemWidth + gap;
-                
-                if (Math.abs(diffX) > itemWidth * 0.3) {
-                    if (diffX > 0 && currentIndex > 0) {
-                        currentIndex--;
-                    } else if (diffX < 0 && currentIndex < items.length - 1) {
-                        currentIndex++;
-                    }
-                }
-                
-                updateCarousel(container, currentIndex);
-            } else if (!hasMoved && touchDuration < 300) {
-                // 短時間觸摸且沒有明顯移動時，顯示燈箱
-                const activeItem = items[currentIndex];
-                const activeImg = activeItem.querySelector('img');
-                if (activeImg) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    openLightbox(activeImg.src);
-                }
-            }
-            
-            isDragging = false;
-            hasMoved = false;
-        }
-
-        // 加入觸控事件監聽（僅在手機版）
-        if (window.innerWidth <= 768) {
-            track.addEventListener('touchstart', handleTouchStart, { passive: true });
-            track.addEventListener('touchmove', handleTouchMove, { passive: true });
-            track.addEventListener('touchend', handleTouchEnd);
-        }
-
         // 初始化
         updateCarousel(container, currentIndex);
+    });
+
+    // 監聽視窗大小變化，重新設置事件監聽器
+    window.addEventListener('resize', () => {
+        const isMobile = window.innerWidth <= 768;
+        document.querySelectorAll('.carousel-container').forEach(container => {
+            const items = container.querySelectorAll('.carousel-item');
+            const track = container.querySelector('.carousel-track');
+            
+            // 移除所有現有的事件監聽器
+            items.forEach(item => {
+                const img = item.querySelector('img');
+                img.replaceWith(img.cloneNode(true));
+            });
+            
+            // 重新綁定事件監聽器
+            if (isMobile) {
+                // 手機版的事件監聽器會在容器初始化時重新綁定
+                container.querySelectorAll('.carousel-item img').forEach(img => {
+                    img.addEventListener('click', (e) => e.preventDefault());
+                });
+            } else {
+                // 電腦版的事件監聽器
+                container.querySelectorAll('.carousel-item img').forEach(img => {
+                    img.addEventListener('click', handleDesktopClick);
+                });
+            }
+        });
     });
 
     // 在事件監聽器中加入清理邏輯
