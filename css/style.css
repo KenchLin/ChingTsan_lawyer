@@ -217,6 +217,7 @@ body {
 #cases {
     background-size: cover;
     background-position: center;
+    padding: 60px 0;
 }
 
 #cases h2, #cases p {
@@ -247,13 +248,14 @@ body {
 }
 
 .case-tab {
-    background-color: #ffffffdd;
-    border: none;
-    padding: 10px 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 12px 24px;
     border-radius: 24px;
     font-size: 18px;
     cursor: pointer;
     transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .case-tab:hover,
@@ -261,6 +263,8 @@ body {
     background-color: #ffd700;
     color: #000;
     transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+    border-color: rgba(255, 215, 0, 0.5);
 }
 
 .case-panel {
@@ -288,18 +292,23 @@ body {
 }
 
 .more-btn {
-    background-color: #ffffffcc;
-    padding: 10px 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 12px 24px;
     border-radius: 24px;
     text-decoration: none;
     color: #333;
     font-weight: bold;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .more-btn:hover {
     background-color: #ffd700;
     color: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+    border-color: rgba(255, 215, 0, 0.5);
 }
 
 @keyframes fadeSlide {
@@ -348,12 +357,14 @@ body {
 .carousel-item p {
     margin-bottom: 10px;
     font-weight: bold;
-    background-color: rgba(255, 255, 255, 0.85);
-    padding: 6px 10px;
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 8px 16px;
     border-radius: 8px;
     position: relative;
     z-index: 2;
     margin-top: 0px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .carousel-item img {
@@ -361,18 +372,21 @@ body {
     height: auto;
     border-radius: 12px;
     cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.3s ease;
     margin-top: clamp(8px, 2vw, 16px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
 }
 
 .carousel-item.active img {
     transform: scale(1.1);
-    opacity: 0.9;
+    opacity: 0.95;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
 .carousel-item img:hover {
     transform: scale(1.05);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
 }
 
 .carousel-item.active {
@@ -387,12 +401,21 @@ body {
     transform: translateY(-50%);
     font-size: 32px;
     font-weight: bold;
-    background-color: #ffffffcc;
-    border: none;
-    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 12px;
     border-radius: 50%;
     cursor: pointer;
     z-index: 3;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.carousel-btn:hover {
+    background-color: #ffd700;
+    color: #000;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+    border-color: rgba(255, 215, 0, 0.5);
 }
 
 .carousel-btn.left { left: 0; }
@@ -428,9 +451,11 @@ body {
     width: 90%;
     height: 90vh;
     display: flex;
-    background-color: #fffffff0;
+    background-color: #4e4e4e49;
     border-radius: 12px;
     overflow: hidden;
+    box-shadow: 0 8px 32px rgba(250, 255, 198, 0.25);
+    border: 1px solid rgba(0, 0, 0, 0.5);
 }
 
 .lightbox-image-container {
@@ -439,9 +464,11 @@ body {
     align-items: center;
     justify-content: center;
     padding: 20px;
-    background-color: #dcdcdcc9;
+    background-color: #eeeeeef0;
     overflow: hidden;
     cursor: grab;
+    border-radius: 12px;
+    border-right: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .lightbox-image-container:active {
@@ -466,7 +493,9 @@ body {
     flex: 1;
     padding: 30px;
     overflow-y: auto;
-    background-color: #f6f9faeb;
+    border-radius: 12px;
+    background-color: #f9fcfdfb;
+    border-right: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .lightbox-title {
@@ -488,17 +517,26 @@ body {
     position: absolute;
     top: 15px;
     right: 15px;
-    background: none;
-    border: none;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     color: #333;
-    font-size: 30px;
+    font-size: 24px;
     cursor: pointer;
-    padding: 5px 10px;
-    z-index: 2;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .lightbox-close:hover {
-    color: #666;
+    background-color: #ffd700;
+    color: #000;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+    border-color: rgba(255, 215, 0, 0.5);
 }
 
 /* 確保輪播項目中的圖片可以點擊 */
@@ -777,7 +815,7 @@ body {
         flex-direction: column;
         width: 100%;
         height: 100%;
-        border-radius: 0;
+        border-radius: 12px;
     }
 
     .lightbox-image-container {
