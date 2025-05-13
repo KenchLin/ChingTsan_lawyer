@@ -81,29 +81,194 @@ document.addEventListener('DOMContentLoaded', function () {
         lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
     }
 
+    // 重置觸控狀態並處理回彈
+    function resetTouchState() {
+        const imgRect = lightboxImg.getBoundingClientRect();
+        const containerRect = lightboxImageContainer.getBoundingClientRect();
+        const scaledWidth = imgRect.width;
+        const scaledHeight = imgRect.height;
+        
+        // 計算最大可移動範圍
+        const maxX = Math.max(0, (scaledWidth - containerRect.width) / 2);
+        const maxY = Math.max(0, (scaledHeight - containerRect.height) / 2);
+        
+        // 計算當前位置到邊界的距離
+        const distanceToBoundaryX = Math.abs(translateX) - maxX;
+        const distanceToBoundaryY = Math.abs(translateY) - maxY;
+        
+        // 設定回彈閾值（只有超出一定距離才回彈）
+        const reboundThreshold = 8; // 稍微增加回彈閾值
+        
+        // 檢查是否需要回彈
+        const needsRebound = scale === 1 || 
+            (distanceToBoundaryX > reboundThreshold) || 
+            (distanceToBoundaryY > reboundThreshold);
+        
+        if (needsRebound) {
+            isAnimating = true;
+            lightboxImg.style.transition = 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
+            
+            if (scale === 1) {
+                // 最小縮放狀態下回到中心
+                translateX = 0;
+                translateY = 0;
+            } else {
+                // 放大狀態下，計算回彈位置
+                let newTranslateX = translateX;
+                let newTranslateY = translateY;
+                
+                // 計算圖片邊界到容器邊界的距離
+                const leftEdge = imgRect.left - containerRect.left;
+                const rightEdge = containerRect.right - imgRect.right;
+                const topEdge = imgRect.top - containerRect.top;
+                const bottomEdge = containerRect.bottom - imgRect.bottom;
+                
+                // 只有當超出閾值時才進行回彈
+                if (Math.abs(leftEdge) > reboundThreshold) {
+                    newTranslateX = -maxX;
+                } else if (Math.abs(rightEdge) > reboundThreshold) {
+                    newTranslateX = maxX;
+                }
+                
+                if (Math.abs(topEdge) > reboundThreshold) {
+                    newTranslateY = -maxY;
+                } else if (Math.abs(bottomEdge) > reboundThreshold) {
+                    newTranslateY = maxY;
+                }
+                
+                // 確保不會超出最大範圍
+                translateX = Math.max(-maxX, Math.min(maxX, newTranslateX));
+                translateY = Math.max(-maxY, Math.min(maxY, newTranslateY));
+            }
+            
+            // 強制重繪以確保動畫生效
+            lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+            
+            // 動畫結束後移除過渡效果
+            setTimeout(() => {
+                lightboxImg.style.transition = '';
+                isAnimating = false;
+            }, 250);
+        }
+        
+        // 重置所有狀態
+        startDistance = 0;
+        currentDistance = 0;
+        isDragging = false;
+        isMouseDown = false;
+        lastX = 0;
+        lastY = 0;
+    }
+
+    // 處理拖曳
+    function handleDrag(e) {
+        if (!isMouseDown) return;
+        
+        e.preventDefault();
+        const touch = e.touches ? e.touches[0] : e;
+        
+        if (!isDragging) {
+            isDragging = true;
+            lastX = touch.clientX;
+            lastY = touch.clientY;
+            return;
+        }
+        
+        const deltaX = touch.clientX - lastX;
+        const deltaY = touch.clientY - lastY;
+        
+        // 計算移動距離
+        const moveDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        
+        // 如果移動距離太小，不進行拖曳
+        if (moveDistance < 1) return;
+        
+        const imgRect = lightboxImg.getBoundingClientRect();
+        const containerRect = lightboxImageContainer.getBoundingClientRect();
+        const scaledWidth = imgRect.width;
+        const scaledHeight = imgRect.height;
+        
+        // 計算最大可移動範圍（根據裝置類型調整）
+        const maxX = Math.max(0, (scaledWidth - containerRect.width) / 2);
+        const maxY = Math.max(0, (scaledHeight - containerRect.height) / 2);
+        
+        // 根據裝置類型設定不同的溢出限制
+        const isMobile = window.innerWidth <= 768;
+        const overflowLimitX = isMobile ? 100 : 150; // 手機版和電腦版的水平溢出限制
+        const overflowLimitY = isMobile ? 150 : 100; // 手機版垂直溢出限制更大，以確保可以看到完整圖片
+        
+        // 在最小縮放狀態下，允許拖曳但限制移動範圍
+        if (scale === 1) {
+            translateX += deltaX;
+            translateY += deltaY;
+            
+            // 根據裝置類型設定不同的最大偏移量
+            const maxOffset = isMobile ? 80 : 100; // 增加可移動範圍
+            translateX = Math.max(-maxOffset, Math.min(maxOffset, translateX));
+            translateY = Math.max(-maxOffset, Math.min(maxOffset, translateY));
+        } else {
+            // 放大狀態下的拖曳邏輯
+            translateX += deltaX;
+            translateY += deltaY;
+            
+            // 計算超出邊界的距離
+            const overflowX = Math.abs(translateX) - maxX;
+            const overflowY = Math.abs(translateY) - maxY;
+            
+            // 如果超出邊界，增加較強的彈性效果
+            if (overflowX > 0 || overflowY > 0) {
+                const damping = 0.25; // 增加彈性係數
+                if (overflowX > 0) {
+                    // 限制最大超出範圍，使用裝置特定的限制
+                    const limitedOverflow = Math.min(overflowX, overflowLimitX);
+                    translateX = Math.sign(translateX) * (maxX + limitedOverflow * damping);
+                }
+                if (overflowY > 0) {
+                    // 限制最大超出範圍，使用裝置特定的限制
+                    const limitedOverflow = Math.min(overflowY, overflowLimitY);
+                    translateY = Math.sign(translateY) * (maxY + limitedOverflow * damping);
+                }
+            }
+        }
+        
+        // 更新圖片位置
+        lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+        
+        lastX = touch.clientX;
+        lastY = touch.clientY;
+    }
+
     // 處理縮放
     function handleZoom(newScale) {
         const oldScale = scale;
         scale = Math.max(1, Math.min(3, newScale));
         
         if (scale !== oldScale) {
+            const imgRect = lightboxImg.getBoundingClientRect();
+            const containerRect = lightboxImageContainer.getBoundingClientRect();
+            
             // 如果縮放到最小，自動置中
             if (scale === 1) {
                 translateX = 0;
                 translateY = 0;
             } else {
-                // 計算新的位移以保持圖片在中心
-                const imgRect = lightboxImg.getBoundingClientRect();
-                const containerRect = lightboxImageContainer.getBoundingClientRect();
-                
+                // 計算新的最大可移動範圍
                 const maxX = (imgRect.width * scale - containerRect.width) / 2;
                 const maxY = (imgRect.height * scale - containerRect.height) / 2;
                 
+                // 確保圖片在縮放後不會超出邊界
                 translateX = Math.max(-maxX, Math.min(maxX, translateX));
                 translateY = Math.max(-maxY, Math.min(maxY, translateY));
             }
             
+            // 使用平滑過渡效果
+            lightboxImg.style.transition = 'transform 0.2s ease-out';
             lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+            
+            // 移除過渡效果
+            setTimeout(() => {
+                lightboxImg.style.transition = '';
+            }, 200);
         }
     }
 
@@ -147,92 +312,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const delta = e.deltaY;
         const zoomFactor = delta > 0 ? 0.9 : 1.1;
         handleZoom(scale * zoomFactor);
-    }
-
-    // 處理拖曳
-    function handleDrag(e) {
-        if (!isMouseDown) return;
-        
-        e.preventDefault();
-        const touch = e.touches ? e.touches[0] : e;
-        
-        if (!isDragging) {
-            isDragging = true;
-            lastX = touch.clientX;
-            lastY = touch.clientY;
-            return;
-        }
-        
-        const deltaX = touch.clientX - lastX;
-        const deltaY = touch.clientY - lastY;
-        
-        // 在最小縮放狀態下，允許拖曳但限制移動範圍
-        if (scale === 1) {
-            // 計算移動距離
-            const moveDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-            
-            // 如果移動距離太小，不進行拖曳
-            if (moveDistance < 2) return;
-            
-            // 在最小縮放狀態下，允許較大的拖曳範圍
-            translateX += deltaX;
-            translateY += deltaY;
-            
-            // 限制拖曳範圍，但允許更大的移動空間
-            const maxOffset = 100; // 允許的最大偏移量
-            translateX = Math.max(-maxOffset, Math.min(maxOffset, translateX));
-            translateY = Math.max(-maxOffset, Math.min(maxOffset, translateY));
-        } else {
-            // 放大狀態下的原有拖曳邏輯
-            translateX += deltaX;
-            translateY += deltaY;
-            
-            const imgRect = lightboxImg.getBoundingClientRect();
-            const containerRect = lightboxImageContainer.getBoundingClientRect();
-            
-            const maxX = (imgRect.width * scale - containerRect.width) / 2;
-            const maxY = (imgRect.height * scale - containerRect.height) / 2;
-            
-            translateX = Math.max(-maxX, Math.min(maxX, translateX));
-            translateY = Math.max(-maxY, Math.min(maxY, translateY));
-        }
-        
-        lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-        
-        lastX = touch.clientX;
-        lastY = touch.clientY;
-    }
-
-    // 重置觸控狀態
-    function resetTouchState() {
-        if (scale === 1) {
-            // 在最小畫面時，使用動畫回到中心
-            isAnimating = true;
-            lightboxImg.style.transition = 'transform 0.3s ease-out';
-            
-            // 計算當前位置到中心的距離
-            const distanceToCenter = Math.sqrt(translateX * translateX + translateY * translateY);
-            
-            // 如果移動距離夠大，才執行回彈動畫
-            if (distanceToCenter > 5) {
-                translateX = 0;
-                translateY = 0;
-                lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-            }
-            
-            // 動畫結束後移除過渡效果
-            setTimeout(() => {
-                lightboxImg.style.transition = '';
-                isAnimating = false;
-            }, 300);
-        }
-        
-        startDistance = 0;
-        currentDistance = 0;
-        isDragging = false;
-        isMouseDown = false;
-        lastX = 0;
-        lastY = 0;
     }
 
     // 開啟燈箱
@@ -525,13 +604,21 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }, { passive: false });
 
-        lightboxImageContainer.addEventListener('touchend', resetTouchState);
-        lightboxImageContainer.addEventListener('touchcancel', resetTouchState);
+        // 確保在觸控結束時一定會觸發回彈
+        lightboxImageContainer.addEventListener('touchend', (e) => {
+            if (isMouseDown) {
+                resetTouchState();
+            }
+        });
+        lightboxImageContainer.addEventListener('touchcancel', (e) => {
+            if (isMouseDown) {
+                resetTouchState();
+            }
+        });
     } else {
         // 電腦版滑鼠事件
         lightboxImageContainer.addEventListener('wheel', handleWheel, { passive: false });
         
-        // 滑鼠按下事件
         lightboxImageContainer.addEventListener('mousedown', (e) => {
             if (!isAnimating) {
                 isMouseDown = true;
@@ -544,10 +631,18 @@ document.addEventListener('DOMContentLoaded', function () {
         // 滑鼠移動事件
         document.addEventListener('mousemove', handleDrag);
 
-        // 滑鼠放開事件
-        document.addEventListener('mouseup', resetTouchState);
+        // 確保在滑鼠放開時一定會觸發回彈
+        document.addEventListener('mouseup', (e) => {
+            if (isMouseDown) {
+                resetTouchState();
+            }
+        });
 
-        // 滑鼠離開視窗事件
-        document.addEventListener('mouseleave', resetTouchState);
+        // 滑鼠離開視窗時也觸發回彈
+        document.addEventListener('mouseleave', (e) => {
+            if (isMouseDown) {
+                resetTouchState();
+            }
+        });
     }
 });
