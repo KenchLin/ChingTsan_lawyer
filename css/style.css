@@ -428,7 +428,7 @@ body {
     width: 90%;
     height: 90vh;
     display: flex;
-    background-color: #fff;
+    background-color: #fffffff0;
     border-radius: 12px;
     overflow: hidden;
 }
@@ -439,7 +439,7 @@ body {
     align-items: center;
     justify-content: center;
     padding: 20px;
-    background-color: #f8f9fa;
+    background-color: #dcdcdcc9;
     overflow: hidden;
     cursor: grab;
 }
@@ -466,7 +466,7 @@ body {
     flex: 1;
     padding: 30px;
     overflow-y: auto;
-    background-color: #fff;
+    background-color: #f6f9faeb;
 }
 
 .lightbox-title {
