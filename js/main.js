@@ -69,6 +69,11 @@ document.addEventListener('DOMContentLoaded', function () {
     let lastY = 0;
     let isAnimating = false;
 
+    // 新增變數用於優化效能
+    let rafId = null;
+    let lastTimestamp = 0;
+    const frameInterval = 1000 / 60; // 目標 60fps
+
     // 重置圖片狀態
     function resetImageState() {
         scale = 1;
@@ -79,85 +84,6 @@ document.addEventListener('DOMContentLoaded', function () {
         lastX = 0;
         lastY = 0;
         lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-    }
-
-    // 重置觸控狀態並處理回彈
-    function resetTouchState() {
-        const imgRect = lightboxImg.getBoundingClientRect();
-        const containerRect = lightboxImageContainer.getBoundingClientRect();
-        const scaledWidth = imgRect.width;
-        const scaledHeight = imgRect.height;
-        
-        // 計算最大可移動範圍
-        const maxX = Math.max(0, (scaledWidth - containerRect.width) / 2);
-        const maxY = Math.max(0, (scaledHeight - containerRect.height) / 2);
-        
-        // 計算當前位置到邊界的距離
-        const distanceToBoundaryX = Math.abs(translateX) - maxX;
-        const distanceToBoundaryY = Math.abs(translateY) - maxY;
-        
-        // 設定回彈閾值（只有超出一定距離才回彈）
-        const reboundThreshold = 8; // 稍微增加回彈閾值
-        
-        // 檢查是否需要回彈
-        const needsRebound = scale === 1 || 
-            (distanceToBoundaryX > reboundThreshold) || 
-            (distanceToBoundaryY > reboundThreshold);
-        
-        if (needsRebound) {
-            isAnimating = true;
-            lightboxImg.style.transition = 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
-            
-            if (scale === 1) {
-                // 最小縮放狀態下回到中心
-                translateX = 0;
-                translateY = 0;
-            } else {
-                // 放大狀態下，計算回彈位置
-                let newTranslateX = translateX;
-                let newTranslateY = translateY;
-                
-                // 計算圖片邊界到容器邊界的距離
-                const leftEdge = imgRect.left - containerRect.left;
-                const rightEdge = containerRect.right - imgRect.right;
-                const topEdge = imgRect.top - containerRect.top;
-                const bottomEdge = containerRect.bottom - imgRect.bottom;
-                
-                // 只有當超出閾值時才進行回彈
-                if (Math.abs(leftEdge) > reboundThreshold) {
-                    newTranslateX = -maxX;
-                } else if (Math.abs(rightEdge) > reboundThreshold) {
-                    newTranslateX = maxX;
-                }
-                
-                if (Math.abs(topEdge) > reboundThreshold) {
-                    newTranslateY = -maxY;
-                } else if (Math.abs(bottomEdge) > reboundThreshold) {
-                    newTranslateY = maxY;
-                }
-                
-                // 確保不會超出最大範圍
-                translateX = Math.max(-maxX, Math.min(maxX, newTranslateX));
-                translateY = Math.max(-maxY, Math.min(maxY, newTranslateY));
-            }
-            
-            // 強制重繪以確保動畫生效
-            lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-            
-            // 動畫結束後移除過渡效果
-            setTimeout(() => {
-                lightboxImg.style.transition = '';
-                isAnimating = false;
-            }, 250);
-        }
-        
-        // 重置所有狀態
-        startDistance = 0;
-        currentDistance = 0;
-        isDragging = false;
-        isMouseDown = false;
-        lastX = 0;
-        lastY = 0;
     }
 
     // 處理拖曳
@@ -188,22 +114,23 @@ document.addEventListener('DOMContentLoaded', function () {
         const scaledWidth = imgRect.width;
         const scaledHeight = imgRect.height;
         
-        // 計算最大可移動範圍（根據裝置類型調整）
+        // 計算最大可移動範圍
         const maxX = Math.max(0, (scaledWidth - containerRect.width) / 2);
         const maxY = Math.max(0, (scaledHeight - containerRect.height) / 2);
         
-        // 根據裝置類型設定不同的溢出限制
+        // 根據裝置類型和縮放比例設定不同的溢出限制
         const isMobile = window.innerWidth <= 768;
-        const overflowLimitX = isMobile ? 100 : 150; // 手機版和電腦版的水平溢出限制
-        const overflowLimitY = isMobile ? 150 : 100; // 手機版垂直溢出限制更大，以確保可以看到完整圖片
+        const baseOverflow = isMobile ? 80 : 100; // 基礎溢出限制
+        const scaleFactor = Math.min(scale, 2); // 根據縮放比例調整溢出限制
+        const overflowLimitX = baseOverflow * scaleFactor;
+        const overflowLimitY = baseOverflow * scaleFactor;
         
-        // 在最小縮放狀態下，允許拖曳但限制移動範圍
+        // 在最小縮放狀態下，使用較小的移動範圍和較強的彈性
         if (scale === 1) {
             translateX += deltaX;
             translateY += deltaY;
             
-            // 根據裝置類型設定不同的最大偏移量
-            const maxOffset = isMobile ? 80 : 100; // 增加可移動範圍
+            const maxOffset = 50; // 最小縮放狀態下的最大偏移量
             translateX = Math.max(-maxOffset, Math.min(maxOffset, translateX));
             translateY = Math.max(-maxOffset, Math.min(maxOffset, translateY));
         } else {
@@ -215,16 +142,14 @@ document.addEventListener('DOMContentLoaded', function () {
             const overflowX = Math.abs(translateX) - maxX;
             const overflowY = Math.abs(translateY) - maxY;
             
-            // 如果超出邊界，增加較強的彈性效果
+            // 如果超出邊界，增加彈性效果
             if (overflowX > 0 || overflowY > 0) {
-                const damping = 0.25; // 增加彈性係數
+                const damping = 0.3; // 增加阻尼係數，使彈性更明顯
                 if (overflowX > 0) {
-                    // 限制最大超出範圍，使用裝置特定的限制
                     const limitedOverflow = Math.min(overflowX, overflowLimitX);
                     translateX = Math.sign(translateX) * (maxX + limitedOverflow * damping);
                 }
                 if (overflowY > 0) {
-                    // 限制最大超出範圍，使用裝置特定的限制
                     const limitedOverflow = Math.min(overflowY, overflowLimitY);
                     translateY = Math.sign(translateY) * (maxY + limitedOverflow * damping);
                 }
@@ -236,6 +161,80 @@ document.addEventListener('DOMContentLoaded', function () {
         
         lastX = touch.clientX;
         lastY = touch.clientY;
+    }
+
+    // 重置觸控狀態並處理回彈
+    function resetTouchState() {
+        const imgRect = lightboxImg.getBoundingClientRect();
+        const containerRect = lightboxImageContainer.getBoundingClientRect();
+        const scaledWidth = imgRect.width;
+        const scaledHeight = imgRect.height;
+        
+        // 計算最大可移動範圍
+        const maxX = Math.max(0, (scaledWidth - containerRect.width) / 2);
+        const maxY = Math.max(0, (scaledHeight - containerRect.height) / 2);
+        
+        // 計算當前位置到邊界的距離
+        const distanceToBoundaryX = Math.abs(translateX) - maxX;
+        const distanceToBoundaryY = Math.abs(translateY) - maxY;
+        
+        // 設定回彈閾值
+        const reboundThreshold = 5;
+        
+        // 檢查是否需要回彈
+        const needsRebound = scale === 1 || 
+            (distanceToBoundaryX > reboundThreshold) || 
+            (distanceToBoundaryY > reboundThreshold);
+        
+        if (needsRebound) {
+            isAnimating = true;
+            lightboxImg.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
+            
+            if (scale === 1) {
+                // 最小縮放狀態下使用較快的回彈
+                translateX = 0;
+                translateY = 0;
+            } else {
+                let newTranslateX = translateX;
+                let newTranslateY = translateY;
+                
+                const leftEdge = imgRect.left - containerRect.left;
+                const rightEdge = containerRect.right - imgRect.right;
+                const topEdge = imgRect.top - containerRect.top;
+                const bottomEdge = containerRect.bottom - imgRect.bottom;
+                
+                // 只有當超出閾值時才進行回彈
+                if (Math.abs(leftEdge) > reboundThreshold) {
+                    newTranslateX = -maxX;
+                } else if (Math.abs(rightEdge) > reboundThreshold) {
+                    newTranslateX = maxX;
+                }
+                
+                if (Math.abs(topEdge) > reboundThreshold) {
+                    newTranslateY = -maxY;
+                } else if (Math.abs(bottomEdge) > reboundThreshold) {
+                    newTranslateY = maxY;
+                }
+                
+                translateX = Math.max(-maxX, Math.min(maxX, newTranslateX));
+                translateY = Math.max(-maxY, Math.min(maxY, newTranslateY));
+            }
+            
+            lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+            
+            setTimeout(() => {
+                lightboxImg.style.transition = '';
+                isAnimating = false;
+            }, 200);
+        }
+        
+        // 重置所有狀態
+        startDistance = 0;
+        currentDistance = 0;
+        isDragging = false;
+        isMouseDown = false;
+        lastX = 0;
+        lastY = 0;
     }
 
     // 處理縮放
@@ -577,9 +576,16 @@ document.addEventListener('DOMContentLoaded', function () {
         updateCarousel(container, currentIndex);
     });
 
-    // 加入事件監聽
+    // 在事件監聽器中加入清理邏輯
+    function cleanup() {
+        if (rafId) {
+            cancelAnimationFrame(rafId);
+            rafId = null;
+        }
+    }
+
+    // 修改事件監聽器
     if (isMobile) {
-        // 手機版觸控事件
         lightboxImageContainer.addEventListener('touchstart', (e) => {
             if (e.touches.length === 2) {
                 handlePinch(e);
@@ -600,25 +606,33 @@ document.addEventListener('DOMContentLoaded', function () {
         // 加入滾輪事件監聽（用於開發者工具中的模擬觸控）
         lightboxImageContainer.addEventListener('wheel', (e) => {
             if (e.ctrlKey) {
-                handlePinch(e);
+                e.preventDefault();
+                const delta = e.deltaY;
+                const zoomFactor = delta > 0 ? 0.9 : 1.1;
+                handleZoom(scale * zoomFactor);
             }
         }, { passive: false });
 
-        // 確保在觸控結束時一定會觸發回彈
-        lightboxImageContainer.addEventListener('touchend', (e) => {
+        lightboxImageContainer.addEventListener('touchend', () => {
             if (isMouseDown) {
                 resetTouchState();
             }
         });
-        lightboxImageContainer.addEventListener('touchcancel', (e) => {
+
+        lightboxImageContainer.addEventListener('touchcancel', () => {
             if (isMouseDown) {
                 resetTouchState();
             }
         });
     } else {
         // 電腦版滑鼠事件
-        lightboxImageContainer.addEventListener('wheel', handleWheel, { passive: false });
-        
+        lightboxImageContainer.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const delta = e.deltaY;
+            const zoomFactor = delta > 0 ? 0.9 : 1.1;
+            handleZoom(scale * zoomFactor);
+        }, { passive: false });
+
         lightboxImageContainer.addEventListener('mousedown', (e) => {
             if (!isAnimating) {
                 isMouseDown = true;
@@ -628,18 +642,15 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // 滑鼠移動事件
         document.addEventListener('mousemove', handleDrag);
 
-        // 確保在滑鼠放開時一定會觸發回彈
-        document.addEventListener('mouseup', (e) => {
+        document.addEventListener('mouseup', () => {
             if (isMouseDown) {
                 resetTouchState();
             }
         });
 
-        // 滑鼠離開視窗時也觸發回彈
-        document.addEventListener('mouseleave', (e) => {
+        document.addEventListener('mouseleave', () => {
             if (isMouseDown) {
                 resetTouchState();
             }
