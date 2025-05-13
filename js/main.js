@@ -159,18 +159,36 @@ document.addEventListener('DOMContentLoaded', function () {
         const deltaX = touch.clientX - lastX;
         const deltaY = touch.clientY - lastY;
         
-        translateX += deltaX;
-        translateY += deltaY;
-        
-        // 限制拖曳範圍
-        const imgRect = lightboxImg.getBoundingClientRect();
-        const containerRect = lightboxImageContainer.getBoundingClientRect();
-        
-        const maxX = (imgRect.width * scale - containerRect.width) / 2;
-        const maxY = (imgRect.height * scale - containerRect.height) / 2;
-        
-        translateX = Math.max(-maxX, Math.min(maxX, translateX));
-        translateY = Math.max(-maxY, Math.min(maxY, translateY));
+        // 在最小縮放狀態下，允許拖曳但限制移動範圍
+        if (scale === 1) {
+            // 計算移動距離
+            const moveDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            
+            // 如果移動距離太小，不進行拖曳
+            if (moveDistance < 2) return;
+            
+            // 在最小縮放狀態下，允許較大的拖曳範圍
+            translateX += deltaX;
+            translateY += deltaY;
+            
+            // 限制拖曳範圍，但允許更大的移動空間
+            const maxOffset = 100; // 允許的最大偏移量
+            translateX = Math.max(-maxOffset, Math.min(maxOffset, translateX));
+            translateY = Math.max(-maxOffset, Math.min(maxOffset, translateY));
+        } else {
+            // 放大狀態下的原有拖曳邏輯
+            translateX += deltaX;
+            translateY += deltaY;
+            
+            const imgRect = lightboxImg.getBoundingClientRect();
+            const containerRect = lightboxImageContainer.getBoundingClientRect();
+            
+            const maxX = (imgRect.width * scale - containerRect.width) / 2;
+            const maxY = (imgRect.height * scale - containerRect.height) / 2;
+            
+            translateX = Math.max(-maxX, Math.min(maxX, translateX));
+            translateY = Math.max(-maxY, Math.min(maxY, translateY));
+        }
         
         lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
         
@@ -184,9 +202,16 @@ document.addEventListener('DOMContentLoaded', function () {
             // 在最小畫面時，使用動畫回到中心
             isAnimating = true;
             lightboxImg.style.transition = 'transform 0.3s ease-out';
-            translateX = 0;
-            translateY = 0;
-            lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+            
+            // 計算當前位置到中心的距離
+            const distanceToCenter = Math.sqrt(translateX * translateX + translateY * translateY);
+            
+            // 如果移動距離夠大，才執行回彈動畫
+            if (distanceToCenter > 5) {
+                translateX = 0;
+                translateY = 0;
+                lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+            }
             
             // 動畫結束後移除過渡效果
             setTimeout(() => {
