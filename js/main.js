@@ -118,41 +118,38 @@ document.addEventListener('DOMContentLoaded', function () {
         const maxX = Math.max(0, (scaledWidth - containerRect.width) / 2);
         const maxY = Math.max(0, (scaledHeight - containerRect.height) / 2);
         
-        // 根據裝置類型和縮放比例設定不同的溢出限制
-        const isMobile = window.innerWidth <= 768;
-        const baseOverflow = isMobile ? 80 : 100; // 基礎溢出限制
-        const scaleFactor = Math.min(scale, 2); // 根據縮放比例調整溢出限制
-        const overflowLimitX = baseOverflow * scaleFactor;
-        const overflowLimitY = baseOverflow * scaleFactor;
+        // 更新位置，允許超出邊界
+        translateX += deltaX;
+        translateY += deltaY;
         
-        // 在最小縮放狀態下，使用較小的移動範圍和較強的彈性
+        // 在最小縮放狀態下，使用較小的移動範圍
         if (scale === 1) {
-            translateX += deltaX;
-            translateY += deltaY;
-            
             const maxOffset = 50; // 最小縮放狀態下的最大偏移量
             translateX = Math.max(-maxOffset, Math.min(maxOffset, translateX));
             translateY = Math.max(-maxOffset, Math.min(maxOffset, translateY));
         } else {
-            // 放大狀態下的拖曳邏輯
-            translateX += deltaX;
-            translateY += deltaY;
+            // 放大狀態下，允許更大的拖曳範圍
+            const damping = 0.3; // 阻尼係數
+            
+            // 分別設定水平和垂直方向的基礎溢出限制
+            const baseOverflowX = 200; // 水平方向的基礎溢出限制
+            const baseOverflowY = 250; // 垂直方向的基礎溢出限制
+            const scaleFactor = Math.min(scale, 3); // 增加縮放係數範圍
+            const overflowLimitX = baseOverflowX * scaleFactor;
+            const overflowLimitY = baseOverflowY * scaleFactor;
             
             // 計算超出邊界的距離
             const overflowX = Math.abs(translateX) - maxX;
             const overflowY = Math.abs(translateY) - maxY;
             
-            // 如果超出邊界，增加彈性效果
-            if (overflowX > 0 || overflowY > 0) {
-                const damping = 0.3; // 增加阻尼係數，使彈性更明顯
-                if (overflowX > 0) {
-                    const limitedOverflow = Math.min(overflowX, overflowLimitX);
-                    translateX = Math.sign(translateX) * (maxX + limitedOverflow * damping);
-                }
-                if (overflowY > 0) {
-                    const limitedOverflow = Math.min(overflowY, overflowLimitY);
-                    translateY = Math.sign(translateY) * (maxY + limitedOverflow * damping);
-                }
+            // 如果超出邊界，增加阻尼效果
+            if (overflowX > baseOverflowX) {
+                const limitedOverflow = Math.min(overflowX, overflowLimitX);
+                translateX = Math.sign(translateX) * (maxX + limitedOverflow * damping);
+            }
+            if (overflowY > baseOverflowY) {
+                const limitedOverflow = Math.min(overflowY, overflowLimitY);
+                translateY = Math.sign(translateY) * (maxY + limitedOverflow * damping);
             }
         }
         
@@ -178,54 +175,52 @@ document.addEventListener('DOMContentLoaded', function () {
         const distanceToBoundaryX = Math.abs(translateX) - maxX;
         const distanceToBoundaryY = Math.abs(translateY) - maxY;
         
-        // 設定回彈閾值
-        const reboundThreshold = 5;
-        
-        // 檢查是否需要回彈
+        // 檢查是否需要回彈（只要超出邊界就需要回彈）
         const needsRebound = scale === 1 || 
-            (distanceToBoundaryX > reboundThreshold) || 
-            (distanceToBoundaryY > reboundThreshold);
+            (distanceToBoundaryX > 0) || 
+            (distanceToBoundaryY > 0);
         
         if (needsRebound) {
             isAnimating = true;
-            lightboxImg.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
+            
+            // 根據縮放比例調整動畫時間
+            const animationDuration = scale === 1 ? 200 : 300;
+            lightboxImg.style.transition = `transform ${animationDuration}ms cubic-bezier(0.4, 0, 0.2, 1)`;
             
             if (scale === 1) {
-                // 最小縮放狀態下使用較快的回彈
+                // 最小縮放狀態下回到中心
                 translateX = 0;
                 translateY = 0;
             } else {
-                let newTranslateX = translateX;
-                let newTranslateY = translateY;
-                
-                const leftEdge = imgRect.left - containerRect.left;
-                const rightEdge = containerRect.right - imgRect.right;
-                const topEdge = imgRect.top - containerRect.top;
-                const bottomEdge = containerRect.bottom - imgRect.bottom;
-                
-                // 只有當超出閾值時才進行回彈
-                if (Math.abs(leftEdge) > reboundThreshold) {
-                    newTranslateX = -maxX;
-                } else if (Math.abs(rightEdge) > reboundThreshold) {
-                    newTranslateX = maxX;
+                // 放大狀態下回到最近的邊界
+                // 根據當前位置決定回彈方向
+                if (translateX > maxX) {
+                    translateX = maxX;
+                } else if (translateX < -maxX) {
+                    translateX = -maxX;
                 }
                 
-                if (Math.abs(topEdge) > reboundThreshold) {
-                    newTranslateY = -maxY;
-                } else if (Math.abs(bottomEdge) > reboundThreshold) {
-                    newTranslateY = maxY;
+                if (translateY > maxY) {
+                    translateY = maxY;
+                } else if (translateY < -maxY) {
+                    translateY = -maxY;
                 }
-                
-                translateX = Math.max(-maxX, Math.min(maxX, newTranslateX));
-                translateY = Math.max(-maxY, Math.min(maxY, newTranslateY));
             }
             
-            lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+            // 使用 requestAnimationFrame 確保動畫流暢
+            rafId = requestAnimationFrame(() => {
+                lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+            });
             
+            // 動畫結束後清理
             setTimeout(() => {
+                cleanup();
                 lightboxImg.style.transition = '';
                 isAnimating = false;
-            }, 200);
+            }, animationDuration);
+        } else {
+            // 如果不需要回彈，直接清理狀態
+            cleanup();
         }
         
         // 重置所有狀態
@@ -246,7 +241,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const imgRect = lightboxImg.getBoundingClientRect();
             const containerRect = lightboxImageContainer.getBoundingClientRect();
             
-            // 如果縮放到最小，自動置中
+            // 如果縮放到最小，使用較快的動畫
+            const animationDuration = scale === 1 ? 200 : 300;
+            lightboxImg.style.transition = `transform ${animationDuration}ms cubic-bezier(0.4, 0, 0.2, 1)`;
+            
             if (scale === 1) {
                 translateX = 0;
                 translateY = 0;
@@ -260,14 +258,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 translateY = Math.max(-maxY, Math.min(maxY, translateY));
             }
             
-            // 使用平滑過渡效果
-            lightboxImg.style.transition = 'transform 0.2s ease-out';
-            lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+            // 使用 requestAnimationFrame 確保動畫流暢
+            rafId = requestAnimationFrame(() => {
+                lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+            });
             
-            // 移除過渡效果
+            // 動畫結束後清理
             setTimeout(() => {
+                cleanup();
                 lightboxImg.style.transition = '';
-            }, 200);
+            }, animationDuration);
         }
     }
 
