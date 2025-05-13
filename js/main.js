@@ -104,14 +104,24 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 300);
     }
 
-    // 簡化事件監聽器
+    // 點擊圖片開啟燈箱
     document.querySelectorAll('.carousel-item img').forEach(img => {
-        console.log('Adding click listener to image:', img.src); // 調試日誌
         img.addEventListener('click', function(e) {
-            console.log('Image clicked:', this.src); // 調試日誌
             e.preventDefault();
             e.stopPropagation();
-            openLightbox(this.src);
+            
+            const carouselItem = this.closest('.carousel-item');
+            const isActive = carouselItem.classList.contains('active');
+            
+            if (isActive) {
+                // 如果是 active 案例，開啟燈箱
+                openLightbox(this.src);
+            } else {
+                // 如果不是 active 案例，切換到該案例
+                const index = parseInt(carouselItem.dataset.index);
+                currentIndex = index;
+                updateCarousel();
+            }
         });
     });
 
@@ -130,6 +140,30 @@ document.addEventListener('DOMContentLoaded', function () {
         e.stopPropagation();
     });
 
+    // 更新滑軌位置與 active 樣式
+    function updateCarousel(container, currentIndex) {
+        const track = container.querySelector('.carousel-track');
+        const items = container.querySelectorAll('.carousel-item');
+        const itemWidth = items[0].offsetWidth;
+        const gap = parseInt(getComputedStyle(track).gap) || 0;
+        const fullItemWidth = itemWidth + gap;
+    
+        const containerWidth = container.offsetWidth;
+        
+        let offset;
+        if (window.innerWidth <= 768) {
+            offset = fullItemWidth * currentIndex;
+        } else {
+            offset = (fullItemWidth * currentIndex) - (containerWidth / 2) + (itemWidth / 2);
+        }
+    
+        track.style.transform = `translateX(${-offset}px)`;
+    
+        items.forEach((item, index) => {
+            item.classList.toggle('active', index === currentIndex);
+        });
+    }
+
     document.querySelectorAll('.carousel-container').forEach(container => {
         const track = container.querySelector('.carousel-track');
         const items = container.querySelectorAll('.carousel-item');
@@ -146,27 +180,36 @@ document.addEventListener('DOMContentLoaded', function () {
         let touchEndTime = 0;
         let hasMoved = false;
 
-        // 更新滑軌位置與 active 樣式
-        function updateCarousel() {
-            const itemWidth = items[0].offsetWidth;
-            const gap = parseInt(getComputedStyle(track).gap) || 0;
-            const fullItemWidth = itemWidth + gap;
-        
-            const containerWidth = container.offsetWidth;
-            
-            let offset;
-            if (window.innerWidth <= 768) {
-                offset = fullItemWidth * currentIndex;
-            } else {
-                offset = (fullItemWidth * currentIndex) - (containerWidth / 2) + (itemWidth / 2);
-            }
-        
-            track.style.transform = `translateX(${-offset}px)`;
-        
-            items.forEach((item, index) => {
-                item.classList.toggle('active', index === currentIndex);
+        // 點擊圖片開啟燈箱
+        items.forEach(item => {
+            const img = item.querySelector('img');
+            img.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const isActive = item.classList.contains('active');
+                
+                if (isActive) {
+                    // 如果是 active 案例，開啟燈箱
+                    openLightbox(this.src);
+                } else {
+                    // 如果不是 active 案例，切換到該案例
+                    currentIndex = parseInt(item.dataset.index);
+                    updateCarousel(container, currentIndex);
+                }
             });
-        }
+        });
+
+        // 保留原有的點擊事件處理
+        leftBtn?.addEventListener('click', () => {
+            currentIndex = (currentIndex - 1 + items.length) % items.length;
+            updateCarousel(container, currentIndex);
+        });
+
+        rightBtn?.addEventListener('click', () => {
+            currentIndex = (currentIndex + 1) % items.length;
+            updateCarousel(container, currentIndex);
+        });
 
         // 修改觸控事件處理（手機版）
         function handleTouchStart(e) {
@@ -244,7 +287,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 }
                 
-                updateCarousel();
+                updateCarousel(container, currentIndex);
             } else if (!hasMoved && touchDuration < 300) {
                 // 短時間觸摸且沒有明顯移動時，顯示燈箱
                 const activeItem = items[currentIndex];
@@ -267,17 +310,7 @@ document.addEventListener('DOMContentLoaded', function () {
             track.addEventListener('touchend', handleTouchEnd);
         }
 
-        // 保留原有的點擊事件處理
-        leftBtn?.addEventListener('click', () => {
-            currentIndex = (currentIndex - 1 + items.length) % items.length;
-            updateCarousel();
-        });
-
-        rightBtn?.addEventListener('click', () => {
-            currentIndex = (currentIndex + 1) % items.length;
-            updateCarousel();
-        });
-
-        updateCarousel();
+        // 初始化
+        updateCarousel(container, currentIndex);
     });
 });
