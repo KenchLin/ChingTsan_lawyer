@@ -109,7 +109,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 處理雙指縮放
     function handlePinch(e) {
-        if (e.touches.length === 2) {
+        // 檢查是否為模擬的觸控事件（開發者工具中的滾輪事件）
+        if (e.type === 'wheel' && e.ctrlKey) {
+            e.preventDefault();
+            const delta = e.deltaY;
+            const zoomFactor = delta > 0 ? 0.9 : 1.1;
+            handleZoom(scale * zoomFactor);
+            return;
+        }
+
+        // 原有的觸控事件處理
+        if (e.touches && e.touches.length === 2) {
             e.preventDefault();
             const touch1 = e.touches[0];
             const touch2 = e.touches[1];
@@ -127,9 +137,6 @@ document.addEventListener('DOMContentLoaded', function () {
             );
             
             const newScale = scale * (currentDistance / startDistance);
-            const centerX = (touch1.clientX + touch2.clientX) / 2;
-            const centerY = (touch1.clientY + touch2.clientY) / 2;
-            
             handleZoom(newScale);
         }
     }
@@ -508,6 +515,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 handlePinch(e);
             } else if (e.touches.length === 1 && !isAnimating) {
                 handleDrag(e);
+            }
+        }, { passive: false });
+
+        // 加入滾輪事件監聽（用於開發者工具中的模擬觸控）
+        lightboxImageContainer.addEventListener('wheel', (e) => {
+            if (e.ctrlKey) {
+                handlePinch(e);
             }
         }, { passive: false });
 
