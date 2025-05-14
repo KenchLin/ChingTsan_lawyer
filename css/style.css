@@ -1260,3 +1260,115 @@ body {
         gap: 12px;
     }
 }
+
+/* 標題和金線的樣式 */
+.section-title {
+    position: relative;
+    margin-bottom: 2rem;
+    text-align: left;
+    display: inline-block;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -0.5rem;
+    left: 0;
+    width: 80px;
+    height: 2.5px;
+    background: linear-gradient(90deg,
+        rgba(255, 217, 0, 0.24) 0%,
+        rgba(255, 217, 0, 0.699) 10%,
+        rgba(255, 215, 0, 0) 100%);
+    opacity: 0;
+}
+
+/* 當 section 淡入時，觸發金線動畫 */
+.fade-in.show .section-title::after {
+    animation: lineFadeIn 0.3s ease-out 0.6s forwards;
+}
+
+/* cases section 的金線特別處理 */
+#cases .section-title {
+    text-align: center;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#cases .section-title::after {
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg,
+        rgba(255, 215, 0, 0) 0%,
+        rgba(255, 215, 0, 0.8) 50%,
+        rgba(255, 215, 0, 0) 100%);
+}
+
+/* 當 cases section 淡入時，觸發金線動畫 */
+#cases.fade-in.show .section-title::after {
+    animation: lineFadeInCenter 0.3s ease-out 0.6s forwards;
+}
+
+/* 左側金線淡入動畫 */
+@keyframes lineFadeIn {
+    0% {
+        opacity: 0;
+        width: 0;
+    }
+    100% {
+        opacity: 1;
+        width: 80px;
+    }
+}
+
+/* 中間向兩側的金線淡入動畫 */
+@keyframes lineFadeInCenter {
+    0% {
+        opacity: 0;
+        width: 0;
+    }
+    100% {
+        opacity: 1;
+        width: 80px;
+    }
+}
+
+/* 手機版調整 */
+@media (max-width: 768px) {
+    .section-title::after {
+        width: 60px;
+    }
+    
+    @keyframes lineFadeIn {
+        0% {
+            opacity: 0;
+            width: 0;
+        }
+        100% {
+            opacity: 1;
+            width: 60px;
+        }
+    }
+    
+    @keyframes lineFadeInCenter {
+        0% {
+            opacity: 0;
+            width: 0;
+        }
+        100% {
+            opacity: 1;
+            width: 60px;
+        }
+    }
+}
+
+/* 確保所有 section 中的標題容器都是左對齊 */
+.section .container {
+    text-align: left;
+}
+
+/* 特別處理 cases section 的容器 */
+#cases .overlay .container {
+    text-align: center;
+}
