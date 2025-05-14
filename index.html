@@ -38,6 +38,8 @@
     <link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC&display=swap" rel="stylesheet">
     <link rel="manifest" href="/site.webmanifest">
     <link rel="stylesheet" href="css/style.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         html {
             scroll-behavior: smooth;
@@ -86,6 +88,49 @@
     </script>
 </head>
 <body>
+<!-- 浮動側邊導航欄 -->
+<nav class="floating-nav collapsed">
+    <button class="floating-nav-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="floating-nav-menu">
+        <a href="#hero" class="floating-nav-link">
+            <i class="fas fa-home"></i>
+            <span class="nav-text">首頁</span>
+        </a>
+        <a href="#about" class="floating-nav-link">
+            <i class="fas fa-user"></i>
+            <span class="nav-text">關於我</span>
+        </a>
+        <a href="#services" class="floating-nav-link">
+            <i class="fas fa-gavel"></i>
+            <span class="nav-text">服務項目</span>
+        </a>
+        <a href="#cases" class="floating-nav-link">
+            <i class="fas fa-trophy"></i>
+            <span class="nav-text">勝訴案例</span>
+        </a>
+        <a href="#contact" class="floating-nav-link">
+            <i class="fas fa-envelope"></i>
+            <span class="nav-text">聯絡我</span>
+        </a>
+        <div class="social-links">
+            <a href="https://lin.ee/VBr0YMy" target="_blank" rel="noopener" class="social-link">
+                <i class="fab fa-line"></i>
+                <span class="social-text">Line</span>
+            </a>
+            <a href="https://www.instagram.com/picky_jipii" target="_blank" rel="noopener" class="social-link">
+                <i class="fab fa-instagram"></i>
+                <span class="social-text">Instagram</span>
+            </a>
+            <a href="https://www.threads.com/@sabrina__512" target="_blank" rel="noopener" class="social-link">
+                <i class="fas fa-at"></i>
+                <span class="social-text">Threads</span>
+            </a>
+        </div>
+    </div>
+</nav>
+
 <!-- 進場動畫容器 -->
 <div class="intro-animation">
     <div class="intro-logo">
@@ -125,7 +170,7 @@
 </header>
 
 <main>
-    <section class="hero" aria-label="首頁主視覺區">
+    <section id="hero" class="hero" aria-label="首頁主視覺區">
         <div class="hero-overlay">
             <div class="container">
                 <h2 class="hero-title">為您的權益，堅持到底</h2>
@@ -296,7 +341,7 @@
 
 <footer class="footer" role="contentinfo">
     <p>© 2025 林景贊律師. All Rights Reserved.</p>
-    <p>website ver: 0.0.2.6</p>
+    <p>website ver: 0.0.2.11</p>
 </footer>
 
 <!-- 燈箱 -->

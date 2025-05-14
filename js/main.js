@@ -904,4 +904,182 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+
+    // 浮動導航欄功能
+    const floatingNav = document.querySelector('.floating-nav');
+    const floatingNavToggle = document.querySelector('.floating-nav-toggle');
+    const floatingNavLinks = document.querySelectorAll('.floating-nav-link');
+    const socialLinks = document.querySelectorAll('.social-link');
+    const backToTop = document.querySelector('.back-to-top');
+
+    // 初始化時，在手機版預設收合導航欄
+    if (window.innerWidth <= 768) {
+        floatingNav.classList.add('collapsed');
+        const icon = floatingNavToggle.querySelector('i');
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+    }
+
+    // 導航欄收合功能
+    if (floatingNavToggle) {
+        floatingNavToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            floatingNav.classList.toggle('collapsed');
+            // 更新按鈕圖示
+            const icon = this.querySelector('i');
+            if (floatingNav.classList.contains('collapsed')) {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            } else {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            }
+        });
+    }
+
+    // 點擊導航連結時收合導航欄（手機版）
+    floatingNavLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768) {
+                const href = this.getAttribute('href');
+                if (href && href !== '#') {
+                    e.preventDefault();
+                    const targetElement = document.querySelector(href);
+                    if (targetElement) {
+                        // 立即收合導航欄
+                        floatingNav.classList.add('collapsed');
+                        const icon = floatingNavToggle.querySelector('i');
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+
+                        // 使用 requestAnimationFrame 優化滾動
+                        requestAnimationFrame(() => {
+                            const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+                            window.scrollTo({
+                                top: targetPosition,
+                                behavior: 'smooth'
+                            });
+                        });
+                    }
+                }
+            }
+        });
+    });
+
+    // 社群媒體連結點擊處理（手機版）
+    socialLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768) {
+                const href = this.getAttribute('href');
+                if (href && href !== '#') {
+                    e.preventDefault();
+                    // 立即收合導航欄
+                    floatingNav.classList.add('collapsed');
+                    const icon = floatingNavToggle.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                    
+                    // 使用 requestAnimationFrame 優化開啟新視窗
+                    requestAnimationFrame(() => {
+                        window.open(href, '_blank', 'noopener,noreferrer');
+                    });
+                }
+            }
+        });
+    });
+
+    // 監聽視窗大小變化
+    window.addEventListener('resize', () => {
+        if (window.innerWidth <= 768) {
+            // 在手機版時，保持收合狀態
+            if (!floatingNav.classList.contains('collapsed')) {
+                floatingNav.classList.add('collapsed');
+                const icon = floatingNavToggle.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        }
+    });
+
+    // 當前頁面指示優化
+    function updateActiveLink() {
+        const sections = document.querySelectorAll('section[id]');
+        const scrollPosition = window.scrollY;
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
+        const threshold = windowHeight * 0.2; // 降低觸發閾值，使切換更靈敏
+        const bottomThreshold = windowHeight * 0.8; // 底部觸發閾值
+
+        // 檢查是否接近頁面底部
+        const isNearBottom = scrollPosition + windowHeight >= documentHeight - bottomThreshold;
+        let foundActiveSection = false;
+
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop - threshold;
+            const sectionHeight = section.offsetHeight;
+            const sectionId = section.getAttribute('id');
+            
+            // 更新浮動導航欄的當前頁面指示
+            const floatingLink = document.querySelector(`.floating-nav-link[href="#${sectionId}"]`);
+            const mainLink = document.querySelector(`.navbar nav ul li a[href="#${sectionId}"]`);
+
+            // 如果接近底部且是聯絡我區塊，優先設為 active
+            if (isNearBottom && sectionId === 'contact') {
+                if (floatingLink && !floatingLink.classList.contains('active')) {
+                    floatingLink.classList.add('active');
+                }
+                if (mainLink && !mainLink.classList.contains('active')) {
+                    mainLink.classList.add('active');
+                }
+                foundActiveSection = true;
+            } 
+            // 如果不是接近底部，使用一般的判斷邏輯
+            else if (!isNearBottom && scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                if (floatingLink && !floatingLink.classList.contains('active')) {
+                    floatingLink.classList.add('active');
+                }
+                if (mainLink && !mainLink.classList.contains('active')) {
+                    mainLink.classList.add('active');
+                }
+                foundActiveSection = true;
+            } else {
+                // 移除其他區塊的 active 狀態
+                if (floatingLink && floatingLink.classList.contains('active')) {
+                    floatingLink.classList.remove('active');
+                }
+                if (mainLink && mainLink.classList.contains('active')) {
+                    mainLink.classList.remove('active');
+                }
+            }
+        });
+
+        // 如果沒有找到任何 active 區塊且接近底部，將聯絡我設為 active
+        if (!foundActiveSection && isNearBottom) {
+            const contactFloatingLink = document.querySelector('.floating-nav-link[href="#contact"]');
+            const contactMainLink = document.querySelector('.navbar nav ul li a[href="#contact"]');
+            
+            if (contactFloatingLink) {
+                contactFloatingLink.classList.add('active');
+            }
+            if (contactMainLink) {
+                contactMainLink.classList.add('active');
+            }
+        }
+    }
+
+    // 使用 requestAnimationFrame 優化滾動事件處理
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            requestAnimationFrame(() => {
+                updateActiveLink();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
+
+    // 初始化當前頁面指示
+    updateActiveLink();
 });
