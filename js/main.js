@@ -1007,7 +1007,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const sections = document.querySelectorAll('section[id]');
         const scrollPosition = window.scrollY;
         const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
         const threshold = windowHeight * 0.2; // 降低觸發閾值，使切換更靈敏
+        const bottomThreshold = windowHeight * 0.8; // 底部觸發閾值
+
+        // 檢查是否接近頁面底部
+        const isNearBottom = scrollPosition + windowHeight >= documentHeight - bottomThreshold;
+        let foundActiveSection = false;
 
         sections.forEach(section => {
             const sectionTop = section.offsetTop - threshold;
@@ -1016,24 +1022,50 @@ document.addEventListener('DOMContentLoaded', function () {
             
             // 更新浮動導航欄的當前頁面指示
             const floatingLink = document.querySelector(`.floating-nav-link[href="#${sectionId}"]`);
-            if (floatingLink && scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-                if (!floatingLink.classList.contains('active')) {
+            const mainLink = document.querySelector(`.navbar nav ul li a[href="#${sectionId}"]`);
+
+            // 如果接近底部且是聯絡我區塊，優先設為 active
+            if (isNearBottom && sectionId === 'contact') {
+                if (floatingLink && !floatingLink.classList.contains('active')) {
                     floatingLink.classList.add('active');
                 }
-            } else if (floatingLink && floatingLink.classList.contains('active')) {
-                floatingLink.classList.remove('active');
-            }
-
-            // 更新主導航欄的當前頁面指示
-            const mainLink = document.querySelector(`.navbar nav ul li a[href="#${sectionId}"]`);
-            if (mainLink && scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-                if (!mainLink.classList.contains('active')) {
+                if (mainLink && !mainLink.classList.contains('active')) {
                     mainLink.classList.add('active');
                 }
-            } else if (mainLink && mainLink.classList.contains('active')) {
-                mainLink.classList.remove('active');
+                foundActiveSection = true;
+            } 
+            // 如果不是接近底部，使用一般的判斷邏輯
+            else if (!isNearBottom && scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                if (floatingLink && !floatingLink.classList.contains('active')) {
+                    floatingLink.classList.add('active');
+                }
+                if (mainLink && !mainLink.classList.contains('active')) {
+                    mainLink.classList.add('active');
+                }
+                foundActiveSection = true;
+            } else {
+                // 移除其他區塊的 active 狀態
+                if (floatingLink && floatingLink.classList.contains('active')) {
+                    floatingLink.classList.remove('active');
+                }
+                if (mainLink && mainLink.classList.contains('active')) {
+                    mainLink.classList.remove('active');
+                }
             }
         });
+
+        // 如果沒有找到任何 active 區塊且接近底部，將聯絡我設為 active
+        if (!foundActiveSection && isNearBottom) {
+            const contactFloatingLink = document.querySelector('.floating-nav-link[href="#contact"]');
+            const contactMainLink = document.querySelector('.navbar nav ul li a[href="#contact"]');
+            
+            if (contactFloatingLink) {
+                contactFloatingLink.classList.add('active');
+            }
+            if (contactMainLink) {
+                contactMainLink.classList.add('active');
+            }
+        }
     }
 
     // 使用 requestAnimationFrame 優化滾動事件處理
