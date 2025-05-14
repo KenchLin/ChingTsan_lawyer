@@ -315,11 +315,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 開啟燈箱
     function openLightbox(imgSrc) {
-        console.log('openLightbox called with:', imgSrc); // 調試日誌
+        console.log('openLightbox called with:', imgSrc);
+        
+        // 重置關閉按鈕狀態
+        lightboxClose.classList.remove('active');
         
         // 從完整路徑中提取文件名並解碼
         const imgName = decodeURIComponent(imgSrc.split('/').pop());
-        console.log('Decoded image name:', imgName); // 調試日誌
+        console.log('Decoded image name:', imgName);
         
         // 使用解碼後的文件名來查找圖片元素
         const img = document.querySelector(`img[src*="${imgName}"]`);
@@ -359,6 +362,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 關閉燈箱
     function closeLightbox() {
+        // 移除 active 狀態
+        lightboxClose.classList.remove('active');
+        
         lightbox.classList.remove('show');
         setTimeout(() => {
             lightbox.classList.add('hidden');
@@ -421,7 +427,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // 點擊關閉按鈕
-    lightboxClose.addEventListener('click', closeLightbox);
+    lightboxClose.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        closeLightbox();
+    });
 
     // 點擊燈箱背景關閉
     lightbox.addEventListener('click', (e) => {
@@ -628,9 +638,151 @@ document.addEventListener('DOMContentLoaded', function () {
         updateCarousel(container, currentIndex);
     });
 
-    // 監聽視窗大小變化，重新設置事件監聽器
+    // 處理導覽標籤點擊事件
+    const navLinks = document.querySelectorAll('.navbar nav ul li a');
+    
+    navLinks.forEach(link => {
+        // 手機版觸控事件處理
+        if (window.innerWidth <= 768) {
+            let touchStartTime = 0;
+            let touchStartY = 0;
+            
+            link.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                link.classList.add('active');
+                touchStartTime = Date.now();
+                touchStartY = e.touches[0].clientY;
+            }, { passive: false });
+
+            link.addEventListener('touchmove', (e) => {
+                const touchY = e.touches[0].clientY;
+                const diffY = Math.abs(touchY - touchStartY);
+                
+                // 如果垂直移動超過 10px，取消 active 狀態
+                if (diffY > 10) {
+                    link.classList.remove('active');
+                }
+            }, { passive: false });
+
+            link.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const touchEndTime = Date.now();
+                const touchDuration = touchEndTime - touchStartTime;
+                
+                // 如果觸控時間小於 300ms 且沒有明顯的垂直移動，執行導覽
+                if (touchDuration < 300) {
+                    const href = link.getAttribute('href');
+                    if (href && href !== '#') {
+                        const targetElement = document.querySelector(href);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }
+                }
+                
+                // 移除 active 狀態
+                link.classList.remove('active');
+            }, { passive: false });
+
+            link.addEventListener('touchcancel', () => {
+                link.classList.remove('active');
+            });
+        } else {
+            // 電腦版點擊事件處理
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                navLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                
+                const href = this.getAttribute('href');
+                if (href && href !== '#') {
+                    const targetElement = document.querySelector(href);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            });
+        }
+    });
+
+    // 監聽視窗大小變化
     window.addEventListener('resize', () => {
         const isMobile = window.innerWidth <= 768;
+        
+        // 移除所有現有的事件監聽器
+        navLinks.forEach(link => {
+            const newLink = link.cloneNode(true);
+            link.parentNode.replaceChild(newLink, link);
+        });
+        
+        // 重新綁定事件監聽器
+        if (isMobile) {
+            document.querySelectorAll('.navbar nav ul li a').forEach(link => {
+                let touchStartTime = 0;
+                let touchStartY = 0;
+                
+                link.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    link.classList.add('active');
+                    touchStartTime = Date.now();
+                    touchStartY = e.touches[0].clientY;
+                }, { passive: false });
+
+                link.addEventListener('touchmove', (e) => {
+                    const touchY = e.touches[0].clientY;
+                    const diffY = Math.abs(touchY - touchStartY);
+                    
+                    if (diffY > 10) {
+                        link.classList.remove('active');
+                    }
+                }, { passive: false });
+
+                link.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const touchEndTime = Date.now();
+                    const touchDuration = touchEndTime - touchStartTime;
+                    
+                    if (touchDuration < 300) {
+                        const href = link.getAttribute('href');
+                        if (href && href !== '#') {
+                            const targetElement = document.querySelector(href);
+                            if (targetElement) {
+                                targetElement.scrollIntoView({ behavior: 'smooth' });
+                            }
+                        }
+                    }
+                    
+                    link.classList.remove('active');
+                }, { passive: false });
+
+                link.addEventListener('touchcancel', () => {
+                    link.classList.remove('active');
+                });
+            });
+        } else {
+            document.querySelectorAll('.navbar nav ul li a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const href = this.getAttribute('href');
+                    if (href && href !== '#') {
+                        const targetElement = document.querySelector(href);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }
+                });
+            });
+        }
+        
         document.querySelectorAll('.carousel-container').forEach(container => {
             const items = container.querySelectorAll('.carousel-item');
             const track = container.querySelector('.carousel-track');
@@ -703,6 +855,22 @@ document.addEventListener('DOMContentLoaded', function () {
             if (isMouseDown) {
                 resetTouchState();
             }
+        });
+
+        lightboxClose.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            lightboxClose.classList.add('active');
+        }, { passive: false });
+
+        lightboxClose.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            closeLightbox();
+        }, { passive: false });
+
+        lightboxClose.addEventListener('touchcancel', () => {
+            lightboxClose.classList.remove('active');
         });
     } else {
         // 電腦版滑鼠事件

@@ -35,6 +35,8 @@ body {
     left: 0;
     z-index: 1000;
     font-family: 'LXGW WenKai TC', sans-serif;
+    opacity: 0;
+    animation: fadeIn 0.5s ease-out 3.0s forwards;
 }
 
 .navbar .container {
@@ -52,15 +54,30 @@ body {
     display: flex;
     align-items: center;
     height: 60px;
-    padding-top: 40px;   /* 或你想要的數值 */
+    padding-top: 40px;
     padding-bottom: 40px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    opacity: 0;
+    animation: fadeIn 0.5s ease-out 3.0s forwards;
 }
 
-.logo-icon {
+.logo-icon,
+.logo1-img,
+.logo2-img,
+.logo3-img,
+.logo4-img,
+.logo5-img {
     height: 60px;
     width: auto;
+    margin: 0;
     display: inline-block;
     vertical-align: middle;
+    position: relative;
+    z-index: 1;
+    opacity: 0;
 }
 
 .logo-img {
@@ -89,10 +106,13 @@ body {
     display: flex;
     gap: 18px;
     align-items: center;
+    opacity: 0;
+    animation: fadeIn 0.5s ease-out 3.0s forwards;
 }
 
 .navbar nav ul li {
     margin-left: 30px;
+    opacity: 0;
 }
 
 .navbar nav ul li a {
@@ -100,11 +120,46 @@ body {
     color: #000;
     font-size: 22px;
     font-weight: 500;
-    transition: color 0.3s;
+    transition: all 0.3s ease;
+    position: relative;
+    padding: 8px 0;
 }
 
-.navbar nav ul li a:hover {
-    color: #FFD700;
+/* 電腦版導航項目懸停效果 */
+@media (min-width: 769px) {
+    .navbar nav ul li a::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg,
+            rgba(255, 215, 0, 0) 0%,
+            rgba(255, 215, 0, 0.8) 50%,
+            rgba(255, 215, 0, 0) 100%);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+        transform-origin: center;
+    }
+
+    .navbar nav ul li a:hover::after,
+    .navbar nav ul li a.active::after {
+        transform: scaleX(1);
+    }
+}
+
+/* 手機版導航項目樣式 */
+@media (max-width: 768px) {
+    .navbar nav ul li a {
+        font-size: 16px;
+        font-weight: 400;
+    }
+
+    .navbar nav ul li a:hover,
+    .navbar nav ul li a.active {
+        color: #FFD700;
+    }
 }
 
 /* Hero Section */
@@ -120,6 +175,8 @@ body {
     justify-content: center;
     color: #eee;
     text-align: center;
+    opacity: 1; /* 確保背景圖片始終可見 */
+    animation: fadeIn 0.5s ease-out 3.0s forwards;
 }
 
 .hero-overlay {
@@ -131,29 +188,30 @@ body {
     align-items: flex-start;
     justify-content: center;
     padding-left: 0%;
-}
-
-.hero-title,
-.hero-subtitle {
-    opacity: 0;
-    animation: fadeIn 2s forwards;
-    text-align: left;
-    color: #ffffffd6;
+    /*animation: fadeIn 1.2s ease-out 1.5s forwards;*/
+    opacity: 1;
 }
 
 .hero-title {
     font-size: 3rem;
+    opacity: 0;
+    animation: slideUp 1.8s ease-out 3.5s forwards;
+    text-align: left;
+    color: #ffffffd6;
 }
 
 .hero-subtitle {
     font-size: 1.7rem;
-    animation-delay: 1s;
+    opacity: 0;
+    animation: slideUp 1.8s ease-out 3.8s forwards;
+    text-align: left;
+    color: #ffffffd6;
 }
 
 /* Animation */
 @keyframes fadeIn {
-    0% { opacity: 0; transform: translateY(20px); }
-    100% { opacity: 1; transform: translateY(0); }
+    0% { opacity: 0; }
+    100% { opacity: 1; }
 }
 
 /* Section */
@@ -357,6 +415,32 @@ body {
     transform: scale(0.9);
 }
 
+.carousel-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+        rgba(255, 215, 0, 0) 0%,
+        rgba(255, 215, 0, 0.5) 50%,
+        rgba(255, 215, 0, 0) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.carousel-item:hover::before {
+    opacity: 1;
+}
+
+.carousel-item.active {
+    transform: scale(1.15);
+    z-index: 1;
+    margin-bottom: 40px;
+    opacity: 1;
+}
+
 .carousel-item p {
     margin-bottom: 10px;
     font-weight: bold;
@@ -380,13 +464,6 @@ body {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     background-color: #ffffff;
     transform: scale(1);
-}
-
-.carousel-item.active {
-    transform: scale(1.15);
-    z-index: 1;
-    margin-bottom: 40px;
-    opacity: 1;
 }
 
 .carousel-item img:hover {
@@ -507,6 +584,21 @@ body {
     font-size: 24px;
     margin-bottom: 20px;
     color: #333;
+    position: relative;
+    padding-bottom: 12px;
+}
+
+/* 保留燈箱標題裝飾線 */
+.lightbox-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg,
+        rgba(255, 215, 0, 0.8) 0%,
+        rgba(255, 215, 0, 0) 100%);
 }
 
 .lightbox-description {
@@ -518,6 +610,7 @@ body {
     margin-bottom: 15px;
 }
 
+/* 燈箱關閉按鈕基本樣式 */
 .lightbox-close {
     position: absolute;
     top: 15px;
@@ -535,13 +628,34 @@ body {
     justify-content: center;
     transition: all 0.3s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
 }
 
-.lightbox-close:hover {
+.lightbox-close:hover,
+.lightbox-close:focus {
     background-color: #ffd700;
     color: #000;
     box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
     border-color: rgba(255, 215, 0, 0.5);
+}
+
+/* 手機版燈箱關閉按鈕樣式 */
+@media (max-width: 768px) {
+    .lightbox-close {
+        top: 10px;
+        right: 10px;
+        font-size: 24px;
+        width: 36px;
+        height: 36px;
+    }
+
+    /* 移除之前的狀態樣式，改用 JavaScript 控制 */
+    .lightbox-close.active {
+        background-color: #ffd700;
+        color: #000;
+        box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+        border-color: rgba(255, 215, 0, 0.5);
+    }
 }
 
 /* 確保輪播項目中的圖片可以點擊 */
@@ -578,23 +692,24 @@ body {
     border-radius: 12px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     z-index: 20;
-    animation: fadeIn 0.8s ease-out;
+    opacity: 0;
+    animation: slideUp 1.2s ease-out 4.0s forwards;
     text-align: left;
     font-size: 0.9em;
-  }
-  
-  .notice-box h2 {
+}
+
+.notice-box h2 {
     font-size: 1.1em;
     margin: 0 0 6px;
     color: #d4a106;
-  }
-  
-  .notice-box p {
+}
+
+.notice-box p {
     margin: 0 0 10px;
     color: #333;
-  }
-  
-  .notice-btn {
+}
+
+.notice-btn {
     display: inline-block;
     background-color: #d4a106;
     color: white;
@@ -603,16 +718,16 @@ body {
     border-radius: 4px;
     font-size: 0.85em;
     transition: background-color 0.3s ease;
-  }
-  
-  .notice-btn:hover {
+}
+
+.notice-btn:hover {
     background-color: #b88d04;
-  }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+}
+
+@keyframes slideUp {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
 
 /* 手機版樣式 */
 @media (max-width: 768px) {
@@ -630,6 +745,7 @@ body {
 
     .navbar nav ul li {
         margin: 0;
+        animation-delay: 3.2s !important;
     }
 
     .navbar nav ul li a {
@@ -642,18 +758,10 @@ body {
         padding: 0px;
         justify-content: center;
         width: 100%;
+        gap: 2px;
     }
 
-    .logo-icon {
-        height: 40px; /* 或指定高度，例如 40px */
-        width: auto;
-    }
-
-    .logo-img {
-        height: 40px;
-        width: auto;
-    }
-
+    .logo-icon,
     .logo1-img,
     .logo2-img,
     .logo3-img,
@@ -661,6 +769,15 @@ body {
     .logo5-img {
         height: 40px;
         width: auto;
+        animation-duration: 0.4s !important;
+    }
+
+    .logo::after {
+        height: 3px;
+        background: linear-gradient(90deg, 
+            rgba(255, 215, 0, 0) 0%,
+            rgba(255, 217, 0, 0.479) 50%,
+            rgba(255, 215, 0, 0) 100%);
     }
 
     .hero-title {
@@ -682,26 +799,28 @@ body {
     }
 
     .notice-box {
-        position: static; /* 移除絕對定位，避免脫離文件流 */
-        margin: 160px auto 10px; /* 垂直外距 + 水平置中 */
+        position: static;
+        margin: 160px auto 10px;
         max-width: 65%;
         text-align: center;
         padding: 9px;
+        opacity: 0;
+        animation: slideUp 1.2s ease-out 4.0s forwards;
     }
-    
-      .notice-box h2 {
+
+    .notice-box h2 {
         font-size: 14px;
-      }
-    
-      .notice-box p {
+    }
+
+    .notice-box p {
         font-size: 11px;
-      }
-    
-      .notice-box .notice-btn {
+    }
+
+    .notice-box .notice-btn {
         font-size: 11px;
         padding: 4px 9px;
-      }
-    
+    }
+
     .image-column img {
         width: 70%;
         height: auto;
@@ -812,6 +931,7 @@ body {
         width: 100%;
         height: 100%;
         border-radius: 12px;
+        overflow: hidden;
     }
 
     .lightbox-image-container {
@@ -820,7 +940,8 @@ body {
         padding: 10px;
         overflow: hidden;
         position: relative;
-        touch-action: none; /* 防止瀏覽器預設的觸控行為 */
+        touch-action: none;
+        border-radius: 12px;
     }
 
     .lightbox-image-container img {
@@ -833,6 +954,7 @@ body {
         transition: transform 0.1s ease-out;
         user-select: none;
         -webkit-user-drag: none;
+        border-radius: 8px;
     }
 
     .lightbox-image-container.zoomed img {
@@ -843,6 +965,7 @@ body {
         flex: none;
         height: 50vh;
         padding: 20px;
+        border-radius: 12px;
     }
 
     .lightbox-title {
@@ -858,5 +981,394 @@ body {
         top: 10px;
         right: 10px;
         font-size: 24px;
+        background-color: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        color: #333;
+        transition: all 0.3s ease;
     }
+
+    .lightbox-close:hover,
+    .lightbox-close:focus {
+        background-color: #ffd700;
+        color: #000;
+        box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+        border-color: rgba(255, 215, 0, 0.5);
+    }
+
+    /* 確保燈箱關閉按鈕在關閉後恢復原狀 */
+    .lightbox.hidden .lightbox-close {
+        background-color: rgba(255, 255, 255, 0.9);
+        color: #333;
+        box-shadow: none;
+        border-color: rgba(0, 0, 0, 0.1);
+    }
+}
+
+/* Logo 序列動畫相關樣式 */
+@keyframes logoSequence {
+    0% { 
+        opacity: 0; 
+        transform: scale(0.8) translateY(-10px); 
+        filter: blur(2px);
+    }
+    20% { 
+        opacity: 1; 
+        transform: scale(1.05) translateY(0); 
+        filter: blur(0);
+    }
+    40% { 
+        opacity: 1; 
+        transform: scale(1); 
+        filter: blur(0);
+    }
+    100% { 
+        opacity: 1; 
+        transform: scale(1); 
+        filter: blur(0);
+    }
+}
+
+@keyframes logoIconHighlight {
+    0% { 
+        filter: brightness(1);
+        box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+    }
+    100% { 
+        filter: brightness(1.1);
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.068);
+        background: linear-gradient(135deg, 
+            rgba(255, 215, 0, 0.05) 0%,    /* 起始點：淡金色 */
+            rgba(255, 217, 0, 0.04) 20%,  /* 中間點：更淡的金色 */
+            rgba(255, 215, 0, 0.07) 30%,   /* 結束點：淡金色 */
+            transparent 100%               /* 確保漸層平滑過渡到透明 */
+        );
+        border-radius: 50%;
+    }
+}
+
+/* Logo 序列動畫 */
+.logo-icon {
+    animation: logoSequence 0.5s ease-out 3.0s forwards,
+               logoIconHighlight 0.8s ease-out 3.8s forwards;
+}
+
+.logo1-img { animation: logoSequence 0.5s ease-out 3.1s forwards; }
+.logo2-img { animation: logoSequence 0.5s ease-out 3.2s forwards; }
+.logo3-img { animation: logoSequence 0.5s ease-out 3.3s forwards; }
+.logo4-img { animation: logoSequence 0.5s ease-out 3.4s forwards; }
+.logo5-img { animation: logoSequence 0.5s ease-out 3.5s forwards; }
+
+/* Logo 容器樣式優化 */
+.logo {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 0;
+}
+
+.logo::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, 
+        rgba(255, 215, 0, 0) 0%,
+        rgba(255, 217, 0, 0.479) 50%,
+        rgba(255, 215, 0, 0) 100%);
+    transform: scaleX(0);
+    animation: logoLine 0.8s ease-out 3.8s forwards;
+}
+
+@keyframes logoLine {
+    0% { transform: scaleX(0); }
+    100% { transform: scaleX(1); }
+}
+
+/* 導航選單動畫 */
+.navbar nav ul li {
+    animation: slideDown 0.5s ease-out forwards;
+}
+
+.navbar nav ul li:nth-child(1) { animation-delay: 3.0s; }
+.navbar nav ul li:nth-child(2) { animation-delay: 3.05s; }
+.navbar nav ul li:nth-child(3) { animation-delay: 3.1s; }
+.navbar nav ul li:nth-child(4) { animation-delay: 3.15s; }
+
+@keyframes slideDown {
+    0% { opacity: 0; transform: translateY(-20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* 手機版調整 */
+@media (max-width: 768px) {
+    .logo-icon,
+    .logo1-img,
+    .logo2-img,
+    .logo3-img,
+    .logo4-img,
+    .logo5-img {
+        animation-duration: 0.4s !important;
+    }
+    
+    .logo::after {
+        height: 3px;
+        background: linear-gradient(90deg, 
+            rgba(255, 215, 0, 0) 0%,
+            rgba(255, 217, 0, 0.479) 50%,
+            rgba(255, 215, 0, 0) 100%);
+    }
+
+    .navbar nav ul li {
+        animation-delay: 3.2s !important;
+    }
+
+    .hero-title {
+        animation-delay: 3.6s !important;
+    }
+
+    .hero-subtitle {
+        animation-delay: 3.8s !important;
+    }
+
+    .notice-box {
+        animation-delay: 4.0s !important;
+    }
+}
+
+/* 進場動畫樣式 */
+.intro-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+    circle at center,
+    rgb(255, 255, 255) 0%,
+    rgb(236, 236, 236) 30%,
+    rgb(201, 201, 201) 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: fadeOut 0.5s ease-out 2.5s forwards;
+}
+
+.intro-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.intro-logo-icon {
+    width: 120px;
+    height: 120px;
+    opacity: 0;
+    animation: introIconAnimation 1.2s ease-out forwards;
+}
+
+.intro-logo-text {
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    animation: introTextAnimation 1.2s ease-out 0.8s forwards;
+}
+
+.intro-logo-text img {
+    height: 60px;
+    width: auto;
+    opacity: 0;
+}
+
+.intro-logo1 { animation: introLogoSequence 0.5s ease-out 1.0s forwards; }
+.intro-logo2 { animation: introLogoSequence 0.5s ease-out 1.1s forwards; }
+.intro-logo3 { animation: introLogoSequence 0.5s ease-out 1.2s forwards; }
+.intro-logo4 { animation: introLogoSequence 0.5s ease-out 1.3s forwards; }
+.intro-logo5 { animation: introLogoSequence 0.5s ease-out 1.4s forwards; }
+
+@keyframes introIconAnimation {
+    0% { 
+        opacity: 0;
+        transform: scale(0.5) rotate(-180deg);
+    }
+    60% { 
+        opacity: 1;
+        transform: scale(1.1) rotate(0deg);
+    }
+    100% { 
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+@keyframes introTextAnimation {
+    0% { 
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes introLogoSequence {
+    0% { 
+        opacity: 0;
+        transform: scale(0.8) translateY(-10px);
+    }
+    100% { 
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    0% { 
+        opacity: 1;
+        visibility: visible;
+    }
+    100% { 
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+/* 調整其他元素在進場動畫期間的顯示 */
+.navbar,
+.hero,
+.notice-box {
+    opacity: 0;
+}
+
+/* 手機版調整 */
+@media (max-width: 768px) {
+    .intro-logo-icon {
+        width: 80px;
+        height: 80px;
+    }
+
+    .intro-logo-text img {
+        height: 40px;
+    }
+
+    .intro-logo {
+        gap: 12px;
+    }
+}
+
+/* 標題和金線的樣式 */
+.section-title {
+    position: relative;
+    margin-bottom: 2rem;
+    text-align: left;
+    display: inline-block;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -0.5rem;
+    left: 0;
+    width: 80px;
+    height: 2.5px;
+    background: linear-gradient(90deg,
+        rgba(255, 217, 0, 0.24) 0%,
+        rgba(255, 217, 0, 0.699) 10%,
+        rgba(255, 215, 0, 0) 100%);
+    opacity: 0;
+}
+
+/* 當 section 淡入時，觸發金線動畫 */
+.fade-in.show .section-title::after {
+    animation: lineFadeIn 0.3s ease-out 0.6s forwards;
+}
+
+/* cases section 的金線特別處理 */
+#cases .section-title {
+    text-align: center;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#cases .section-title::after {
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg,
+        rgba(255, 215, 0, 0) 0%,
+        rgba(255, 215, 0, 0.8) 50%,
+        rgba(255, 215, 0, 0) 100%);
+}
+
+/* 當 cases section 淡入時，觸發金線動畫 */
+#cases.fade-in.show .section-title::after {
+    animation: lineFadeInCenter 0.3s ease-out 0.6s forwards;
+}
+
+/* 左側金線淡入動畫 */
+@keyframes lineFadeIn {
+    0% {
+        opacity: 0;
+        width: 0;
+    }
+    100% {
+        opacity: 1;
+        width: 80px;
+    }
+}
+
+/* 中間向兩側的金線淡入動畫 */
+@keyframes lineFadeInCenter {
+    0% {
+        opacity: 0;
+        width: 0;
+    }
+    100% {
+        opacity: 1;
+        width: 80px;
+    }
+}
+
+/* 手機版調整 */
+@media (max-width: 768px) {
+    .section-title::after {
+        width: 60px;
+    }
+    
+    @keyframes lineFadeIn {
+        0% {
+            opacity: 0;
+            width: 0;
+        }
+        100% {
+            opacity: 1;
+            width: 60px;
+        }
+    }
+    
+    @keyframes lineFadeInCenter {
+        0% {
+            opacity: 0;
+            width: 0;
+        }
+        100% {
+            opacity: 1;
+            width: 60px;
+        }
+    }
+}
+
+/* 確保所有 section 中的標題容器都是左對齊 */
+.section .container {
+    text-align: left;
+}
+
+/* 特別處理 cases section 的容器 */
+#cases .overlay .container {
+    text-align: center;
 }
