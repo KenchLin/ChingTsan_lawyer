@@ -54,6 +54,10 @@ body {
     height: 60px;
     padding-top: 40px;   /* 或你想要的數值 */
     padding-bottom: 40px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .logo-icon {
@@ -120,6 +124,7 @@ body {
     justify-content: center;
     color: #eee;
     text-align: center;
+    opacity: 1; /* 確保背景圖片始終可見 */
 }
 
 .hero-overlay {
@@ -131,29 +136,30 @@ body {
     align-items: flex-start;
     justify-content: center;
     padding-left: 0%;
-}
-
-.hero-title,
-.hero-subtitle {
-    opacity: 0;
-    animation: fadeIn 2s forwards;
-    text-align: left;
-    color: #ffffffd6;
+    /*animation: fadeIn 1.2s ease-out 1.5s forwards;*/
+    opacity: 1;
 }
 
 .hero-title {
     font-size: 3rem;
+    opacity: 0;
+    animation: slideUp 1.8s ease-out 1.5s forwards;
+    text-align: left;
+    color: #ffffffd6;
 }
 
 .hero-subtitle {
     font-size: 1.7rem;
-    animation-delay: 1s;
+    opacity: 0;
+    animation: slideUp 1.8s ease-out 1.8s forwards;
+    text-align: left;
+    color: #ffffffd6;
 }
 
 /* Animation */
 @keyframes fadeIn {
-    0% { opacity: 0; transform: translateY(20px); }
-    100% { opacity: 1; transform: translateY(0); }
+    0% { opacity: 0; }
+    100% { opacity: 1; }
 }
 
 /* Section */
@@ -578,23 +584,24 @@ body {
     border-radius: 12px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     z-index: 20;
-    animation: fadeIn 0.8s ease-out;
+    opacity: 0;
+    animation: slideUp 1.2s ease-out 2.0s forwards;
     text-align: left;
     font-size: 0.9em;
-  }
-  
-  .notice-box h2 {
+}
+
+.notice-box h2 {
     font-size: 1.1em;
     margin: 0 0 6px;
     color: #d4a106;
-  }
-  
-  .notice-box p {
+}
+
+.notice-box p {
     margin: 0 0 10px;
     color: #333;
-  }
-  
-  .notice-btn {
+}
+
+.notice-btn {
     display: inline-block;
     background-color: #d4a106;
     color: white;
@@ -603,16 +610,16 @@ body {
     border-radius: 4px;
     font-size: 0.85em;
     transition: background-color 0.3s ease;
-  }
-  
-  .notice-btn:hover {
+}
+
+.notice-btn:hover {
     background-color: #b88d04;
-  }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+}
+
+@keyframes slideUp {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
 
 /* 手機版樣式 */
 @media (max-width: 768px) {
@@ -642,6 +649,7 @@ body {
         padding: 0px;
         justify-content: center;
         width: 100%;
+        gap: 2px;
     }
 
     .logo-icon {
@@ -661,6 +669,11 @@ body {
     .logo5-img {
         height: 40px;
         width: auto;
+        animation-duration: 0.6s !important;
+    }
+
+    .logo::after {
+        height: 1px;
     }
 
     .hero-title {
@@ -682,26 +695,28 @@ body {
     }
 
     .notice-box {
-        position: static; /* 移除絕對定位，避免脫離文件流 */
-        margin: 160px auto 10px; /* 垂直外距 + 水平置中 */
+        position: static;
+        margin: 160px auto 10px;
         max-width: 65%;
         text-align: center;
         padding: 9px;
+        opacity: 0;
+        animation: slideUp 1.2s ease-out 2.0s forwards;
     }
-    
-      .notice-box h2 {
+
+    .notice-box h2 {
         font-size: 14px;
-      }
-    
-      .notice-box p {
+    }
+
+    .notice-box p {
         font-size: 11px;
-      }
-    
-      .notice-box .notice-btn {
+    }
+
+    .notice-box .notice-btn {
         font-size: 11px;
         padding: 4px 9px;
-      }
-    
+    }
+
     .image-column img {
         width: 70%;
         height: auto;
@@ -860,3 +875,144 @@ body {
         font-size: 24px;
     }
 }
+
+/* Logo 序列動畫相關樣式 */
+@keyframes logoSequence {
+    0% { 
+        opacity: 0; 
+        transform: scale(0.8) translateY(-10px); 
+        filter: blur(2px);
+    }
+    20% { 
+        opacity: 1; 
+        transform: scale(1.05) translateY(0); 
+        filter: blur(0);
+    }
+    40% { 
+        opacity: 1; 
+        transform: scale(1); 
+        filter: blur(0);
+    }
+    100% { 
+        opacity: 1; 
+        transform: scale(1); 
+        filter: blur(0);
+    }
+}
+
+@keyframes logoIconHighlight {
+    0% { 
+        filter: brightness(1);
+        box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+    }
+    100% { 
+        filter: brightness(1.1);
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.068);
+        background: linear-gradient(135deg, 
+            rgba(255, 215, 0, 0.05) 0%,    /* 起始點：淡金色 */
+            rgba(255, 217, 0, 0.027) 20%,  /* 中間點：更淡的金色 */
+            rgba(255, 215, 0, 0.05) 30%,   /* 結束點：淡金色 */
+            transparent 100%               /* 確保漸層平滑過渡到透明 */
+        );
+        border-radius: 50%;
+    }
+}
+
+/* Logo 序列動畫 */
+.logo-icon {
+    animation: logoSequence 0.5s ease-out forwards,
+               logoIconHighlight 0.8s ease-out 0.8s forwards;
+    padding: 4px;
+    transition: all 0.3s ease;
+}
+
+.logo1-img { animation: logoSequence 0.5s ease-out 0.1s forwards; opacity: 0; }
+.logo2-img { animation: logoSequence 0.5s ease-out 0.2s forwards; opacity: 0; }
+.logo3-img { animation: logoSequence 0.5s ease-out 0.3s forwards; opacity: 0; }
+.logo4-img { animation: logoSequence 0.5s ease-out 0.4s forwards; opacity: 0; }
+.logo5-img { animation: logoSequence 0.5s ease-out 0.5s forwards; opacity: 0; }
+
+/* Logo 容器樣式優化 */
+.logo {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 0;
+}
+
+.logo::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, 
+        rgba(255, 215, 0, 0) 0%,
+        rgba(255, 217, 0, 0.233) 50%,
+        rgba(255, 215, 0, 0) 100%);
+    transform: scaleX(0);
+    animation: logoLine 0.8s ease-out 0.8s forwards;
+}
+
+@keyframes logoLine {
+    0% { transform: scaleX(0); }
+    100% { transform: scaleX(1); }
+}
+
+/* 導航選單動畫 */
+.navbar nav ul li {
+    opacity: 0;
+    animation: slideDown 0.5s ease-out forwards;
+}
+
+.navbar nav ul li:nth-child(1) { animation-delay: 0.7s; }
+.navbar nav ul li:nth-child(2) { animation-delay: 0.75s; }
+.navbar nav ul li:nth-child(3) { animation-delay: 0.8s; }
+.navbar nav ul li:nth-child(4) { animation-delay: 0.85s; }
+
+@keyframes slideDown {
+    0% { opacity: 0; transform: translateY(-20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* 手機版調整 */
+/*@media (max-width: 768px) {
+    .logo {
+        gap: 2px;
+    }
+    
+    .logo-icon,
+    .logo1-img,
+    .logo2-img,
+    .logo3-img,
+    .logo4-img,
+    .logo5-img {
+        animation-duration: 0.4s !important;
+    }
+    
+    .logo::after {
+        height: 1px;
+    }
+
+    .navbar nav ul li {
+        animation-delay: 0.8s !important;
+    }
+
+    .hero {
+        animation-delay: 1.2s !important;
+    }
+
+    .hero-title {
+        animation-delay: 1.6s !important;
+    }
+
+    .hero-subtitle {
+        animation-delay: 1.8s !important;
+    }
+
+    .notice-box {
+        animation-delay: 2.0s !important;
+    }
+}*/
