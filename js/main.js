@@ -315,11 +315,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 開啟燈箱
     function openLightbox(imgSrc) {
-        console.log('openLightbox called with:', imgSrc); // 調試日誌
+        console.log('openLightbox called with:', imgSrc);
+        
+        // 重置關閉按鈕狀態
+        lightboxClose.classList.remove('active');
         
         // 從完整路徑中提取文件名並解碼
         const imgName = decodeURIComponent(imgSrc.split('/').pop());
-        console.log('Decoded image name:', imgName); // 調試日誌
+        console.log('Decoded image name:', imgName);
         
         // 使用解碼後的文件名來查找圖片元素
         const img = document.querySelector(`img[src*="${imgName}"]`);
@@ -359,6 +362,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 關閉燈箱
     function closeLightbox() {
+        // 移除 active 狀態
+        lightboxClose.classList.remove('active');
+        
         lightbox.classList.remove('show');
         setTimeout(() => {
             lightbox.classList.add('hidden');
@@ -421,7 +427,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // 點擊關閉按鈕
-    lightboxClose.addEventListener('click', closeLightbox);
+    lightboxClose.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        closeLightbox();
+    });
 
     // 點擊燈箱背景關閉
     lightbox.addEventListener('click', (e) => {
@@ -703,6 +713,22 @@ document.addEventListener('DOMContentLoaded', function () {
             if (isMouseDown) {
                 resetTouchState();
             }
+        });
+
+        lightboxClose.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            lightboxClose.classList.add('active');
+        }, { passive: false });
+
+        lightboxClose.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            closeLightbox();
+        }, { passive: false });
+
+        lightboxClose.addEventListener('touchcancel', () => {
+            lightboxClose.classList.remove('active');
         });
     } else {
         // 電腦版滑鼠事件

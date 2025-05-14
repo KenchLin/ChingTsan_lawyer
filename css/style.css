@@ -541,6 +541,7 @@ body {
     margin-bottom: 15px;
 }
 
+/* 燈箱關閉按鈕基本樣式 */
 .lightbox-close {
     position: absolute;
     top: 15px;
@@ -558,13 +559,34 @@ body {
     justify-content: center;
     transition: all 0.3s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
 }
 
-.lightbox-close:hover {
+.lightbox-close:hover,
+.lightbox-close:focus {
     background-color: #ffd700;
     color: #000;
     box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
     border-color: rgba(255, 215, 0, 0.5);
+}
+
+/* 手機版燈箱關閉按鈕樣式 */
+@media (max-width: 768px) {
+    .lightbox-close {
+        top: 10px;
+        right: 10px;
+        font-size: 24px;
+        width: 36px;
+        height: 36px;
+    }
+
+    /* 移除之前的狀態樣式，改用 JavaScript 控制 */
+    .lightbox-close.active {
+        background-color: #ffd700;
+        color: #000;
+        box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+        border-color: rgba(255, 215, 0, 0.5);
+    }
 }
 
 /* 確保輪播項目中的圖片可以點擊 */
@@ -682,7 +704,11 @@ body {
     }
 
     .logo::after {
-        height: 1px;
+        height: 3px;
+        background: linear-gradient(90deg, 
+            rgba(255, 215, 0, 0) 0%,
+            rgba(255, 217, 0, 0.479) 50%,
+            rgba(255, 215, 0, 0) 100%);
     }
 
     .hero-title {
@@ -836,6 +862,7 @@ body {
         width: 100%;
         height: 100%;
         border-radius: 12px;
+        overflow: hidden;
     }
 
     .lightbox-image-container {
@@ -844,7 +871,8 @@ body {
         padding: 10px;
         overflow: hidden;
         position: relative;
-        touch-action: none; /* 防止瀏覽器預設的觸控行為 */
+        touch-action: none;
+        border-radius: 12px;
     }
 
     .lightbox-image-container img {
@@ -857,6 +885,7 @@ body {
         transition: transform 0.1s ease-out;
         user-select: none;
         -webkit-user-drag: none;
+        border-radius: 8px;
     }
 
     .lightbox-image-container.zoomed img {
@@ -867,6 +896,7 @@ body {
         flex: none;
         height: 50vh;
         padding: 20px;
+        border-radius: 12px;
     }
 
     .lightbox-title {
@@ -882,6 +912,26 @@ body {
         top: 10px;
         right: 10px;
         font-size: 24px;
+        background-color: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        color: #333;
+        transition: all 0.3s ease;
+    }
+
+    .lightbox-close:hover,
+    .lightbox-close:focus {
+        background-color: #ffd700;
+        color: #000;
+        box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+        border-color: rgba(255, 215, 0, 0.5);
+    }
+
+    /* 確保燈箱關閉按鈕在關閉後恢復原狀 */
+    .lightbox.hidden .lightbox-close {
+        background-color: rgba(255, 255, 255, 0.9);
+        color: #333;
+        box-shadow: none;
+        border-color: rgba(0, 0, 0, 0.1);
     }
 }
 
@@ -995,7 +1045,11 @@ body {
     }
     
     .logo::after {
-        height: 1px;
+        height: 3px;
+        background: linear-gradient(90deg, 
+            rgba(255, 215, 0, 0) 0%,
+            rgba(255, 217, 0, 0.479) 50%,
+            rgba(255, 215, 0, 0) 100%);
     }
 
     .navbar nav ul li {
