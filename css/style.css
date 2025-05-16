@@ -334,13 +334,52 @@ body {
 }
 
 #cases {
+    position: relative;
+    background: url('../images/勝訴案例背景.jpg') no-repeat center center;
     background-size: cover;
-    background-position: center;
+    min-height: 100vh;
     padding: 60px 0;
+    overflow: hidden;
 }
 
-#cases h2, #cases p {
+/* 背景容器 */
+#cases::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: inherit;
+    background-size: cover;
+    background-position: center center;
+    z-index: 0;
+}
+
+/* 黑色半透明遮罩 - 確保遮蓋所有內容區域 */
+#cases::before {
+    content: '';
+    position: absolute;
+    top: 5%; /* 從上方 5% 開始 */
+    left: 0;
+    right: 0;
+    bottom: 5%; /* 到底部 5% 結束 */
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+#cases .container {
+    position: relative;
+    z-index: 2;
+    padding: 40px 0; /* 確保內容有足夠的上下間距 */
+}
+
+#cases h2, 
+#cases p {
     text-align: center;
+    position: relative;
+    z-index: 2;
+    color: #fff;
 }
 
 .service-item {
@@ -2110,5 +2149,103 @@ body {
 
     .service-item:hover {
         background: rgba(245, 247, 249, 0.98);
+    }
+}
+
+/* 關於我區塊 */
+#about {
+    position: relative;
+    background: url('../images/關於我背景.jpg') no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    padding: 100px 0;
+    color: #333;
+    overflow: hidden;
+}
+
+#about::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.75); /* 統一透明度為 0.75 */
+    z-index: 1;
+}
+
+#about .container {
+    position: relative;
+    z-index: 2;
+}
+
+/* 服務項目區塊 */
+#services {
+    position: relative;
+    background: url('../images/服務項目背景.jpg') no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    padding: 100px 0;
+    color: #333;
+    overflow: hidden;
+}
+
+#services::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.75); /* 統一透明度為 0.75 */
+    z-index: 1;
+}
+
+#services .container {
+    position: relative;
+    z-index: 2;
+}
+
+/* 聯絡我區塊 */
+#contact {
+    position: relative;
+    background: url('../images/聯絡我背景.jpg') no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    padding: 100px 0;
+    color: #333;
+    overflow: hidden;
+}
+
+#contact::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.75); /* 統一透明度為 0.75 */
+    z-index: 1;
+}
+
+#contact .container {
+    position: relative;
+    z-index: 2;
+}
+
+/* 手機版背景優化 */
+@media (max-width: 768px) {
+    #about,
+    #services,
+    #contact {
+        background-attachment: scroll; /* 手機版取消固定背景 */
+        padding: 60px 0;
+    }
+
+    /* 移除手機版不同的透明度設定，保持與電腦版一致 */
+    #about::before,
+    #services::before,
+    #contact::before {
+        background: rgba(255, 255, 255, 0.75); /* 保持與電腦版相同的透明度 */
     }
 }

@@ -372,96 +372,25 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 300);
     }
 
-    // 電腦版的點擊處理
-    function handleDesktopClick(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        const img = e.target;
-        const carouselItem = img.closest('.carousel-item');
-        const isActive = carouselItem.classList.contains('active');
-        const container = carouselItem.closest('.carousel-container');
-        const items = container.querySelectorAll('.carousel-item');
-        const index = parseInt(carouselItem.dataset.index);
-        
-        if (isActive) {
-            // 如果是 active 案例，開啟燈箱
-            openLightbox(img.src);
-        } else {
-            // 如果不是 active 案例，切換到該案例
-            const track = container.querySelector('.carousel-track');
-            const itemWidth = items[0].offsetWidth;
-            const gap = parseInt(getComputedStyle(track).gap) || 0;
-            const fullItemWidth = itemWidth + gap;
-            const containerWidth = container.offsetWidth;
-            
-            // 計算新的偏移量
-            const offset = (fullItemWidth * index) - (containerWidth / 2) + (itemWidth / 2);
-            
-            // 添加過渡效果
-            track.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-            track.style.transform = `translateX(${-offset}px)`;
-            
-            // 更新 active 狀態
-            items.forEach(item => item.classList.remove('active'));
-            carouselItem.classList.add('active');
-        }
-    }
-
-    // 手機版的觸控處理
-    function handleMobileTouch(e) {
-        const touch = e.touches[0];
-        const activeItem = items[currentIndex];
-        const activeImg = activeItem.querySelector('img');
-        if (activeImg) {
-            const rect = activeImg.getBoundingClientRect();
-            const isClickOnActiveImg = 
-                touch.clientX >= rect.left && 
-                touch.clientX <= rect.right && 
-                touch.clientY >= rect.top && 
-                touch.clientY <= rect.bottom;
-            
-            // 儲存點擊位置資訊
-            e.target.dataset.clickedOnActive = isClickOnActiveImg;
-        }
-    }
-
-    // 點擊關閉按鈕
-    lightboxClose.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        closeLightbox();
-    });
-
-    // 點擊燈箱背景關閉
-    lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox) {
-            closeLightbox();
-        }
-    });
-
-    // 防止燈箱內容區域的點擊事件冒泡
-    document.querySelector('.lightbox-content').addEventListener('click', (e) => {
-        e.stopPropagation();
-    });
-
     // 更新滑軌位置與 active 樣式
-    function updateCarousel(container, currentIndex) {
+    function updateCarousel(container, newIndex) {
         const track = container.querySelector('.carousel-track');
         const items = container.querySelectorAll('.carousel-item');
         const itemWidth = items[0].offsetWidth;
         const gap = parseInt(getComputedStyle(track).gap) || 0;
         const fullItemWidth = itemWidth + gap;
-    
         const containerWidth = container.offsetWidth;
+        
+        // 確保索引在有效範圍內
+        newIndex = Math.max(0, Math.min(newIndex, items.length - 1));
         
         let offset;
         if (window.innerWidth <= 768) {
-            offset = fullItemWidth * currentIndex;
+            offset = fullItemWidth * newIndex;
         } else {
-            offset = (fullItemWidth * currentIndex) - (containerWidth / 2) + (itemWidth / 2);
+            offset = (fullItemWidth * newIndex) - (containerWidth / 2) + (itemWidth / 2);
         }
-    
+
         // 先移除所有項目的 active 類別
         items.forEach(item => {
             item.classList.remove('active');
@@ -469,13 +398,17 @@ document.addEventListener('DOMContentLoaded', function () {
         
         // 使用 requestAnimationFrame 確保動畫流暢
         requestAnimationFrame(() => {
+            track.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
             track.style.transform = `translateX(${-offset}px)`;
             
             // 在 transform 動畫開始後，添加 active 類別
             setTimeout(() => {
-                items[currentIndex].classList.add('active');
+                items[newIndex].classList.add('active');
             }, 50);
         });
+
+        // 更新容器的 currentIndex
+        container.dataset.currentIndex = newIndex;
     }
 
     document.querySelectorAll('.carousel-container').forEach(container => {
@@ -484,7 +417,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const leftBtn = container.querySelector('.carousel-btn.left');
         const rightBtn = container.querySelector('.carousel-btn.right');
 
-        let currentIndex = 0;
+        // 初始化 currentIndex
+        container.dataset.currentIndex = '0';
         let startX = 0;
         let currentX = 0;
         let startY = 0;
@@ -501,11 +435,27 @@ document.addEventListener('DOMContentLoaded', function () {
             // 電腦版：使用點擊事件
             items.forEach(item => {
                 const img = item.querySelector('img');
-                img.addEventListener('click', handleDesktopClick);
+                img.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const carouselItem = img.closest('.carousel-item');
+                    const isActive = carouselItem.classList.contains('active');
+                    const clickedIndex = Array.from(items).indexOf(carouselItem);
+                    
+                    if (isActive) {
+                        // 如果是 active 案例，開啟燈箱
+                        openLightbox(img.src);
+                    } else {
+                        // 如果不是 active 案例，切換到該案例
+                        updateCarousel(container, clickedIndex);
+                    }
+                });
             });
         } else {
             // 手機版：使用觸控事件
             track.addEventListener('touchstart', (e) => {
+                const currentIndex = parseInt(container.dataset.currentIndex || '0');
                 startX = e.touches[0].clientX;
                 startY = e.touches[0].clientY;
                 currentX = startX;
@@ -533,6 +483,7 @@ document.addEventListener('DOMContentLoaded', function () {
             track.addEventListener('touchmove', (e) => {
                 if (!startX) return;
                 
+                const currentIndex = parseInt(container.dataset.currentIndex || '0');
                 currentX = e.touches[0].clientX;
                 currentY = e.touches[0].clientY;
                 
@@ -562,6 +513,7 @@ document.addEventListener('DOMContentLoaded', function () {
             track.addEventListener('touchend', (e) => {
                 if (!startX) return;
                 
+                const currentIndex = parseInt(container.dataset.currentIndex || '0');
                 touchEndTime = Date.now();
                 const touchDuration = touchEndTime - touchStartTime;
                 const diffX = currentX - startX;
@@ -578,15 +530,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     const gap = parseInt(getComputedStyle(track).gap) || 0;
                     const fullItemWidth = itemWidth + gap;
                     
+                    let newIndex = currentIndex;
                     if (Math.abs(diffX) > itemWidth * 0.3) {
                         if (diffX > 0 && currentIndex > 0) {
-                            currentIndex--;
+                            newIndex = currentIndex - 1;
                         } else if (diffX < 0 && currentIndex < items.length - 1) {
-                            currentIndex++;
+                            newIndex = currentIndex + 1;
                         }
                     }
                     
-                    updateCarousel(container, currentIndex);
+                    updateCarousel(container, newIndex);
                 } else if (!hasMoved && touchDuration < 300 && touchStartTarget === e.target) {
                     if (touchStartActiveImg) {
                         const activeItem = items[currentIndex];
@@ -609,9 +562,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                         
                         if (newIndex !== currentIndex) {
-                            currentIndex = newIndex;
-                            track.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-                            updateCarousel(container, currentIndex);
+                            updateCarousel(container, newIndex);
                         }
                     }
                 }
@@ -623,19 +574,21 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-        // 保留原有的按鈕點擊事件
+        // 修改按鈕點擊事件
         leftBtn?.addEventListener('click', () => {
-            currentIndex = (currentIndex - 1 + items.length) % items.length;
-            updateCarousel(container, currentIndex);
+            const currentIndex = parseInt(container.dataset.currentIndex || '0');
+            const newIndex = (currentIndex - 1 + items.length) % items.length;
+            updateCarousel(container, newIndex);
         });
 
         rightBtn?.addEventListener('click', () => {
-            currentIndex = (currentIndex + 1) % items.length;
-            updateCarousel(container, currentIndex);
+            const currentIndex = parseInt(container.dataset.currentIndex || '0');
+            const newIndex = (currentIndex + 1) % items.length;
+            updateCarousel(container, newIndex);
         });
 
         // 初始化
-        updateCarousel(container, currentIndex);
+        updateCarousel(container, 0);
     });
 
     // 處理導覽標籤點擊事件
@@ -802,7 +755,22 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 // 電腦版的事件監聽器
                 container.querySelectorAll('.carousel-item img').forEach(img => {
-                    img.addEventListener('click', handleDesktopClick);
+                    img.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        const carouselItem = img.closest('.carousel-item');
+                        const isActive = carouselItem.classList.contains('active');
+                        const clickedIndex = Array.from(items).indexOf(carouselItem);
+                        
+                        if (isActive) {
+                            // 如果是 active 案例，開啟燈箱
+                            openLightbox(img.src);
+                        } else {
+                            // 如果不是 active 案例，切換到該案例
+                            updateCarousel(container, clickedIndex);
+                        }
+                    });
                 });
             }
         });
@@ -1082,4 +1050,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 初始化當前頁面指示
     updateActiveLink();
+
+    // 點擊關閉按鈕
+    lightboxClose.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        closeLightbox();
+    });
+
+    // 點擊燈箱背景關閉
+    lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) {
+            closeLightbox();
+        }
+    });
+
+    // 防止燈箱內容區域的點擊事件冒泡
+    document.querySelector('.lightbox-content').addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+
+    // 添加 ESC 鍵關閉燈箱
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !lightbox.classList.contains('hidden')) {
+            closeLightbox();
+        }
+    });
 });
