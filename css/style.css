@@ -383,9 +383,59 @@ body {
 }
 
 .service-item {
+    background: rgba(248, 249, 250, 0.95);
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     display: flex;
-    align-items: center;
-    gap: 20px;
+    flex-direction: column;
+    gap: 25px;
+    border: 1px solid rgba(28, 124, 71, 0.12);
+    position: relative;
+    overflow: hidden;
+}
+
+/* 為不同服務卡片添加不同的背景圖片 */
+.service-item:nth-child(1) {
+    background: url('../images/刑事辯護卡片背景.jpg') no-repeat center center;
+    background-size: cover;
+}
+
+.service-item:nth-child(2) {
+    background: url('../images/家事事件卡片背景.jpg') no-repeat center center;
+    background-size: cover;
+}
+
+.service-item:nth-child(3) {
+    background: url('../images/法律諮詢卡片背景.jpg') no-repeat center center;
+    background-size: cover;
+}
+
+/* 添加白色半透明遮罩 */
+.service-item::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.95);
+    z-index: 1;
+    transition: background-color 0.3s ease;
+    pointer-events: none; /* 確保遮罩不會影響點擊事件 */
+}
+
+/* 確保內容在遮罩之上 */
+.service-icon,
+.service-content {
+    position: relative;
+    z-index: 2;
+}
+
+/* 懸停效果 */
+.service-item:hover::after {
+    background: rgba(255, 255, 255, 0.85);
 }
 
 .contact-img {
@@ -2047,30 +2097,46 @@ body {
     overflow: hidden;
 }
 
-.service-item::before {
+/* 為不同服務卡片添加不同的背景圖片 */
+.service-item:nth-child(1) {
+    background: url('../images/刑事辯護卡片背景.jpg') no-repeat center center;
+    background-size: cover;
+}
+
+.service-item:nth-child(2) {
+    background: url('../images/家事事件卡片背景.jpg') no-repeat center center;
+    background-size: cover;
+}
+
+.service-item:nth-child(3) {
+    background: url('../images/法律諮詢卡片背景.jpg') no-repeat center center;
+    background-size: cover;
+}
+
+/* 添加白色半透明遮罩 */
+.service-item::after {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, 
-        rgba(28, 124, 71, 0.15) 0%,
-        rgba(28, 124, 71, 0.25) 50%,
-        rgba(28, 124, 71, 0.15) 100%);
-    opacity: 0;
-    transition: opacity 0.4s ease;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.95);
+    z-index: 1;
+    transition: background-color 0.3s ease;
+    pointer-events: none; /* 確保遮罩不會影響點擊事件 */
 }
 
-.service-item:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 30px rgba(28, 124, 71, 0.15);
-    border-color: rgba(28, 124, 71, 0.2);
-    background: rgba(245, 247, 249, 0.98);
+/* 確保內容在遮罩之上 */
+.service-icon,
+.service-content {
+    position: relative;
+    z-index: 2;
 }
 
-.service-item:hover::before {
-    opacity: 1;
+/* 懸停效果 */
+.service-item:hover::after {
+    background: rgba(255, 255, 255, 0.85);
 }
 
 .service-icon {
@@ -2399,5 +2465,30 @@ body {
 
     .service-card:hover {
         transform: none;
+    }
+}
+
+/* 手機版優化 */
+@media (max-width: 768px) {
+    .service-item {
+        background-size: cover;
+        background-position: center;
+        background-attachment: local;
+        will-change: transform; /* 優化性能 */
+    }
+
+    .service-item::after {
+        background: rgba(255, 255, 255, 0.95);
+        transition: background-color 0.3s ease; /* 手機版過渡時間稍短 */
+    }
+
+    .service-item:hover::after {
+        background: rgba(255, 255, 255, 0.8);
+    }
+
+    /* 移除其他懸停效果 */
+    .service-item:hover {
+        transform: none;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
     }
 }
