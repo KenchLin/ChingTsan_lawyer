@@ -178,7 +178,7 @@ body {
 
     .navbar nav ul li a:hover,
     .navbar nav ul li a.active {
-        color: #FFD700;
+    color: #FFD700;
     }
 }
 
@@ -821,20 +821,20 @@ body {
     animation: slideUp 1.2s ease-out 4.0s forwards;
     text-align: left;
     font-size: 0.9em;
-}
-
-.notice-box h2 {
+  }
+  
+  .notice-box h2 {
     font-size: 1.1em;
     margin: 0 0 6px;
     color: #d4a106;
-}
-
-.notice-box p {
+  }
+  
+  .notice-box p {
     margin: 0 0 10px;
     color: #333;
-}
-
-.notice-btn {
+  }
+  
+  .notice-btn {
     display: inline-block;
     background-color: #d4a106;
     color: white;
@@ -843,16 +843,16 @@ body {
     border-radius: 4px;
     font-size: 0.85em;
     transition: background-color 0.3s ease;
-}
-
-.notice-btn:hover {
+  }
+  
+  .notice-btn:hover {
     background-color: #b88d04;
-}
-
+  }
+  
 @keyframes slideUp {
     0% { opacity: 0; transform: translateY(20px); }
     100% { opacity: 1; transform: translateY(0); }
-}
+  }
 
 /* 手機版樣式 */
 @media (max-width: 768px) {
@@ -932,20 +932,20 @@ body {
         opacity: 0;
         animation: slideUp 1.2s ease-out 4.0s forwards;
     }
-
-    .notice-box h2 {
+    
+      .notice-box h2 {
         font-size: 14px;
-    }
-
-    .notice-box p {
+      }
+    
+      .notice-box p {
         font-size: 11px;
-    }
-
-    .notice-box .notice-btn {
+      }
+    
+      .notice-box .notice-btn {
         font-size: 11px;
         padding: 4px 9px;
-    }
-
+      }
+    
     .image-column img {
         width: 70%;
         height: auto;
@@ -2271,4 +2271,33 @@ body {
     #contact::before {
         background: rgba(255, 255, 255, 0.75); 
     }*/
+}
+
+/* 手機版調整 */
+@media (max-width: 768px) {
+    .two-columns {
+        flex-direction: column;
+    }
+
+    .text-column {
+        width: 100%;
+        text-align: left;
+        order: 1; /* 確保文字在上方 */
+    }
+
+    .image-column {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        order: 2; /* 確保圖片在下方 */
+    }
+
+    .image-column img {
+        width: 85%;
+        height: auto;
+        border-radius: 8px;
+        margin: 0 auto;
+    }
 }
