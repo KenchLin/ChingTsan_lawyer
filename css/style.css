@@ -335,7 +335,7 @@ body {
 
 #cases {
     position: relative;
-    background: url('../images/勝訴案例背景.jpg') no-repeat center center;
+    background: url('../images/勝訴案例背景.webp') no-repeat center center;
     background-size: cover;
     min-height: 100vh;
     padding: 60px 0;
@@ -646,7 +646,7 @@ body {
     align-items: center;
     justify-content: center;
     padding: 20px;
-    background: url('../images/勝訴案例燈箱圖片背景.jpg') no-repeat center center;
+    background: url('../images/勝訴案例燈箱圖片背景.webp') no-repeat center center;
     background-size: cover;
     overflow: hidden;
     cursor: grab;
@@ -683,7 +683,7 @@ body {
     padding: 30px;
     overflow-y: auto;
     border-radius: 12px;
-    background: url('../images/勝訴案例燈箱文字背景.jpg') no-repeat center center;
+    background: url('../images/勝訴案例燈箱文字背景.webp') no-repeat center center;
     background-size: cover;
     border-right: 1px solid rgba(0, 0, 0, 0.2);
     position: relative;
@@ -2178,7 +2178,7 @@ body {
 /* 關於我區塊 */
 #about {
     position: relative;
-    background: url('../images/關於我背景.jpg') no-repeat center center;
+    background: url('../images/關於我背景.webp') no-repeat center center;
     background-size: cover;
     background-attachment: fixed;
     padding: 100px 0;
@@ -2205,7 +2205,7 @@ body {
 /* 服務項目區塊 */
 #services {
     position: relative;
-    background: url('../images/服務項目背景.jpg') no-repeat center center;
+    background: url('../images/服務項目背景.webp') no-repeat center center;
     background-size: cover;
     background-attachment: fixed;
     padding: 100px 0;
@@ -2232,7 +2232,7 @@ body {
 /* 聯絡我區塊 */
 #contact {
     position: relative;
-    background: url('../images/聯絡我背景.jpg') no-repeat center center;
+    background: url('../images/聯絡我背景.webp') no-repeat center center;
     background-size: cover;
     background-attachment: fixed;
     padding: 100px 0;
@@ -2299,5 +2299,69 @@ body {
         height: auto;
         border-radius: 8px;
         margin: 0 auto;
+    }
+}
+
+.service-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 添加微妙的圖案效果 */
+.service-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        linear-gradient(45deg, transparent 48%, rgba(0, 0, 0, 0.03) 49%, rgba(0, 0, 0, 0.03) 51%, transparent 52%),
+        linear-gradient(-45deg, transparent 48%, rgba(0, 0, 0, 0.03) 49%, rgba(0, 0, 0, 0.03) 51%, transparent 52%);
+    background-size: 30px 30px;
+    opacity: 0.5;
+    z-index: 1;
+}
+
+/* 確保內容在圖案之上 */
+.service-card h3,
+.service-card p {
+    position: relative;
+    z-index: 2;
+}
+
+/* 懸停效果 */
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* 為不同服務卡片添加不同的強調色 */
+.service-card:nth-child(1) {
+    border-top: 4px solid #4a90e2;
+}
+
+.service-card:nth-child(2) {
+    border-top: 4px solid #50c878;
+}
+
+.service-card:nth-child(3) {
+    border-top: 4px solid #f5a623;
+}
+
+/* 手機版優化 */
+@media (max-width: 768px) {
+    .service-card {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .service-card:hover {
+        transform: none;
     }
 }
