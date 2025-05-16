@@ -399,8 +399,8 @@ document.addEventListener('DOMContentLoaded', function () {
         // 使用 requestAnimationFrame 確保動畫流暢
         requestAnimationFrame(() => {
             track.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-            track.style.transform = `translateX(${-offset}px)`;
-            
+        track.style.transform = `translateX(${-offset}px)`;
+    
             // 在 transform 動畫開始後，添加 active 類別
             setTimeout(() => {
                 items[newIndex].classList.add('active');
@@ -433,37 +433,37 @@ document.addEventListener('DOMContentLoaded', function () {
         // 根據螢幕寬度設置事件監聽器
         if (window.innerWidth > 768) {
             // 電腦版：使用點擊事件
-            items.forEach(item => {
-                const img = item.querySelector('img');
+        items.forEach(item => {
+            const img = item.querySelector('img');
                 img.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
+                e.preventDefault();
+                e.stopPropagation();
+                
                     const carouselItem = img.closest('.carousel-item');
                     const isActive = carouselItem.classList.contains('active');
                     const clickedIndex = Array.from(items).indexOf(carouselItem);
-                    
-                    if (isActive) {
-                        // 如果是 active 案例，開啟燈箱
+                
+                if (isActive) {
+                    // 如果是 active 案例，開啟燈箱
                         openLightbox(img.src);
-                    } else {
-                        // 如果不是 active 案例，切換到該案例
+                } else {
+                    // 如果不是 active 案例，切換到該案例
                         updateCarousel(container, clickedIndex);
-                    }
-                });
+                }
             });
+        });
         } else {
             // 手機版：使用觸控事件
             track.addEventListener('touchstart', (e) => {
                 const currentIndex = parseInt(container.dataset.currentIndex || '0');
-                startX = e.touches[0].clientX;
-                startY = e.touches[0].clientY;
-                currentX = startX;
-                currentY = startY;
-                touchStartTime = Date.now();
-                isDragging = false;
-                hasMoved = false;
-                track.style.transition = 'none';
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            currentX = startX;
+            currentY = startY;
+            touchStartTime = Date.now();
+            isDragging = false;
+            hasMoved = false;
+            track.style.transition = 'none';
                 touchStartTarget = e.target;
 
                 // 檢查點擊位置是否在 active case 上
@@ -481,60 +481,60 @@ document.addEventListener('DOMContentLoaded', function () {
             }, { passive: true });
 
             track.addEventListener('touchmove', (e) => {
-                if (!startX) return;
-                
+            if (!startX) return;
+            
                 const currentIndex = parseInt(container.dataset.currentIndex || '0');
-                currentX = e.touches[0].clientX;
-                currentY = e.touches[0].clientY;
-                
-                const diffX = currentX - startX;
-                const diffY = currentY - startY;
-                
-                const distance = Math.sqrt(diffX * diffX + diffY * diffY);
-                
-                if (distance > 10) {
-                    hasMoved = true;
-                    isDragging = true;
+            currentX = e.touches[0].clientX;
+            currentY = e.touches[0].clientY;
+            
+            const diffX = currentX - startX;
+            const diffY = currentY - startY;
+            
+            const distance = Math.sqrt(diffX * diffX + diffY * diffY);
+            
+            if (distance > 10) {
+                hasMoved = true;
+                isDragging = true;
                     touchStartActiveImg = false;
-                }
-                
-                if (isDragging) {
-                    const itemWidth = items[0].offsetWidth;
-                    const gap = parseInt(getComputedStyle(track).gap) || 0;
-                    const fullItemWidth = itemWidth + gap;
+            }
+            
+            if (isDragging) {
+                const itemWidth = items[0].offsetWidth;
+                const gap = parseInt(getComputedStyle(track).gap) || 0;
+                const fullItemWidth = itemWidth + gap;
                     const containerWidth = container.offsetWidth;
                     
                     let currentOffset = currentIndex * fullItemWidth;
-                    const newOffset = currentOffset - diffX;
-                    track.style.transform = `translateX(${-newOffset}px)`;
-                }
+                const newOffset = currentOffset - diffX;
+                track.style.transform = `translateX(${-newOffset}px)`;
+            }
             }, { passive: true });
 
             track.addEventListener('touchend', (e) => {
-                if (!startX) return;
-                
+            if (!startX) return;
+            
                 const currentIndex = parseInt(container.dataset.currentIndex || '0');
-                touchEndTime = Date.now();
-                const touchDuration = touchEndTime - touchStartTime;
-                const diffX = currentX - startX;
-                
-                startX = 0;
-                currentX = 0;
-                startY = 0;
-                currentY = 0;
-                
-                if (isDragging) {
+            touchEndTime = Date.now();
+            const touchDuration = touchEndTime - touchStartTime;
+            const diffX = currentX - startX;
+            
+            startX = 0;
+            currentX = 0;
+            startY = 0;
+            currentY = 0;
+            
+            if (isDragging) {
                     track.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-                    
-                    const itemWidth = items[0].offsetWidth;
-                    const gap = parseInt(getComputedStyle(track).gap) || 0;
-                    const fullItemWidth = itemWidth + gap;
-                    
+                
+                const itemWidth = items[0].offsetWidth;
+                const gap = parseInt(getComputedStyle(track).gap) || 0;
+                const fullItemWidth = itemWidth + gap;
+                
                     let newIndex = currentIndex;
-                    if (Math.abs(diffX) > itemWidth * 0.3) {
-                        if (diffX > 0 && currentIndex > 0) {
+                if (Math.abs(diffX) > itemWidth * 0.3) {
+                    if (diffX > 0 && currentIndex > 0) {
                             newIndex = currentIndex - 1;
-                        } else if (diffX < 0 && currentIndex < items.length - 1) {
+                    } else if (diffX < 0 && currentIndex < items.length - 1) {
                             newIndex = currentIndex + 1;
                         }
                     }
@@ -542,12 +542,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     updateCarousel(container, newIndex);
                 } else if (!hasMoved && touchDuration < 300 && touchStartTarget === e.target) {
                     if (touchStartActiveImg) {
-                        const activeItem = items[currentIndex];
-                        const activeImg = activeItem.querySelector('img');
-                        if (activeImg) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            openLightbox(activeImg.src);
+                const activeItem = items[currentIndex];
+                const activeImg = activeItem.querySelector('img');
+                if (activeImg) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openLightbox(activeImg.src);
                         }
                     } else {
                         const touch = e.changedTouches[0];
@@ -569,8 +569,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 
                 touchStartActiveImg = null;
                 touchStartTarget = null;
-                isDragging = false;
-                hasMoved = false;
+            isDragging = false;
+            hasMoved = false;
             });
         }
 

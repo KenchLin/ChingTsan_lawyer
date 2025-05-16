@@ -646,15 +646,24 @@ body {
     align-items: center;
     justify-content: center;
     padding: 20px;
-    background-color: #eeeeeef0;
+    background: url('../images/勝訴案例燈箱圖片背景.jpg') no-repeat center center;
+    background-size: cover;
     overflow: hidden;
     cursor: grab;
     border-radius: 12px;
     border-right: 1px solid rgba(0, 0, 0, 0.2);
+    position: relative;
 }
 
-.lightbox-image-container:active {
-    cursor: grabbing;
+.lightbox-image-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.75);
+    z-index: 1;
 }
 
 .lightbox-image-container img {
@@ -665,10 +674,8 @@ body {
     user-select: none;
     -webkit-user-drag: none;
     cursor: grab;
-}
-
-.lightbox-image-container:active img {
-    cursor: grabbing;
+    position: relative;
+    z-index: 2;
 }
 
 .lightbox-details {
@@ -676,16 +683,30 @@ body {
     padding: 30px;
     overflow-y: auto;
     border-radius: 12px;
-    background-color: #f9fcfdfb;
+    background: url('../images/勝訴案例燈箱文字背景.jpg') no-repeat center center;
+    background-size: cover;
     border-right: 1px solid rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.lightbox-details::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.90);
+    z-index: 1;
 }
 
 .lightbox-title {
     font-size: 24px;
     margin-bottom: 20px;
-    color: #333;
+    color: #1c7c47;
     position: relative;
     padding-bottom: 12px;
+    z-index: 2;
 }
 
 /* 保留燈箱標題裝飾線 */
@@ -697,13 +718,15 @@ body {
     width: 60px;
     height: 2px;
     background: linear-gradient(90deg,
-        rgba(255, 215, 0, 0.8) 0%,
-        rgba(255, 215, 0, 0) 100%);
+        rgba(28, 124, 71, 0.8) 0%,
+        rgba(28, 124, 71, 0) 100%);
 }
 
 .lightbox-description {
-    color: #666;
+    color: #333;
     line-height: 1.8;
+    position: relative;
+    z-index: 2;
 }
 
 .lightbox-description p {
@@ -2224,7 +2247,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 255, 255, 0.75); /* 統一透明度為 0.75 */
+    background: rgba(249, 249, 249, 0.9); /* 統一透明度為 0.75 */
     z-index: 1;
 }
 
@@ -2243,9 +2266,9 @@ body {
     }
 
     /* 移除手機版不同的透明度設定，保持與電腦版一致 */
-    #about::before,
+    /*#about::before,
     #services::before,
     #contact::before {
-        background: rgba(255, 255, 255, 0.75); /* 保持與電腦版相同的透明度 */
-    }
+        background: rgba(255, 255, 255, 0.75); 
+    }*/
 }
