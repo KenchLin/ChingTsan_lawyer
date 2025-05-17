@@ -422,10 +422,10 @@ body {
     bottom: 0;
     background: radial-gradient(
         circle at center,
-        rgba(255, 255, 255, 0.95) 0%,
-        rgba(231, 231, 231) 40%,
-        rgba(231, 231, 231) 60%,
-        rgb(231, 231, 231) 100%
+        rgba(255, 255, 255, 0.85) 0%,
+        rgba(255, 255, 255, 0.85) 40%,
+        rgba(255, 255, 255, 0.95) 60%,
+        rgba(255, 255, 255, 1) 100%
     );
     z-index: 1;
     transition: background 0.3s ease;
@@ -1380,7 +1380,7 @@ body {
     display: flex;
     gap: 4px;
     opacity: 0;
-    animation: introTextAnimation 1.2s ease-out 0.8s forwards;
+    animation: introTextAnimation 2.0s ease-out 0.0s forwards;
 }
 
 .intro-logo-text img {
@@ -1389,11 +1389,11 @@ body {
     opacity: 0;
 }
 
-.intro-logo1 { animation: introLogoSequence 0.5s ease-out 1.0s forwards; }
-.intro-logo2 { animation: introLogoSequence 0.5s ease-out 1.1s forwards; }
-.intro-logo3 { animation: introLogoSequence 0.5s ease-out 1.2s forwards; }
-.intro-logo4 { animation: introLogoSequence 0.5s ease-out 1.3s forwards; }
-.intro-logo5 { animation: introLogoSequence 0.5s ease-out 1.4s forwards; }
+.intro-logo1 { animation: introLogoSequence 0.3s ease-out 0.8s forwards; }
+.intro-logo2 { animation: introLogoSequence 0.3s ease-out 1.1s forwards; }
+.intro-logo3 { animation: introLogoSequence 0.3s ease-out 1.4s forwards; }
+.intro-logo4 { animation: introLogoSequence 0.3s ease-out 1.7s forwards; }
+.intro-logo5 { animation: introLogoSequence 0.3s ease-out 2.0s forwards; }
 
 @keyframes introIconAnimation {
     0% { 
