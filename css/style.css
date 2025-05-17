@@ -364,7 +364,7 @@ body {
     left: 0;
     right: 0;
     bottom: 5%; /* 到底部 5% 結束 */
-    background: rgba(32, 32, 32, 0.764);
+    background: rgba(59, 59, 74, 0.764);
     z-index: 1;
 }
 
@@ -1346,11 +1346,11 @@ body {
     bottom: 0;
     background: radial-gradient(
         circle at center,
-        rgba(255, 255, 255, 1) 0%,
-        rgb(230, 230, 230) 40%,
-        rgba(209, 209, 209, 0.9) 60%,
-        rgba(191, 191, 191, 0.7) 80%,
-        rgba(180, 180, 180, 0.5) 100%
+        rgb(251, 241, 255) 0%,
+        rgb(249, 234, 255) 40%,
+        rgba(236, 215, 244, 0.9) 60%,
+        rgba(247, 226, 255, 0.7) 80%,
+        rgba(247, 226, 255, 0.5) 100%
     );
     z-index: 1;
 }
@@ -2362,7 +2362,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(226, 228, 247, 0.85); /* 淡紫色遮罩 */
+    background: rgba(254, 255, 247, 0.85); /* 淡紫色遮罩 */
     z-index: 1;
 }
 
