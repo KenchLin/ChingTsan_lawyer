@@ -539,7 +539,7 @@ body {
 .carousel-item p {
     margin-bottom: 10px;
     font-weight: bold;
-    background-color: rgba(255, 255, 255, 0.95);
+    background-color: rgba(255, 255, 255, 0);
     padding: 8px 16px;
     border-radius: 8px;
     position: relative;
@@ -736,17 +736,19 @@ body {
 }
 
 .lightbox-details {
-    flex: 1;
+    position: relative;
     padding: 30px;
     overflow-y: auto;
+    flex: 1;
     border-radius: 12px;
-    background: url('../images/勝訴案例燈箱文字背景.webp') no-repeat center center;
+    background: 
+        linear-gradient(rgba(255, 255, 255, 0.90), rgba(255, 255, 255, 0.90)),
+        url('../images/勝訴案例燈箱文字背景.webp') no-repeat center center;
     background-size: cover;
     border-right: 1px solid rgba(0, 0, 0, 0.2);
-    position: relative;
 }
 
-.lightbox-details::before {
+/*.lightbox-details::before {
     content: '';
     position: absolute;
     top: 0;
@@ -755,7 +757,8 @@ body {
     bottom: 0;
     background: rgba(255, 255, 255, 0.90);
     z-index: 1;
-}
+    pointer-events: none;
+}*/
 
 .lightbox-title {
     font-size: 24px;
