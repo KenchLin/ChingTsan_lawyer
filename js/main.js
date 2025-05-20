@@ -18,6 +18,19 @@ document.addEventListener('DOMContentLoaded', function () {
     const panels = document.querySelectorAll('.case-panel');
     const casesSection = document.getElementById('cases'); // 精選勝訴案例區塊
 
+    // 初始化所有滑軌
+    function initializeAllCarousels() {
+        panels.forEach(panel => {
+            const container = panel.querySelector('.carousel-container');
+            if (container) {
+                // 初始化滑軌位置
+                updateCarousel(container, 0);
+                // 保存當前索引
+                container.dataset.currentIndex = '0';
+            }
+        });
+    }
+
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
             // 移除所有標籤的 active 類別
@@ -52,6 +65,9 @@ document.addEventListener('DOMContentLoaded', function () {
     if (tabs.length > 0) {
         tabs[0].click();
     }
+
+    // 初始化所有滑軌
+    initializeAllCarousels();
 
     // ===== 案例滑軌與燈箱互動邏輯 =====
     const lightbox = document.getElementById('lightbox');
@@ -414,8 +430,8 @@ document.addEventListener('DOMContentLoaded', function () {
         // 使用 requestAnimationFrame 確保動畫流暢
         requestAnimationFrame(() => {
             track.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-            track.style.transform = `translateX(${-offset}px)`;
-
+        track.style.transform = `translateX(${-offset}px)`;
+    
             // 在 transform 動畫開始後，添加 active 類別
             setTimeout(() => {
                 items[newIndex].classList.add('active');

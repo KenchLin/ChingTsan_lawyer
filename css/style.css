@@ -485,10 +485,17 @@ body {
 }
 
 .carousel-container {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow: hidden;
+    min-height: 680px;
+    padding-top: 40px;
+    padding-bottom: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 8px 0;
 }
 
 .carousel-track {
@@ -497,6 +504,8 @@ body {
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     align-items: flex-start;
     will-change: transform;
+    padding: 0 20px;
+    width: 100%;
 }
 
 .carousel-item {
@@ -508,6 +517,13 @@ body {
     z-index: 0;
     opacity: 0.6;
     transform: scale(0.9);
+}
+
+.carousel-item.active {
+    transform: scale(1.15);
+    z-index: 1;
+    margin-bottom: 40px;
+    opacity: 1;
 }
 
 .carousel-item::before {
@@ -526,13 +542,6 @@ body {
 }
 
 .carousel-item:hover::before {
-    opacity: 1;
-}
-
-.carousel-item.active {
-    transform: scale(1.15);
-    z-index: 1;
-    margin-bottom: 40px;
     opacity: 1;
 }
 
@@ -657,6 +666,14 @@ body {
 @media (max-width: 768px) {
     .carousel-btn {
         display: none;
+    }
+
+    .carousel-container {
+        padding: 0 40px;
+    }
+
+    .carousel-item {
+        flex: 0 0 calc(100% - 20px);
     }
 }
 
