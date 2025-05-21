@@ -18,25 +18,45 @@ document.addEventListener('DOMContentLoaded', function () {
     const panels = document.querySelectorAll('.case-panel');
     const casesSection = document.getElementById('cases'); // 精選勝訴案例區塊
 
+    // 初始化所有滑軌
+    function initializeAllCarousels() {
+        panels.forEach(panel => {
+            const container = panel.querySelector('.carousel-container');
+            if (container) {
+                // 初始化滑軌位置
+                updateCarousel(container, 0);
+                // 保存當前索引
+                container.dataset.currentIndex = '0';
+            }
+        });
+    }
+
     tabs.forEach(tab => {
-        tab.addEventListener('click', function () {
-            tabs.forEach(t => t.classList.remove('active'));
-            panels.forEach(p => p.classList.remove('show'));
+        tab.addEventListener('click', () => {
+            // 移除所有標籤的 active 類別
+            document.querySelectorAll('.case-tab').forEach(t => t.classList.remove('active'));
+            // 為當前點擊的標籤添加 active 類別
+            tab.classList.add('active');
 
-            const targetId = 'panel-' + this.dataset.target;
-            this.classList.add('active');
-            const targetPanel = document.getElementById(targetId);
-            targetPanel?.classList.add('show');
+            // 隱藏所有面板
+            document.querySelectorAll('.case-panel').forEach(panel => {
+                panel.style.display = 'none';
+            });
 
-            // 動態調整背景圖片與區塊高度
-            const newHeight = targetPanel ? targetPanel.offsetHeight : 600; // 根據顯示區域調整
-            casesSection.style.minHeight = `${newHeight + 100}px`; // 留下足夠的空間以容納動畫
-
-            // 進行背景圖片縮放
+            // 顯示目標面板
+            const targetPanel = document.getElementById(`panel-${tab.dataset.target}`);
             if (targetPanel) {
-                casesSection.style.backgroundSize = '110%'; // 放大背景圖片
-            } else {
-                casesSection.style.backgroundSize = 'cover'; // 回到原來大小
+                targetPanel.style.display = 'block';
+                
+                // 獲取該面板的滑軌容器
+                const container = targetPanel.querySelector('.carousel-container');
+                if (container) {
+                    // 獲取保存的索引，如果沒有則使用 0
+                    const savedIndex = parseInt(container.dataset.currentIndex || '0');
+                    
+                    // 更新滑軌位置
+                    updateCarousel(container, savedIndex);
+                }
             }
         });
     });
@@ -45,6 +65,9 @@ document.addEventListener('DOMContentLoaded', function () {
     if (tabs.length > 0) {
         tabs[0].click();
     }
+
+    // 初始化所有滑軌
+    initializeAllCarousels();
 
     // ===== 案例滑軌與燈箱互動邏輯 =====
     const lightbox = document.getElementById('lightbox');
@@ -384,11 +407,19 @@ document.addEventListener('DOMContentLoaded', function () {
         // 確保索引在有效範圍內
         newIndex = Math.max(0, Math.min(newIndex, items.length - 1));
         
+        // 計算置中偏移量
         let offset;
         if (window.innerWidth <= 768) {
+            // 手機版：直接使用索引位置
             offset = fullItemWidth * newIndex;
         } else {
-            offset = (fullItemWidth * newIndex) - (containerWidth / 2) + (itemWidth / 2);
+            // 電腦版：計算置中位置
+            // 計算容器中心點到第一個項目的距離
+            const centerOffset = (containerWidth - itemWidth) / 2;
+            // 計算目標項目的位置
+            const targetPosition = fullItemWidth * newIndex;
+            // 計算最終偏移量，使目標項目置中
+            offset = targetPosition - centerOffset;
         }
 
         // 先移除所有項目的 active 類別
@@ -577,14 +608,17 @@ document.addEventListener('DOMContentLoaded', function () {
         // 修改按鈕點擊事件
         leftBtn?.addEventListener('click', () => {
             const currentIndex = parseInt(container.dataset.currentIndex || '0');
-            const newIndex = (currentIndex - 1 + items.length) % items.length;
-            updateCarousel(container, newIndex);
+            if (currentIndex > 0) {
+                updateCarousel(container, currentIndex - 1);
+            }
         });
 
         rightBtn?.addEventListener('click', () => {
             const currentIndex = parseInt(container.dataset.currentIndex || '0');
-            const newIndex = (currentIndex + 1) % items.length;
-            updateCarousel(container, newIndex);
+            const items = container.querySelectorAll('.carousel-item');
+            if (currentIndex < items.length - 1) {
+                updateCarousel(container, currentIndex + 1);
+            }
         });
 
         // 初始化
