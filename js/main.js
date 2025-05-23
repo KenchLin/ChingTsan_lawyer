@@ -403,9 +403,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const gap = parseInt(getComputedStyle(track).gap) || 0;
         const fullItemWidth = itemWidth + gap;
         const containerWidth = container.offsetWidth;
-        
-        // 確保索引在有效範圍內
-        newIndex = Math.max(0, Math.min(newIndex, items.length - 1));
+        const totalItems = items.length;
+        const realItems = totalItems - 2; // 減去複製的項目
         
         // 計算置中偏移量
         let offset;
@@ -414,11 +413,8 @@ document.addEventListener('DOMContentLoaded', function () {
             offset = fullItemWidth * newIndex;
         } else {
             // 電腦版：計算置中位置
-            // 計算容器中心點到第一個項目的距離
             const centerOffset = (containerWidth - itemWidth) / 2;
-            // 計算目標項目的位置
             const targetPosition = fullItemWidth * newIndex;
-            // 計算最終偏移量，使目標項目置中
             offset = targetPosition - centerOffset;
         }
 
@@ -427,19 +423,110 @@ document.addEventListener('DOMContentLoaded', function () {
             item.classList.remove('active');
         });
         
-        // 使用 requestAnimationFrame 確保動畫流暢
-        requestAnimationFrame(() => {
-            track.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+        // 設置動畫
+        track.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
         track.style.transform = `translateX(${-offset}px)`;
-    
-            // 在 transform 動畫開始後，添加 active 類別
-            setTimeout(() => {
-                items[newIndex].classList.add('active');
-            }, 50);
-        });
+        
+        // 在動畫開始後添加 active 類別
+        setTimeout(() => {
+            items[newIndex].classList.add('active');
+        }, 50);
 
         // 更新容器的 currentIndex
         container.dataset.currentIndex = newIndex;
+
+        // 檢查是否需要重置位置
+        setTimeout(() => {
+            const currentIndex = parseInt(container.dataset.currentIndex);
+            
+            // 如果滑到最後一個複製的項目
+            if (currentIndex === totalItems - 1) {
+                // 移除所有動畫
+                track.style.transition = 'none';
+                items.forEach(item => {
+                    item.style.transition = 'none';
+                });
+                
+                // 計算新的置中偏移量
+                let newOffset;
+                if (window.innerWidth <= 768) {
+                    newOffset = fullItemWidth;
+                } else {
+                    const centerOffset = (containerWidth - itemWidth) / 2;
+                    newOffset = fullItemWidth - centerOffset;
+                }
+                
+                // 直接設置新的位置
+                track.style.transform = `translateX(${-newOffset}px)`;
+                container.dataset.currentIndex = '1';
+                
+                // 移除所有項目的 active 類別並設置新的 active
+                items.forEach(item => {
+                    item.classList.remove('active');
+                });
+                items[1].classList.add('active');
+                
+                // 在下一幀恢復動畫屬性
+                requestAnimationFrame(() => {
+                    track.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                    items.forEach(item => {
+                        item.style.transition = '';
+                    });
+                });
+            }
+            // 如果滑到第一個複製的項目
+            else if (currentIndex === 0) {
+                // 移除所有動畫
+                track.style.transition = 'none';
+                items.forEach(item => {
+                    item.style.transition = 'none';
+                });
+                
+                // 計算新的置中偏移量
+                let newOffset;
+                if (window.innerWidth <= 768) {
+                    newOffset = fullItemWidth * (totalItems - 2);
+                } else {
+                    const centerOffset = (containerWidth - itemWidth) / 2;
+                    newOffset = fullItemWidth * (totalItems - 2) - centerOffset;
+                }
+                
+                // 直接設置新的位置
+                track.style.transform = `translateX(${-newOffset}px)`;
+                container.dataset.currentIndex = (totalItems - 2).toString();
+                
+                // 移除所有項目的 active 類別並設置新的 active
+                items.forEach(item => {
+                    item.classList.remove('active');
+                });
+                items[totalItems - 2].classList.add('active');
+                
+                // 在下一幀恢復動畫屬性
+                requestAnimationFrame(() => {
+                    track.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                    items.forEach(item => {
+                        item.style.transition = '';
+                    });
+                });
+            }
+        }, 400); // 等待動畫完成
+    }
+
+    // 初始化滑軌
+    function initializeCarousel(container) {
+        const track = container.querySelector('.carousel-track');
+        const items = container.querySelectorAll('.carousel-item');
+        
+        // 複製第一個和最後一個項目
+        const firstClone = items[0].cloneNode(true);
+        const lastClone = items[items.length - 1].cloneNode(true);
+        
+        // 添加複製的項目到滑軌
+        track.appendChild(firstClone);
+        track.insertBefore(lastClone, items[0]);
+        
+        // 初始化位置到第一個真實項目
+        updateCarousel(container, 1);
     }
 
     document.querySelectorAll('.carousel-container').forEach(container => {
@@ -449,7 +536,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const rightBtn = container.querySelector('.carousel-btn.right');
 
         // 初始化 currentIndex
-        container.dataset.currentIndex = '0';
+        container.dataset.currentIndex = '1';
         let startX = 0;
         let currentX = 0;
         let startY = 0;
@@ -461,168 +548,101 @@ document.addEventListener('DOMContentLoaded', function () {
         let touchStartTarget = null;
         let touchStartActiveImg = null;
 
-        // 根據螢幕寬度設置事件監聽器
-        if (window.innerWidth > 768) {
-            // 電腦版：使用點擊事件
-        items.forEach(item => {
-            const img = item.querySelector('img');
-                img.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                    const carouselItem = img.closest('.carousel-item');
-                    const isActive = carouselItem.classList.contains('active');
-                    const clickedIndex = Array.from(items).indexOf(carouselItem);
-                
-                if (isActive) {
-                    // 如果是 active 案例，開啟燈箱
-                        openLightbox(img.src);
-                } else {
-                    // 如果不是 active 案例，切換到該案例
-                        updateCarousel(container, clickedIndex);
-                }
-            });
-        });
-        } else {
-            // 手機版：使用觸控事件
-            track.addEventListener('touchstart', (e) => {
-                const currentIndex = parseInt(container.dataset.currentIndex || '0');
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-            currentX = startX;
-            currentY = startY;
-            touchStartTime = Date.now();
-            isDragging = false;
-            hasMoved = false;
-            track.style.transition = 'none';
+        // 觸控事件處理
+        track.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                touchStartTime = Date.now();
                 touchStartTarget = e.target;
-
-                // 檢查點擊位置是否在 active case 上
-                const touch = e.touches[0];
-                const activeItem = items[currentIndex];
-                const activeImg = activeItem.querySelector('img');
-                if (activeImg) {
-                    const rect = activeImg.getBoundingClientRect();
-                    touchStartActiveImg = 
-                        touch.clientX >= rect.left && 
-                        touch.clientX <= rect.right && 
-                        touch.clientY >= rect.top && 
-                        touch.clientY <= rect.bottom;
-                }
-            }, { passive: true });
-
-            track.addEventListener('touchmove', (e) => {
-            if (!startX) return;
-            
-                const currentIndex = parseInt(container.dataset.currentIndex || '0');
-            currentX = e.touches[0].clientX;
-            currentY = e.touches[0].clientY;
-            
-            const diffX = currentX - startX;
-            const diffY = currentY - startY;
-            
-            const distance = Math.sqrt(diffX * diffX + diffY * diffY);
-            
-            if (distance > 10) {
-                hasMoved = true;
+                touchStartActiveImg = e.target.closest('.carousel-item')?.classList.contains('active');
                 isDragging = true;
-                    touchStartActiveImg = false;
+                hasMoved = false;
             }
+        });
+
+        track.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
             
-            if (isDragging) {
+            const touch = e.touches[0];
+            currentX = touch.clientX;
+            currentY = touch.clientY;
+            
+            const deltaX = currentX - startX;
+            const deltaY = currentY - startY;
+            
+            // 如果水平移動距離大於垂直移動距離，則視為滑動
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                e.preventDefault();
+                hasMoved = true;
+                
+                const currentIndex = parseInt(container.dataset.currentIndex);
                 const itemWidth = items[0].offsetWidth;
                 const gap = parseInt(getComputedStyle(track).gap) || 0;
                 const fullItemWidth = itemWidth + gap;
-                    const containerWidth = container.offsetWidth;
-                    
-                    let currentOffset = currentIndex * fullItemWidth;
-                const newOffset = currentOffset - diffX;
-                track.style.transform = `translateX(${-newOffset}px)`;
+                
+                // 計算新的位置
+                const offset = deltaX / fullItemWidth;
+                const newIndex = currentIndex - Math.round(offset);
+                
+                // 更新滑軌位置
+                updateCarousel(container, newIndex);
+                
+                // 重置起始位置
+                startX = currentX;
             }
-            }, { passive: true });
+        });
 
-            track.addEventListener('touchend', (e) => {
-            if (!startX) return;
+        track.addEventListener('touchend', (e) => {
+            if (!isDragging) return;
             
-                const currentIndex = parseInt(container.dataset.currentIndex || '0');
             touchEndTime = Date.now();
             const touchDuration = touchEndTime - touchStartTime;
-            const diffX = currentX - startX;
             
-            startX = 0;
-            currentX = 0;
-            startY = 0;
-            currentY = 0;
-            
-            if (isDragging) {
-                    track.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-                
-                const itemWidth = items[0].offsetWidth;
-                const gap = parseInt(getComputedStyle(track).gap) || 0;
-                const fullItemWidth = itemWidth + gap;
-                
-                    let newIndex = currentIndex;
-                if (Math.abs(diffX) > itemWidth * 0.3) {
-                    if (diffX > 0 && currentIndex > 0) {
-                            newIndex = currentIndex - 1;
-                    } else if (diffX < 0 && currentIndex < items.length - 1) {
-                            newIndex = currentIndex + 1;
-                        }
+            if (!hasMoved && touchDuration < 300 && touchStartTarget === e.target) {
+                if (touchStartActiveImg) {
+                    const activeItem = items[parseInt(container.dataset.currentIndex)];
+                    const activeImg = activeItem.querySelector('img');
+                    if (activeImg) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        openLightbox(activeImg.src);
+                    }
+                } else {
+                    const touch = e.changedTouches[0];
+                    const containerRect = container.getBoundingClientRect();
+                    const containerCenter = containerRect.left + containerRect.width / 2;
+                    
+                    let newIndex = parseInt(container.dataset.currentIndex);
+                    if (touch.clientX < containerCenter) {
+                        newIndex--;
+                    } else {
+                        newIndex++;
                     }
                     
                     updateCarousel(container, newIndex);
-                } else if (!hasMoved && touchDuration < 300 && touchStartTarget === e.target) {
-                    if (touchStartActiveImg) {
-                const activeItem = items[currentIndex];
-                const activeImg = activeItem.querySelector('img');
-                if (activeImg) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    openLightbox(activeImg.src);
-                        }
-                    } else {
-                        const touch = e.changedTouches[0];
-                        const containerRect = container.getBoundingClientRect();
-                        const containerCenter = containerRect.left + containerRect.width / 2;
-                        
-                        let newIndex = currentIndex;
-                        if (touch.clientX < containerCenter && currentIndex > 0) {
-                            newIndex = currentIndex - 1;
-                        } else if (touch.clientX > containerCenter && currentIndex < items.length - 1) {
-                            newIndex = currentIndex + 1;
-                        }
-                        
-                        if (newIndex !== currentIndex) {
-                            updateCarousel(container, newIndex);
-                        }
-                    }
                 }
-                
-                touchStartActiveImg = null;
-                touchStartTarget = null;
+            }
+            
+            touchStartActiveImg = null;
+            touchStartTarget = null;
             isDragging = false;
             hasMoved = false;
-            });
-        }
+        });
 
         // 修改按鈕點擊事件
         leftBtn?.addEventListener('click', () => {
-            const currentIndex = parseInt(container.dataset.currentIndex || '0');
-            if (currentIndex > 0) {
-                updateCarousel(container, currentIndex - 1);
-            }
+            const currentIndex = parseInt(container.dataset.currentIndex || '1');
+            updateCarousel(container, currentIndex - 1);
         });
 
         rightBtn?.addEventListener('click', () => {
-            const currentIndex = parseInt(container.dataset.currentIndex || '0');
-            const items = container.querySelectorAll('.carousel-item');
-            if (currentIndex < items.length - 1) {
-                updateCarousel(container, currentIndex + 1);
-            }
+            const currentIndex = parseInt(container.dataset.currentIndex || '1');
+            updateCarousel(container, currentIndex + 1);
         });
 
         // 初始化
-        updateCarousel(container, 0);
+        initializeCarousel(container);
     });
 
     // 處理導覽標籤點擊事件
