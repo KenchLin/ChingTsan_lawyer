@@ -404,7 +404,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const fullItemWidth = itemWidth + gap;
         const containerWidth = container.offsetWidth;
         const totalItems = items.length;
-        const realItems = totalItems - 2; // 減去複製的項目
+        const realItems = totalItems - 4; // 減去複製的項目（兩端各兩個）
         
         // 計算置中偏移量
         let offset;
@@ -439,8 +439,8 @@ document.addEventListener('DOMContentLoaded', function () {
         setTimeout(() => {
             const currentIndex = parseInt(container.dataset.currentIndex);
             
-            // 如果滑到最後一個複製的項目
-            if (currentIndex === totalItems - 1) {
+            // 如果滑到最後兩個複製的項目
+            if (currentIndex >= totalItems - 2) {
                 // 移除所有動畫
                 track.style.transition = 'none';
                 items.forEach(item => {
@@ -450,21 +450,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 // 計算新的置中偏移量
                 let newOffset;
                 if (window.innerWidth <= 768) {
-                    newOffset = fullItemWidth;
+                    newOffset = fullItemWidth * 2;
                 } else {
                     const centerOffset = (containerWidth - itemWidth) / 2;
-                    newOffset = fullItemWidth - centerOffset;
+                    newOffset = fullItemWidth * 2 - centerOffset;
                 }
                 
                 // 直接設置新的位置
                 track.style.transform = `translateX(${-newOffset}px)`;
-                container.dataset.currentIndex = '1';
+                container.dataset.currentIndex = '2';
                 
                 // 移除所有項目的 active 類別並設置新的 active
                 items.forEach(item => {
                     item.classList.remove('active');
                 });
-                items[1].classList.add('active');
+                items[2].classList.add('active');
                 
                 // 在下一幀恢復動畫屬性
                 requestAnimationFrame(() => {
@@ -474,8 +474,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                 });
             }
-            // 如果滑到第一個複製的項目
-            else if (currentIndex === 0) {
+            // 如果滑到前兩個複製的項目
+            else if (currentIndex <= 1) {
                 // 移除所有動畫
                 track.style.transition = 'none';
                 items.forEach(item => {
@@ -485,21 +485,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 // 計算新的置中偏移量
                 let newOffset;
                 if (window.innerWidth <= 768) {
-                    newOffset = fullItemWidth * (totalItems - 2);
+                    newOffset = fullItemWidth * (realItems + 1);
                 } else {
                     const centerOffset = (containerWidth - itemWidth) / 2;
-                    newOffset = fullItemWidth * (totalItems - 2) - centerOffset;
+                    newOffset = fullItemWidth * (realItems + 1) - centerOffset;
                 }
                 
                 // 直接設置新的位置
                 track.style.transform = `translateX(${-newOffset}px)`;
-                container.dataset.currentIndex = (totalItems - 2).toString();
+                container.dataset.currentIndex = (realItems + 1).toString();
                 
                 // 移除所有項目的 active 類別並設置新的 active
                 items.forEach(item => {
                     item.classList.remove('active');
                 });
-                items[totalItems - 2].classList.add('active');
+                items[realItems + 1].classList.add('active');
                 
                 // 在下一幀恢復動畫屬性
                 requestAnimationFrame(() => {
@@ -517,16 +517,22 @@ document.addEventListener('DOMContentLoaded', function () {
         const track = container.querySelector('.carousel-track');
         const items = container.querySelectorAll('.carousel-item');
         
-        // 複製第一個和最後一個項目
-        const firstClone = items[0].cloneNode(true);
-        const lastClone = items[items.length - 1].cloneNode(true);
+        // 複製最後兩個項目到開頭
+        const lastClone1 = items[items.length - 1].cloneNode(true);
+        const lastClone2 = items[items.length - 2].cloneNode(true);
+        
+        // 複製前兩個項目到結尾
+        const firstClone1 = items[0].cloneNode(true);
+        const firstClone2 = items[1].cloneNode(true);
         
         // 添加複製的項目到滑軌
-        track.appendChild(firstClone);
-        track.insertBefore(lastClone, items[0]);
+        track.appendChild(firstClone1);
+        track.appendChild(firstClone2);
+        track.insertBefore(lastClone2, items[0]);
+        track.insertBefore(lastClone1, items[0]);
         
         // 初始化位置到第一個真實項目
-        updateCarousel(container, 1);
+        updateCarousel(container, 2);
     }
 
     document.querySelectorAll('.carousel-container').forEach(container => {
@@ -536,7 +542,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const rightBtn = container.querySelector('.carousel-btn.right');
 
         // 初始化 currentIndex
-        container.dataset.currentIndex = '1';
+        container.dataset.currentIndex = '2';
         let startX = 0;
         let currentX = 0;
         let startY = 0;
@@ -632,12 +638,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // 修改按鈕點擊事件
         leftBtn?.addEventListener('click', () => {
-            const currentIndex = parseInt(container.dataset.currentIndex || '1');
+            const currentIndex = parseInt(container.dataset.currentIndex || '2');
             updateCarousel(container, currentIndex - 1);
         });
 
         rightBtn?.addEventListener('click', () => {
-            const currentIndex = parseInt(container.dataset.currentIndex || '1');
+            const currentIndex = parseInt(container.dataset.currentIndex || '2');
             updateCarousel(container, currentIndex + 1);
         });
 
