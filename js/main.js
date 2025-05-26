@@ -406,110 +406,124 @@ document.addEventListener('DOMContentLoaded', function () {
         const totalItems = items.length;
         const realItems = totalItems - 4; // 減去複製的項目（兩端各兩個）
         
-        // 計算置中偏移量
-        let offset;
-        if (window.innerWidth <= 768) {
-            // 手機版：直接使用索引位置
-            offset = fullItemWidth * newIndex;
-        } else {
-            // 電腦版：計算置中位置
-            const centerOffset = (containerWidth - itemWidth) / 2;
-            const targetPosition = fullItemWidth * newIndex;
-            offset = targetPosition - centerOffset;
-        }
-
         // 先移除所有項目的 active 類別
         items.forEach(item => {
             item.classList.remove('active');
         });
-        
-        // 設置動畫
-        track.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-        track.style.transform = `translateX(${-offset}px)`;
-        
-        // 在動畫開始後添加 active 類別
-        setTimeout(() => {
-            items[newIndex].classList.add('active');
-        }, 50);
 
-        // 更新容器的 currentIndex
-        container.dataset.currentIndex = newIndex;
+        // 檢查是否需要先無動畫切換到複製項目
+        const currentIndex = parseInt(container.dataset.currentIndex);
+        let targetIndex = newIndex;
 
-        // 檢查是否需要重置位置
-        setTimeout(() => {
-            const currentIndex = parseInt(container.dataset.currentIndex);
-            
-            // 如果滑到最後兩個複製的項目
-            if (currentIndex >= totalItems - 2) {
-                // 移除所有動畫
-                track.style.transition = 'none';
-                items.forEach(item => {
-                    item.style.transition = 'none';
-                });
-                
-                // 計算新的置中偏移量
-                let newOffset;
-                if (window.innerWidth <= 768) {
-                    newOffset = fullItemWidth * 2;
-                } else {
-                    const centerOffset = (containerWidth - itemWidth) / 2;
-                    newOffset = fullItemWidth * 2 - centerOffset;
-                }
-                
-                // 直接設置新的位置
-                track.style.transform = `translateX(${-newOffset}px)`;
-                container.dataset.currentIndex = '2';
-                
-                // 移除所有項目的 active 類別並設置新的 active
-                items.forEach(item => {
-                    item.classList.remove('active');
-                });
-                items[2].classList.add('active');
-                
-                // 在下一幀恢復動畫屬性
-                requestAnimationFrame(() => {
-                    track.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-                    items.forEach(item => {
-                        item.style.transition = '';
-                    });
-                });
+        // 如果從 A 往左切換到 E(copy)
+        if (currentIndex === 2 && newIndex === 1) {
+            // 先無動畫切換到 A(copy)
+            track.style.transition = 'none';
+            items.forEach(item => {
+                item.style.transition = 'none';
+            });
+
+            let newOffset;
+            if (window.innerWidth <= 768) {
+                newOffset = fullItemWidth * (realItems + 2);
+            } else {
+                const centerOffset = (containerWidth - itemWidth) / 2;
+                newOffset = fullItemWidth * (realItems + 2) - centerOffset;
             }
-            // 如果滑到前兩個複製的項目
-            else if (currentIndex <= 1) {
-                // 移除所有動畫
-                track.style.transition = 'none';
+
+            track.style.transform = `translateX(${-newOffset}px)`;
+            items[realItems + 2].classList.add('active');
+            container.dataset.currentIndex = (realItems + 2).toString();
+
+            // 在下一幀恢復動畫屬性並切換到 E
+            requestAnimationFrame(() => {
+                track.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
                 items.forEach(item => {
-                    item.style.transition = 'none';
+                    item.style.transition = '';
                 });
-                
-                // 計算新的置中偏移量
-                let newOffset;
+
+                // 計算到 E 的偏移量
+                let finalOffset;
                 if (window.innerWidth <= 768) {
-                    newOffset = fullItemWidth * (realItems + 1);
+                    finalOffset = fullItemWidth * (realItems + 1);
                 } else {
                     const centerOffset = (containerWidth - itemWidth) / 2;
-                    newOffset = fullItemWidth * (realItems + 1) - centerOffset;
+                    finalOffset = fullItemWidth * (realItems + 1) - centerOffset;
                 }
-                
-                // 直接設置新的位置
-                track.style.transform = `translateX(${-newOffset}px)`;
-                container.dataset.currentIndex = (realItems + 1).toString();
-                
-                // 移除所有項目的 active 類別並設置新的 active
+
+                track.style.transform = `translateX(${-finalOffset}px)`;
                 items.forEach(item => {
                     item.classList.remove('active');
                 });
                 items[realItems + 1].classList.add('active');
-                
-                // 在下一幀恢復動畫屬性
-                requestAnimationFrame(() => {
-                    track.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-                    items.forEach(item => {
-                        item.style.transition = '';
-                    });
-                });
+                container.dataset.currentIndex = (realItems + 1).toString();
+            });
+            return;
+        }
+        // 如果從 E 往右切換到 A(copy)
+        else if (currentIndex === realItems + 1 && newIndex === realItems + 2) {
+            // 先無動畫切換到 E(copy)
+            track.style.transition = 'none';
+            items.forEach(item => {
+                item.style.transition = 'none';
+            });
+
+            let newOffset;
+            if (window.innerWidth <= 768) {
+                newOffset = fullItemWidth * 1;
+            } else {
+                const centerOffset = (containerWidth - itemWidth) / 2;
+                newOffset = fullItemWidth * 1 - centerOffset;
             }
-        }, 400); // 等待動畫完成
+
+            track.style.transform = `translateX(${-newOffset}px)`;
+            items[1].classList.add('active');
+            container.dataset.currentIndex = '1';
+
+            // 在下一幀恢復動畫屬性並切換到 A
+            requestAnimationFrame(() => {
+                track.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                items.forEach(item => {
+                    item.style.transition = '';
+                });
+
+                // 計算到 A 的偏移量
+                let finalOffset;
+                if (window.innerWidth <= 768) {
+                    finalOffset = fullItemWidth * 2;
+                } else {
+                    const centerOffset = (containerWidth - itemWidth) / 2;
+                    finalOffset = fullItemWidth * 2 - centerOffset;
+                }
+
+                track.style.transform = `translateX(${-finalOffset}px)`;
+                items.forEach(item => {
+                    item.classList.remove('active');
+                });
+                items[2].classList.add('active');
+                container.dataset.currentIndex = '2';
+            });
+            return;
+        }
+        
+        // 一般切換邏輯
+        let offset;
+        if (window.innerWidth <= 768) {
+            offset = fullItemWidth * newIndex;
+        } else {
+            const centerOffset = (containerWidth - itemWidth) / 2;
+            const targetPosition = fullItemWidth * newIndex;
+            offset = targetPosition - centerOffset;
+        }
+        
+        track.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+        track.style.transform = `translateX(${-offset}px)`;
+        
+        setTimeout(() => {
+            items[newIndex].classList.add('active');
+        }, 50);
+
+        container.dataset.currentIndex = newIndex;
     }
 
     // 初始化滑軌
