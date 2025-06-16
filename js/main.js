@@ -336,51 +336,36 @@ document.addEventListener('DOMContentLoaded', function () {
         handleZoom(scale * zoomFactor);
     }
 
-    // 開啟燈箱
+    // 修改 openLightbox 函數
     function openLightbox(imgSrc) {
-        console.log('openLightbox called with:', imgSrc);
-        
         // 重置關閉按鈕狀態
         lightboxClose.classList.remove('active');
         
-        // 從完整路徑中提取文件名並解碼
-        const imgName = decodeURIComponent(imgSrc.split('/').pop());
-        console.log('Decoded image name:', imgName);
+        // 找到當前顯示的面板
+        const activePanel = document.querySelector('.case-panel[style*="display: block"]');
+        if (!activePanel) return;
         
-        // 使用解碼後的文件名來查找圖片元素
-        const img = document.querySelector(`img[src*="${imgName}"]`);
-        console.log('Found image element:', img); // 調試日誌
+        // 在當前面板中找到 active 的案例項目
+        const activeItem = activePanel.querySelector('.carousel-item.active');
+        if (!activeItem) return;
         
-        if (!img) {
-            console.log('Image not found, trying alternative method...'); // 調試日誌
-            // 嘗試使用更寬鬆的匹配方式
-            const allImages = document.querySelectorAll('.carousel-item img');
-            const clickedImg = Array.from(allImages).find(img => 
-                decodeURIComponent(img.src).includes(imgName)
-            );
-            console.log('Found image using alternative method:', clickedImg); // 調試日誌
-            if (!clickedImg) return;
-            
-            const title = clickedImg.dataset.caseTitle || '案例詳情';
-            const description = clickedImg.dataset.caseDescription || '<p>這是一個示範案例的詳細說明。</p>';
+        // 從 active 項目中獲取圖片元素
+        const img = activeItem.querySelector('img');
+        if (!img) return;
+        
+        const title = img.dataset.caseTitle || '案例詳情';
+        const description = img.dataset.caseDescription || '<p>這是一個示範案例的詳細說明。</p>';
 
-            lightboxImg.src = clickedImg.src;
-            lightboxTitle.textContent = title;
-            lightboxDescription.innerHTML = description;
-        } else {
-            const title = img.dataset.caseTitle || '案例詳情';
-            const description = img.dataset.caseDescription || '<p>這是一個示範案例的詳細說明。</p>';
-
-            lightboxImg.src = img.src;
-            lightboxTitle.textContent = title;
-            lightboxDescription.innerHTML = description;
-        }
+        lightboxImg.src = img.src;
+        lightboxTitle.textContent = title;
+        lightboxDescription.innerHTML = description;
         
         lightbox.classList.remove('hidden');
         requestAnimationFrame(() => {
             lightbox.classList.add('show');
             resetImageState();
         });
+        document.body.style.overflow = 'hidden';
     }
 
     // 關閉燈箱
@@ -526,7 +511,7 @@ document.addEventListener('DOMContentLoaded', function () {
         container.dataset.currentIndex = newIndex;
     }
 
-    // 初始化滑軌
+    // 修改案例項目的點擊事件處理
     function initializeCarousel(container) {
         const track = container.querySelector('.carousel-track');
         const items = container.querySelectorAll('.carousel-item');
@@ -547,6 +532,27 @@ document.addEventListener('DOMContentLoaded', function () {
         
         // 初始化位置到第一個真實項目
         updateCarousel(container, 2);
+
+        // 為所有案例項目（包括複製的）添加點擊事件
+        const allItems = track.querySelectorAll('.carousel-item');
+        allItems.forEach((item, index) => {
+            const img = item.querySelector('img');
+            if (img) {
+                img.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const isActive = item.classList.contains('active');
+                    if (isActive) {
+                        // 如果是 active 案例，開啟燈箱
+                        openLightbox(img.src);
+                    } else {
+                        // 如果不是 active 案例，切換到該案例
+                        updateCarousel(container, index);
+                    }
+                });
+            }
+        });
     }
 
     document.querySelectorAll('.carousel-container').forEach(container => {
