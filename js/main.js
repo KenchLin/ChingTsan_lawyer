@@ -511,6 +511,14 @@ document.addEventListener('DOMContentLoaded', function () {
         container.dataset.currentIndex = newIndex;
     }
 
+    // touch/click 防重複觸發旗標
+    let lastTouchTime = 0;
+
+    // 在 document 層級監聽 touchstart，記錄時間
+    document.addEventListener('touchstart', function() {
+        lastTouchTime = Date.now();
+    }, {passive: true});
+
     // 修改案例項目的點擊事件處理
     function initializeCarousel(container) {
         const track = container.querySelector('.carousel-track');
@@ -539,6 +547,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const img = item.querySelector('img');
             if (img) {
                 img.addEventListener('click', (e) => {
+                    // 防止手機點擊重複觸發
+                    if (Date.now() - lastTouchTime < 500) return;
                     e.preventDefault();
                     e.stopPropagation();
                     
