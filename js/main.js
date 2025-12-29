@@ -47,13 +47,13 @@ document.addEventListener('DOMContentLoaded', function () {
             const targetPanel = document.getElementById(`panel-${tab.dataset.target}`);
             if (targetPanel) {
                 targetPanel.style.display = 'block';
-                
+
                 // 獲取該面板的滑軌容器
                 const container = targetPanel.querySelector('.carousel-container');
                 if (container) {
                     // 獲取保存的索引，如果沒有則使用 0
                     const savedIndex = parseInt(container.dataset.currentIndex || '0');
-                    
+
                     // 更新滑軌位置
                     updateCarousel(container, savedIndex);
                 }
@@ -112,39 +112,39 @@ document.addEventListener('DOMContentLoaded', function () {
     // 處理拖曳
     function handleDrag(e) {
         if (!isMouseDown) return;
-        
+
         e.preventDefault();
         const touch = e.touches ? e.touches[0] : e;
-        
+
         if (!isDragging) {
             isDragging = true;
             lastX = touch.clientX;
             lastY = touch.clientY;
             return;
         }
-        
+
         const deltaX = touch.clientX - lastX;
         const deltaY = touch.clientY - lastY;
-        
+
         // 計算移動距離
         const moveDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        
+
         // 如果移動距離太小，不進行拖曳
         if (moveDistance < 1) return;
-        
+
         const imgRect = lightboxImg.getBoundingClientRect();
         const containerRect = lightboxImageContainer.getBoundingClientRect();
         const scaledWidth = imgRect.width;
         const scaledHeight = imgRect.height;
-        
+
         // 計算最大可移動範圍
         const maxX = Math.max(0, (scaledWidth - containerRect.width) / 2);
         const maxY = Math.max(0, (scaledHeight - containerRect.height) / 2);
-        
+
         // 更新位置，允許超出邊界
         translateX += deltaX;
         translateY += deltaY;
-        
+
         // 在最小縮放狀態下，使用較小的移動範圍
         if (scale === 1) {
             const maxOffset = 50; // 最小縮放狀態下的最大偏移量
@@ -153,18 +153,18 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
             // 放大狀態下，允許更大的拖曳範圍
             const damping = 0.3; // 阻尼係數
-            
+
             // 分別設定水平和垂直方向的基礎溢出限制
             const baseOverflowX = 200; // 水平方向的基礎溢出限制
             const baseOverflowY = 250; // 垂直方向的基礎溢出限制
             const scaleFactor = Math.min(scale, 3); // 增加縮放係數範圍
             const overflowLimitX = baseOverflowX * scaleFactor;
             const overflowLimitY = baseOverflowY * scaleFactor;
-            
+
             // 計算超出邊界的距離
             const overflowX = Math.abs(translateX) - maxX;
             const overflowY = Math.abs(translateY) - maxY;
-            
+
             // 如果超出邊界，增加阻尼效果
             if (overflowX > baseOverflowX) {
                 const limitedOverflow = Math.min(overflowX, overflowLimitX);
@@ -175,10 +175,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 translateY = Math.sign(translateY) * (maxY + limitedOverflow * damping);
             }
         }
-        
+
         // 更新圖片位置
         lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-        
+
         lastX = touch.clientX;
         lastY = touch.clientY;
     }
@@ -189,27 +189,27 @@ document.addEventListener('DOMContentLoaded', function () {
         const containerRect = lightboxImageContainer.getBoundingClientRect();
         const scaledWidth = imgRect.width;
         const scaledHeight = imgRect.height;
-        
+
         // 計算最大可移動範圍
         const maxX = Math.max(0, (scaledWidth - containerRect.width) / 2);
         const maxY = Math.max(0, (scaledHeight - containerRect.height) / 2);
-        
+
         // 計算當前位置到邊界的距離
         const distanceToBoundaryX = Math.abs(translateX) - maxX;
         const distanceToBoundaryY = Math.abs(translateY) - maxY;
-        
+
         // 檢查是否需要回彈（只要超出邊界就需要回彈）
-        const needsRebound = scale === 1 || 
-            (distanceToBoundaryX > 0) || 
+        const needsRebound = scale === 1 ||
+            (distanceToBoundaryX > 0) ||
             (distanceToBoundaryY > 0);
-        
+
         if (needsRebound) {
             isAnimating = true;
-            
+
             // 根據縮放比例調整動畫時間
             const animationDuration = scale === 1 ? 200 : 300;
             lightboxImg.style.transition = `transform ${animationDuration}ms cubic-bezier(0.4, 0, 0.2, 1)`;
-            
+
             if (scale === 1) {
                 // 最小縮放狀態下回到中心
                 translateX = 0;
@@ -222,19 +222,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 } else if (translateX < -maxX) {
                     translateX = -maxX;
                 }
-                
+
                 if (translateY > maxY) {
                     translateY = maxY;
                 } else if (translateY < -maxY) {
                     translateY = -maxY;
                 }
             }
-            
+
             // 使用 requestAnimationFrame 確保動畫流暢
             rafId = requestAnimationFrame(() => {
                 lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
             });
-            
+
             // 動畫結束後清理
             setTimeout(() => {
                 cleanup();
@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // 如果不需要回彈，直接清理狀態
             cleanup();
         }
-        
+
         // 重置所有狀態
         startDistance = 0;
         currentDistance = 0;
@@ -259,15 +259,15 @@ document.addEventListener('DOMContentLoaded', function () {
     function handleZoom(newScale) {
         const oldScale = scale;
         scale = Math.max(1, Math.min(3, newScale));
-        
+
         if (scale !== oldScale) {
             const imgRect = lightboxImg.getBoundingClientRect();
             const containerRect = lightboxImageContainer.getBoundingClientRect();
-            
+
             // 如果縮放到最小，使用較快的動畫
             const animationDuration = scale === 1 ? 200 : 300;
             lightboxImg.style.transition = `transform ${animationDuration}ms cubic-bezier(0.4, 0, 0.2, 1)`;
-            
+
             if (scale === 1) {
                 translateX = 0;
                 translateY = 0;
@@ -275,17 +275,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 // 計算新的最大可移動範圍
                 const maxX = (imgRect.width * scale - containerRect.width) / 2;
                 const maxY = (imgRect.height * scale - containerRect.height) / 2;
-                
+
                 // 確保圖片在縮放後不會超出邊界
                 translateX = Math.max(-maxX, Math.min(maxX, translateX));
                 translateY = Math.max(-maxY, Math.min(maxY, translateY));
             }
-            
+
             // 使用 requestAnimationFrame 確保動畫流暢
             rafId = requestAnimationFrame(() => {
                 lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
             });
-            
+
             // 動畫結束後清理
             setTimeout(() => {
                 cleanup();
@@ -310,19 +310,19 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
             const touch1 = e.touches[0];
             const touch2 = e.touches[1];
-            
+
             if (!startDistance) {
                 startDistance = Math.hypot(
                     touch2.clientX - touch1.clientX,
                     touch2.clientY - touch1.clientY
                 );
             }
-            
+
             currentDistance = Math.hypot(
                 touch2.clientX - touch1.clientX,
                 touch2.clientY - touch1.clientY
             );
-            
+
             const newScale = scale * (currentDistance / startDistance);
             handleZoom(newScale);
         }
@@ -340,26 +340,26 @@ document.addEventListener('DOMContentLoaded', function () {
     function openLightbox(imgSrc) {
         // 重置關閉按鈕狀態
         lightboxClose.classList.remove('active');
-        
+
         // 找到當前顯示的面板
         const activePanel = document.querySelector('.case-panel[style*="display: block"]');
         if (!activePanel) return;
-        
+
         // 在當前面板中找到 active 的案例項目
         const activeItem = activePanel.querySelector('.carousel-item.active');
         if (!activeItem) return;
-        
+
         // 從 active 項目中獲取圖片元素
         const img = activeItem.querySelector('img');
         if (!img) return;
-        
+
         const title = img.dataset.caseTitle || '案例詳情';
         const description = img.dataset.caseDescription || '<p>這是一個示範案例的詳細說明。</p>';
 
         lightboxImg.src = img.src;
         lightboxTitle.textContent = title;
         lightboxDescription.innerHTML = description;
-        
+
         lightbox.classList.remove('hidden');
         requestAnimationFrame(() => {
             lightbox.classList.add('show');
@@ -372,7 +372,8 @@ document.addEventListener('DOMContentLoaded', function () {
     function closeLightbox() {
         // 移除 active 狀態
         lightboxClose.classList.remove('active');
-        
+        document.body.style.overflow = ''; // Restore scrolling
+
         lightbox.classList.remove('show');
         setTimeout(() => {
             lightbox.classList.add('hidden');
@@ -390,7 +391,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const containerWidth = container.offsetWidth;
         const totalItems = items.length;
         const realItems = totalItems - 4; // 減去複製的項目（兩端各兩個）
-        
+
         // 先移除所有項目的 active 類別
         items.forEach(item => {
             item.classList.remove('active');
@@ -490,7 +491,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             return;
         }
-        
+
         // 一般切換邏輯
         let offset;
         if (window.innerWidth <= 768) {
@@ -500,10 +501,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const targetPosition = fullItemWidth * newIndex;
             offset = targetPosition - centerOffset;
         }
-        
+
         track.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
         track.style.transform = `translateX(${-offset}px)`;
-        
+
         setTimeout(() => {
             items[newIndex].classList.add('active');
         }, 50);
@@ -512,58 +513,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // touch/click 防重複觸發旗標
-    let lastTouchTime = 0;
-
-    // 在 document 層級監聽 touchstart，記錄時間
-    document.addEventListener('touchstart', function() {
-        lastTouchTime = Date.now();
-    }, {passive: true});
+    // (Removed lastTouchTime since we use standard click events now)
 
     // 修改案例項目的點擊事件處理
-    function initializeCarousel(container) {
-        const track = container.querySelector('.carousel-track');
-        const items = container.querySelectorAll('.carousel-item');
-        
-        // 複製最後兩個項目到開頭
-        const lastClone1 = items[items.length - 1].cloneNode(true);
-        const lastClone2 = items[items.length - 2].cloneNode(true);
-        
-        // 複製前兩個項目到結尾
-        const firstClone1 = items[0].cloneNode(true);
-        const firstClone2 = items[1].cloneNode(true);
-        
-        // 添加複製的項目到滑軌
-        track.appendChild(firstClone1);
-        track.appendChild(firstClone2);
-        track.insertBefore(lastClone2, items[0]);
-        track.insertBefore(lastClone1, items[0]);
-        
-        // 初始化位置到第一個真實項目
-        updateCarousel(container, 2);
-
-        // 為所有案例項目（包括複製的）添加點擊事件
-        const allItems = track.querySelectorAll('.carousel-item');
-        allItems.forEach((item, index) => {
-            const img = item.querySelector('img');
-            if (img) {
-                img.addEventListener('click', (e) => {
-                    // 防止手機點擊重複觸發
-                    if (Date.now() - lastTouchTime < 500) return;
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    const isActive = item.classList.contains('active');
-                    if (isActive) {
-                        // 如果是 active 案例，開啟燈箱
-                        openLightbox(img.src);
-                    } else {
-                        // 如果不是 active 案例，切換到該案例
-                        updateCarousel(container, index);
-                    }
-                });
-            }
-        });
-    }
+    // (Moved inside the loop to access closure variables)
 
     document.querySelectorAll('.carousel-container').forEach(container => {
         const track = container.querySelector('.carousel-track');
@@ -584,6 +537,56 @@ document.addEventListener('DOMContentLoaded', function () {
         let touchStartTarget = null;
         let touchStartActiveImg = null;
 
+        function initializeCarousel(container) {
+            const track = container.querySelector('.carousel-track');
+            const items = container.querySelectorAll('.carousel-item');
+
+            // 複製最後兩個項目到開頭
+            const lastClone1 = items[items.length - 1].cloneNode(true);
+            const lastClone2 = items[items.length - 2].cloneNode(true);
+
+            // 複製前兩個項目到結尾
+            const firstClone1 = items[0].cloneNode(true);
+            const firstClone2 = items[1].cloneNode(true);
+
+            // 添加複製的項目到滑軌
+            track.appendChild(firstClone1);
+            track.appendChild(firstClone2);
+            track.insertBefore(lastClone2, items[0]);
+            track.insertBefore(lastClone1, items[0]);
+
+            // 初始化位置到第一個真實項目
+            updateCarousel(container, 2);
+
+            // 為所有案例項目（包括複製的）添加點擊事件
+            const allItems = track.querySelectorAll('.carousel-item');
+            allItems.forEach((item, index) => {
+                const img = item.querySelector('img');
+                if (img) {
+                    img.addEventListener('click', (e) => {
+                        // 如果剛剛發生了滑動，則阻止點擊
+                        if (hasMoved) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            return;
+                        }
+
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const isActive = item.classList.contains('active');
+                        if (isActive) {
+                            // 如果是 active 案例，開啟燈箱
+                            openLightbox(img.src);
+                        } else {
+                            // 如果不是 active 案例，切換到該案例
+                            updateCarousel(container, index);
+                        }
+                    });
+                }
+            });
+        }
+
         // 觸控事件處理
         track.addEventListener('touchstart', (e) => {
             if (e.touches.length === 1) {
@@ -599,31 +602,31 @@ document.addEventListener('DOMContentLoaded', function () {
 
         track.addEventListener('touchmove', (e) => {
             if (!isDragging) return;
-            
+
             const touch = e.touches[0];
             currentX = touch.clientX;
             currentY = touch.clientY;
-            
+
             const deltaX = currentX - startX;
             const deltaY = currentY - startY;
-            
+
             // 如果水平移動距離大於垂直移動距離，則視為滑動
             if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                e.preventDefault();
+                if (e.cancelable) e.preventDefault();
                 hasMoved = true;
-                
+
                 const currentIndex = parseInt(container.dataset.currentIndex);
                 const itemWidth = items[0].offsetWidth;
                 const gap = parseInt(getComputedStyle(track).gap) || 0;
                 const fullItemWidth = itemWidth + gap;
-                
+
                 // 計算新的位置
                 const offset = deltaX / fullItemWidth;
                 const newIndex = currentIndex - Math.round(offset);
-                
+
                 // 更新滑軌位置
                 updateCarousel(container, newIndex);
-                
+
                 // 重置起始位置
                 startX = currentX;
             }
@@ -631,39 +634,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
         track.addEventListener('touchend', (e) => {
             if (!isDragging) return;
-            
+
             touchEndTime = Date.now();
-            const touchDuration = touchEndTime - touchStartTime;
-            
-            if (!hasMoved && touchDuration < 300 && touchStartTarget === e.target) {
-                if (touchStartActiveImg) {
-                    const activeItem = items[parseInt(container.dataset.currentIndex)];
-                    const activeImg = activeItem.querySelector('img');
-                    if (activeImg) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        openLightbox(activeImg.src);
-                    }
-                } else {
-                    const touch = e.changedTouches[0];
-                    const containerRect = container.getBoundingClientRect();
-                    const containerCenter = containerRect.left + containerRect.width / 2;
-                    
-                    let newIndex = parseInt(container.dataset.currentIndex);
-                    if (touch.clientX < containerCenter) {
-                        newIndex--;
-                    } else {
-                        newIndex++;
-                    }
-                    
-                    updateCarousel(container, newIndex);
-                }
-            }
-            
+
             touchStartActiveImg = null;
             touchStartTarget = null;
             isDragging = false;
-            hasMoved = false;
+
+            // 讓 hasMoved 狀態多停留一下，以便 click 事件能偵測到
+            setTimeout(() => {
+                hasMoved = false;
+            }, 100);
         });
 
         // 修改按鈕點擊事件
@@ -683,13 +664,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 處理導覽標籤點擊事件
     const navLinks = document.querySelectorAll('.navbar nav ul li a');
-    
+
     navLinks.forEach(link => {
         // 手機版觸控事件處理
         if (window.innerWidth <= 768) {
             let touchStartTime = 0;
             let touchStartY = 0;
-            
+
             link.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -701,7 +682,7 @@ document.addEventListener('DOMContentLoaded', function () {
             link.addEventListener('touchmove', (e) => {
                 const touchY = e.touches[0].clientY;
                 const diffY = Math.abs(touchY - touchStartY);
-                
+
                 // 如果垂直移動超過 10px，取消 active 狀態
                 if (diffY > 10) {
                     link.classList.remove('active');
@@ -711,10 +692,10 @@ document.addEventListener('DOMContentLoaded', function () {
             link.addEventListener('touchend', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                
+
                 const touchEndTime = Date.now();
                 const touchDuration = touchEndTime - touchStartTime;
-                
+
                 // 如果觸控時間小於 300ms 且沒有明顯的垂直移動，執行導覽
                 if (touchDuration < 300) {
                     const href = link.getAttribute('href');
@@ -725,7 +706,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                     }
                 }
-                
+
                 // 移除 active 狀態
                 link.classList.remove('active');
             }, { passive: false });
@@ -735,11 +716,11 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         } else {
             // 電腦版點擊事件處理
-            link.addEventListener('click', function(e) {
+            link.addEventListener('click', function (e) {
                 e.preventDefault();
                 navLinks.forEach(l => l.classList.remove('active'));
                 this.classList.add('active');
-                
+
                 const href = this.getAttribute('href');
                 if (href && href !== '#') {
                     const targetElement = document.querySelector(href);
@@ -754,19 +735,19 @@ document.addEventListener('DOMContentLoaded', function () {
     // 監聽視窗大小變化
     window.addEventListener('resize', () => {
         const isMobile = window.innerWidth <= 768;
-        
+
         // 移除所有現有的事件監聽器
         navLinks.forEach(link => {
             const newLink = link.cloneNode(true);
             link.parentNode.replaceChild(newLink, link);
         });
-        
+
         // 重新綁定事件監聽器
         if (isMobile) {
             document.querySelectorAll('.navbar nav ul li a').forEach(link => {
                 let touchStartTime = 0;
                 let touchStartY = 0;
-                
+
                 link.addEventListener('touchstart', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -778,7 +759,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 link.addEventListener('touchmove', (e) => {
                     const touchY = e.touches[0].clientY;
                     const diffY = Math.abs(touchY - touchStartY);
-                    
+
                     if (diffY > 10) {
                         link.classList.remove('active');
                     }
@@ -787,10 +768,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 link.addEventListener('touchend', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    
+
                     const touchEndTime = Date.now();
                     const touchDuration = touchEndTime - touchStartTime;
-                    
+
                     if (touchDuration < 300) {
                         const href = link.getAttribute('href');
                         if (href && href !== '#') {
@@ -800,7 +781,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             }
                         }
                     }
-                    
+
                     link.classList.remove('active');
                 }, { passive: false });
 
@@ -810,11 +791,11 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         } else {
             document.querySelectorAll('.navbar nav ul li a').forEach(link => {
-                link.addEventListener('click', function(e) {
+                link.addEventListener('click', function (e) {
                     e.preventDefault();
                     navLinks.forEach(l => l.classList.remove('active'));
                     this.classList.add('active');
-                    
+
                     const href = this.getAttribute('href');
                     if (href && href !== '#') {
                         const targetElement = document.querySelector(href);
@@ -825,17 +806,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             });
         }
-        
+
         document.querySelectorAll('.carousel-container').forEach(container => {
             const items = container.querySelectorAll('.carousel-item');
             const track = container.querySelector('.carousel-track');
-            
+
             // 移除所有現有的事件監聽器
             items.forEach(item => {
                 const img = item.querySelector('img');
                 img.replaceWith(img.cloneNode(true));
             });
-            
+
             // 重新綁定事件監聽器
             if (isMobile) {
                 // 手機版的事件監聽器會在容器初始化時重新綁定
@@ -848,11 +829,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     img.addEventListener('click', (e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        
+
                         const carouselItem = img.closest('.carousel-item');
                         const isActive = carouselItem.classList.contains('active');
                         const clickedIndex = Array.from(items).indexOf(carouselItem);
-                        
+
                         if (isActive) {
                             // 如果是 active 案例，開啟燈箱
                             openLightbox(img.src);
@@ -980,7 +961,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 導航欄收合功能
     if (floatingNavToggle) {
-        floatingNavToggle.addEventListener('click', function(e) {
+        floatingNavToggle.addEventListener('click', function (e) {
             e.preventDefault();
             e.stopPropagation();
             floatingNav.classList.toggle('collapsed');
@@ -998,7 +979,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 點擊導航連結時收合導航欄（手機版）
     floatingNavLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
+        link.addEventListener('click', function (e) {
             if (window.innerWidth <= 768) {
                 const href = this.getAttribute('href');
                 if (href && href !== '#') {
@@ -1027,7 +1008,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 社群媒體連結點擊處理（手機版）
     socialLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
+        link.addEventListener('click', function (e) {
             if (window.innerWidth <= 768) {
                 const href = this.getAttribute('href');
                 if (href && href !== '#') {
@@ -1037,7 +1018,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const icon = floatingNavToggle.querySelector('i');
                     icon.classList.remove('fa-times');
                     icon.classList.add('fa-bars');
-                    
+
                     // 使用 requestAnimationFrame 優化開啟新視窗
                     requestAnimationFrame(() => {
                         window.open(href, '_blank', 'noopener,noreferrer');
@@ -1077,7 +1058,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const sectionTop = section.offsetTop - threshold;
             const sectionHeight = section.offsetHeight;
             const sectionId = section.getAttribute('id');
-            
+
             // 更新浮動導航欄的當前頁面指示
             const floatingLink = document.querySelector(`.floating-nav-link[href="#${sectionId}"]`);
             const mainLink = document.querySelector(`.navbar nav ul li a[href="#${sectionId}"]`);
@@ -1091,7 +1072,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     mainLink.classList.add('active');
                 }
                 foundActiveSection = true;
-            } 
+            }
             // 如果不是接近底部，使用一般的判斷邏輯
             else if (!isNearBottom && scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
                 if (floatingLink && !floatingLink.classList.contains('active')) {
@@ -1116,7 +1097,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!foundActiveSection && isNearBottom) {
             const contactFloatingLink = document.querySelector('.floating-nav-link[href="#contact"]');
             const contactMainLink = document.querySelector('.navbar nav ul li a[href="#contact"]');
-            
+
             if (contactFloatingLink) {
                 contactFloatingLink.classList.add('active');
             }
