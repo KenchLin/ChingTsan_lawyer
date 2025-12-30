@@ -11,7 +11,8 @@ body {
     line-height: 1.6;
     color: #1e1d1d;
     background: #f8f9fa;
-    overflow-x: hidden; /* ⬅︎ 防止極小誤差導致水平滾動條 */
+    overflow-x: hidden;
+    /* ⬅︎ 防止極小誤差導致水平滾動條 */
 }
 
 .container {
@@ -139,9 +140,9 @@ body {
         width: 100%;
         height: 2px;
         background: linear-gradient(90deg,
-            rgba(255, 215, 0, 0) 0%,
-            rgba(255, 215, 0, 0.8) 50%,
-            rgba(255, 215, 0, 0) 100%);
+                rgba(255, 215, 0, 0) 0%,
+                rgba(255, 215, 0, 0.8) 50%,
+                rgba(255, 215, 0, 0) 100%);
         transform: scaleX(0);
         transition: transform 0.3s ease;
         transform-origin: center;
@@ -178,7 +179,7 @@ body {
 
     .navbar nav ul li a:hover,
     .navbar nav ul li a.active {
-    color: #FFD700;
+        color: #FFD700;
     }
 }
 
@@ -195,7 +196,8 @@ body {
     justify-content: center;
     color: #eee;
     text-align: center;
-    opacity: 1; /* 確保背景圖片始終可見 */
+    opacity: 1;
+    /* 確保背景圖片始終可見 */
     animation: fadeIn 0.5s ease-out 3.0s forwards;
 }
 
@@ -230,8 +232,13 @@ body {
 
 /* Animation */
 @keyframes fadeIn {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
 }
 
 /* Section */
@@ -246,11 +253,11 @@ body {
 
 /* Footer */
 .footer {
-    background: linear-gradient(180deg, 
-        rgba(59, 59, 59, 0.227) 0%,
-        rgba(236, 236, 236, 0.807) 20%,
-        rgba(236, 236, 236, 0.807) 80%,
-        rgba(59, 59, 59, 0.227) 100%);
+    background: linear-gradient(180deg,
+            rgba(59, 59, 59, 0.227) 0%,
+            rgba(236, 236, 236, 0.807) 20%,
+            rgba(236, 236, 236, 0.807) 80%,
+            rgba(59, 59, 59, 0.227) 100%);
     color: #343a40;
     text-align: center;
     padding: 20px 0;
@@ -266,7 +273,7 @@ body {
     left: 0;
     right: 0;
     height: 100%;
-    background: 
+    background:
         radial-gradient(circle at 20% 50%, rgba(28, 124, 71, 0.03) 0%, transparent 50%),
         radial-gradient(circle at 80% 30%, rgba(28, 124, 71, 0.03) 0%, transparent 50%);
     pointer-events: none;
@@ -282,9 +289,9 @@ body {
     width: 80%;
     height: 1px;
     background: linear-gradient(90deg,
-        rgba(28, 124, 71, 0) 0%,
-        rgba(28, 124, 71, 0.1) 50%,
-        rgba(28, 124, 71, 0) 100%);
+            rgba(28, 124, 71, 0) 0%,
+            rgba(28, 124, 71, 0.1) 50%,
+            rgba(28, 124, 71, 0) 100%);
 }
 
 /* 確保 footer 內容在裝飾元素之上 */
@@ -360,10 +367,12 @@ body {
 #cases::before {
     content: '';
     position: absolute;
-    top: 5%; /* 從上方 5% 開始 */
+    top: 5%;
+    /* 從上方 5% 開始 */
     left: 0;
     right: 0;
-    bottom: 5%; /* 到底部 5% 結束 */
+    bottom: 5%;
+    /* 到底部 5% 結束 */
     background: rgba(59, 59, 74, 0.871);
     z-index: 1;
 }
@@ -371,10 +380,11 @@ body {
 #cases .container {
     position: relative;
     z-index: 2;
-    padding: 40px 0; /* 確保內容有足夠的上下間距 */
+    padding: 40px 0;
+    /* 確保內容有足夠的上下間距 */
 }
 
-#cases h2, 
+#cases h2,
 #cases p {
     text-align: center;
     position: relative;
@@ -425,7 +435,8 @@ body {
     animation: fadeSlide 0.4s ease forwards;
     text-align: center;
     margin-bottom: 5px;
-    transition: min-height 0.5s ease; /* 使區塊高度變動有平滑動畫 */
+    transition: min-height 0.5s ease;
+    /* 使區塊高度變動有平滑動畫 */
 }
 
 .case-panel.show {
@@ -465,8 +476,15 @@ body {
 }
 
 @keyframes fadeSlide {
-    0% { opacity: 0; transform: translateY(10px); }
-    100% { opacity: 1; transform: translateY(0); }
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* 案例滑軌區塊 */
@@ -492,109 +510,139 @@ body {
     overflow: hidden;
     min-height: 680px;
     padding-top: 40px;
-    padding-bottom: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding-bottom: 50px;
+
+    /* 增加遮罩效果: 左右兩側淡出 */
+    mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
 }
 
-.carousel-track {
-    display: flex;
-    gap: 80px;
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    align-items: flex-start;
-    will-change: transform;
-    padding: 0 20px;
+/* ==================== Swiper Slide Style ==================== */
+.swiper {
     width: 100%;
+    padding-top: 50px;
+    padding-bottom: 50px;
 }
 
-.carousel-item {
-    flex: 0 0 300px;
-    text-align: center;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    margin-top: 20px;
-    transform-origin: center center;
-    z-index: 0;
-    opacity: 0.6;
-    transform: scale(0.9);
-}
-
-.carousel-item.active {
-    transform: scale(1.15);
-    z-index: 1;
-    margin-bottom: 40px;
+.swiper-slide {
+    background-position: center;
+    background-size: cover;
+    width: 300px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* 移除過度的縮放與模糊，回歸清晰標準 */
     opacity: 1;
-}
-
-.carousel-item::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg,
-        rgba(255, 215, 0, 0) 0%,
-        rgba(255, 215, 0, 0.5) 50%,
-        rgba(255, 215, 0, 0) 100%);
-    opacity: 0;
+    transform: scale(1);
     transition: opacity 0.3s ease;
 }
 
-.carousel-item:hover::before {
-    opacity: 1;
+/* 僅在手機版保留一點點焦點效果區分 */
+@media (max-width: 768px) {
+    .swiper-slide {
+        width: 75%;
+        /* 手機版寬度 */
+        opacity: 1 !important;
+        /* 強制不透明，確保清晰 */
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+    }
+
+    .swiper-slide-active {
+        transform: scale(1);
+        z-index: 10;
+        /* opacity: 1; removed as base is already 1 */
+    }
 }
 
-.carousel-item p {
-    margin-bottom: 10px;
-    font-weight: bold;
-    background-color: rgba(255, 255, 255, 0);
-    padding: 8px 16px;
-    border-radius: 8px;
-    position: relative;
-    z-index: 2;
-    margin-top: 0px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.carousel-item img {
+.swiper-slide img {
+    display: block;
     width: 100%;
-    height: auto;
     border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    /* 確保圖片點擊優化 */
+    touch-action: manipulation;
     cursor: pointer;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    margin-top: clamp(8px, 2vw, 16px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    background-color: #ffffff;
-    transform: scale(1);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
-.carousel-item img:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+.swiper-slide img:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
+/* 標題樣式 */
+.carousel-caption {
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    opacity: 1;
+    /* Always show caption on desktop */
+    margin-top: 10px;
+}
+
+/* Distinct cursor for active slide to hint at lightbox */
+.swiper-slide.swiper-slide-active img {
+    cursor: zoom-in;
+}
+
+/* 左右按鈕自定義 */
 .carousel-btn {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 56px;
-    height: 56px;
-    background: rgba(255, 255, 255, 0.65);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 20;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: none;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
+    color: white;
+    font-size: 24px;
     cursor: pointer;
-    z-index: 3;
+    backdrop-filter: blur(5px);
+    transition: background-color 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    padding: 0;
-    border: none;
+}
+
+.carousel-btn:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.carousel-btn.left {
+    left: 20px;
+}
+
+.carousel-btn.right {
+    right: 20px;
+}
+
+/* Swiper Pagination (Dots) */
+.swiper-pagination-bullet {
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 1;
+}
+
+.swiper-pagination-bullet-active {
+    background: #fff;
+}
+
+@media (max-width: 768px) {
+    .swiper-slide {
+        width: 70%;
+        /* 手機版寬度 */
+    }
+
+    .carousel-btn {
+        display: none;
+        /* 手機版隱藏按鈕，使用滑動 */
+    }
 }
 
 .arrow-symbol {
@@ -626,11 +674,11 @@ body {
     background: rgba(255, 255, 255, 0.75);
 }
 
-.carousel-btn.left { 
+.carousel-btn.left {
     left: 20px;
 }
 
-.carousel-btn.right { 
+.carousel-btn.right {
     right: 20px;
 }
 
@@ -642,11 +690,9 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(
-        circle at center,
-        rgba(255, 255, 255, 0.15) 0%,
-        transparent 70%
-    );
+    background: radial-gradient(circle at center,
+            rgba(255, 255, 255, 0.15) 0%,
+            transparent 70%);
     border-radius: 50%;
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -752,7 +798,7 @@ body {
     overflow-y: auto;
     flex: 1;
     border-radius: 12px;
-    background: 
+    background:
         linear-gradient(rgba(255, 255, 255, 0.90), rgba(255, 255, 255, 0.90)),
         url('../images/勝訴案例燈箱文字背景.webp') no-repeat center center;
     background-size: cover;
@@ -789,8 +835,8 @@ body {
     width: 60px;
     height: 2px;
     background: linear-gradient(90deg,
-        rgba(28, 124, 71, 0.8) 0%,
-        rgba(28, 124, 71, 0) 100%);
+            rgba(28, 124, 71, 0.8) 0%,
+            rgba(28, 124, 71, 0) 100%);
 }
 
 .lightbox-description {
@@ -843,7 +889,7 @@ body {
         height: 36px;
     }
 
-    
+
 
     /* 移除之前的狀態樣式，改用 JavaScript 控制 */
     .lightbox-close.active {
@@ -892,20 +938,20 @@ body {
     animation: slideUp 1.2s ease-out 4.0s forwards;
     text-align: left;
     font-size: 0.9em;
-  }
-  
-  .notice-box h2 {
+}
+
+.notice-box h2 {
     font-size: 1.1em;
     margin: 0 0 6px;
     color: #d4a106;
-  }
-  
-  .notice-box p {
+}
+
+.notice-box p {
     margin: 0 0 10px;
     color: #333;
-  }
-  
-  .notice-btn {
+}
+
+.notice-btn {
     display: inline-block;
     background-color: #d4a106;
     color: white;
@@ -914,16 +960,23 @@ body {
     border-radius: 4px;
     font-size: 0.85em;
     transition: background-color 0.3s ease;
-  }
-  
-  .notice-btn:hover {
+}
+
+.notice-btn:hover {
     background-color: #b88d04;
-  }
-  
+}
+
 @keyframes slideUp {
-    0% { opacity: 0; transform: translateY(20px); }
-    100% { opacity: 1; transform: translateY(0); }
-  }
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
 /* 手機版樣式 */
 @media (max-width: 768px) {
@@ -970,10 +1023,10 @@ body {
 
     .logo::after {
         height: 3px;
-        background: linear-gradient(90deg, 
-            rgba(255, 215, 0, 0) 0%,
-            rgba(255, 234, 117, 0.479) 50%,
-            rgba(255, 215, 0, 0) 100%);
+        background: linear-gradient(90deg,
+                rgba(255, 215, 0, 0) 0%,
+                rgba(255, 234, 117, 0.479) 50%,
+                rgba(255, 215, 0, 0) 100%);
     }
 
     .hero-title {
@@ -1003,20 +1056,20 @@ body {
         opacity: 0;
         animation: slideUp 1.2s ease-out 4.0s forwards;
     }
-    
-      .notice-box h2 {
+
+    .notice-box h2 {
         font-size: 14px;
-      }
-    
-      .notice-box p {
+    }
+
+    .notice-box p {
         font-size: 11px;
-      }
-    
-      .notice-box .notice-btn {
+    }
+
+    .notice-box .notice-btn {
         font-size: 11px;
         padding: 4px 9px;
-      }
-    
+    }
+
     .image-column img {
         width: 70%;
         height: auto;
@@ -1202,42 +1255,50 @@ body {
 
 /* Logo 序列動畫相關樣式 */
 @keyframes logoSequence {
-    0% { 
-        opacity: 0; 
-        transform: scale(0.8) translateY(-10px); 
+    0% {
+        opacity: 0;
+        transform: scale(0.8) translateY(-10px);
         filter: blur(2px);
     }
-    20% { 
-        opacity: 1; 
-        transform: scale(1.05) translateY(0); 
+
+    20% {
+        opacity: 1;
+        transform: scale(1.05) translateY(0);
         filter: blur(0);
     }
-    40% { 
-        opacity: 1; 
-        transform: scale(1); 
+
+    40% {
+        opacity: 1;
+        transform: scale(1);
         filter: blur(0);
     }
-    100% { 
-        opacity: 1; 
-        transform: scale(1); 
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
         filter: blur(0);
     }
 }
 
 @keyframes logoIconHighlight {
-    0% { 
+    0% {
         filter: brightness(1);
         box-shadow: 0 0 0 rgba(255, 255, 255, 0);
     }
-    100% { 
+
+    100% {
         filter: brightness(1.1);
         box-shadow: 0 0 15px rgba(255, 255, 255, 0.068);
-        background: linear-gradient(135deg, 
-            rgba(255, 215, 0, 0.05) 0%,    /* 起始點：淡金色 */
-            rgba(255, 217, 0, 0.04) 20%,  /* 中間點：更淡的金色 */
-            rgba(255, 215, 0, 0.07) 30%,   /* 結束點：淡金色 */
-            transparent 100%               /* 確保漸層平滑過渡到透明 */
-        );
+        background: linear-gradient(135deg,
+                rgba(255, 215, 0, 0.05) 0%,
+                /* 起始點：淡金色 */
+                rgba(255, 217, 0, 0.04) 20%,
+                /* 中間點：更淡的金色 */
+                rgba(255, 215, 0, 0.07) 30%,
+                /* 結束點：淡金色 */
+                transparent 100%
+                /* 確保漸層平滑過渡到透明 */
+            );
         border-radius: 50%;
     }
 }
@@ -1245,14 +1306,28 @@ body {
 /* Logo 序列動畫 */
 .logo-icon {
     animation: logoSequence 0.5s ease-out 3.0s forwards,
-               logoIconHighlight 0.8s ease-out 3.8s forwards;
+        logoIconHighlight 0.8s ease-out 3.8s forwards;
 }
 
-.logo1-img { animation: logoSequence 0.5s ease-out 3.1s forwards; }
-.logo2-img { animation: logoSequence 0.5s ease-out 3.2s forwards; }
-.logo3-img { animation: logoSequence 0.5s ease-out 3.3s forwards; }
-.logo4-img { animation: logoSequence 0.5s ease-out 3.4s forwards; }
-.logo5-img { animation: logoSequence 0.5s ease-out 3.5s forwards; }
+.logo1-img {
+    animation: logoSequence 0.5s ease-out 3.1s forwards;
+}
+
+.logo2-img {
+    animation: logoSequence 0.5s ease-out 3.2s forwards;
+}
+
+.logo3-img {
+    animation: logoSequence 0.5s ease-out 3.3s forwards;
+}
+
+.logo4-img {
+    animation: logoSequence 0.5s ease-out 3.4s forwards;
+}
+
+.logo5-img {
+    animation: logoSequence 0.5s ease-out 3.5s forwards;
+}
 
 /* Logo 容器樣式優化 */
 .logo {
@@ -1270,17 +1345,22 @@ body {
     left: 0;
     width: 100%;
     height: 3px;
-    background: linear-gradient(90deg, 
-        rgba(255, 215, 0, 0) 0%,
-        rgba(251, 255, 0, 0.605) 50%,
-        rgba(255, 215, 0, 0) 100%);
+    background: linear-gradient(90deg,
+            rgba(255, 215, 0, 0) 0%,
+            rgba(251, 255, 0, 0.605) 50%,
+            rgba(255, 215, 0, 0) 100%);
     transform: scaleX(0);
     animation: logoLine 0.8s ease-out 3.8s forwards;
 }
 
 @keyframes logoLine {
-    0% { transform: scaleX(0); }
-    100% { transform: scaleX(1); }
+    0% {
+        transform: scaleX(0);
+    }
+
+    100% {
+        transform: scaleX(1);
+    }
 }
 
 /* 導航選單動畫 */
@@ -1288,18 +1368,37 @@ body {
     animation: slideDown 0.5s ease-out forwards;
 }
 
-.navbar nav ul li:nth-child(1) { animation-delay: 3.0s; }
-.navbar nav ul li:nth-child(2) { animation-delay: 3.05s; }
-.navbar nav ul li:nth-child(3) { animation-delay: 3.1s; }
-.navbar nav ul li:nth-child(4) { animation-delay: 3.15s; }
+.navbar nav ul li:nth-child(1) {
+    animation-delay: 3.0s;
+}
+
+.navbar nav ul li:nth-child(2) {
+    animation-delay: 3.05s;
+}
+
+.navbar nav ul li:nth-child(3) {
+    animation-delay: 3.1s;
+}
+
+.navbar nav ul li:nth-child(4) {
+    animation-delay: 3.15s;
+}
 
 @keyframes slideDown {
-    0% { opacity: 0; transform: translateY(-20px); }
-    100% { opacity: 1; transform: translateY(0); }
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* 手機版調整 */
 @media (max-width: 768px) {
+
     .logo-icon,
     .logo1-img,
     .logo2-img,
@@ -1308,13 +1407,13 @@ body {
     .logo5-img {
         animation-duration: 0.4s !important;
     }
-    
+
     .logo::after {
         height: 3px;
-        background: linear-gradient(90deg, 
-            rgba(255, 215, 0, 0) 0%,
-            rgba(255, 217, 0, 0.479) 50%,
-            rgba(255, 215, 0, 0) 100%);
+        background: linear-gradient(90deg,
+                rgba(255, 215, 0, 0) 0%,
+                rgba(255, 217, 0, 0.479) 50%,
+                rgba(255, 215, 0, 0) 100%);
     }
 
     .navbar nav ul li {
@@ -1358,14 +1457,12 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(
-        circle at center,
-        rgb(251, 241, 255) 0%,
-        rgb(249, 234, 255) 40%,
-        rgba(236, 215, 244, 0.9) 60%,
-        rgba(247, 226, 255, 0.7) 80%,
-        rgba(247, 226, 255, 0.5) 100%
-    );
+    background: radial-gradient(circle at center,
+            rgb(251, 241, 255) 0%,
+            rgb(249, 234, 255) 40%,
+            rgba(236, 215, 244, 0.9) 60%,
+            rgba(247, 226, 255, 0.7) 80%,
+            rgba(247, 226, 255, 0.5) 100%);
     z-index: 1;
 }
 
@@ -1398,55 +1495,74 @@ body {
     opacity: 0;
 }
 
-.intro-logo1 { animation: introLogoSequence 0.3s ease-out 0.8s forwards; }
-.intro-logo2 { animation: introLogoSequence 0.3s ease-out 1.1s forwards; }
-.intro-logo3 { animation: introLogoSequence 0.3s ease-out 1.4s forwards; }
-.intro-logo4 { animation: introLogoSequence 0.3s ease-out 1.7s forwards; }
-.intro-logo5 { animation: introLogoSequence 0.3s ease-out 2.0s forwards; }
+.intro-logo1 {
+    animation: introLogoSequence 0.3s ease-out 0.8s forwards;
+}
+
+.intro-logo2 {
+    animation: introLogoSequence 0.3s ease-out 1.1s forwards;
+}
+
+.intro-logo3 {
+    animation: introLogoSequence 0.3s ease-out 1.4s forwards;
+}
+
+.intro-logo4 {
+    animation: introLogoSequence 0.3s ease-out 1.7s forwards;
+}
+
+.intro-logo5 {
+    animation: introLogoSequence 0.3s ease-out 2.0s forwards;
+}
 
 @keyframes introIconAnimation {
-    0% { 
+    0% {
         opacity: 0;
         transform: scale(0.5) rotate(-180deg);
     }
-    60% { 
+
+    60% {
         opacity: 1;
         transform: scale(1.1) rotate(0deg);
     }
-    100% { 
+
+    100% {
         opacity: 1;
         transform: scale(1) rotate(0deg);
     }
 }
 
 @keyframes introTextAnimation {
-    0% { 
+    0% {
         opacity: 0;
         transform: translateY(20px);
     }
-    100% { 
+
+    100% {
         opacity: 1;
         transform: translateY(0);
     }
 }
 
 @keyframes introLogoSequence {
-    0% { 
+    0% {
         opacity: 0;
         transform: scale(0.8) translateY(-10px);
     }
-    100% { 
+
+    100% {
         opacity: 1;
         transform: scale(1) translateY(0);
     }
 }
 
 @keyframes fadeOut {
-    0% { 
+    0% {
         opacity: 1;
         visibility: visible;
     }
-    100% { 
+
+    100% {
         opacity: 0;
         visibility: hidden;
     }
@@ -1509,9 +1625,9 @@ body {
     width: 80px;
     height: 2.5px;
     background: linear-gradient(90deg,
-        rgba(255, 215, 0, 0.24) 0%,
-        rgba(255, 215, 0, 0.699) 10%,
-        rgba(255, 215, 0, 0) 100%);
+            rgba(255, 215, 0, 0.24) 0%,
+            rgba(255, 215, 0, 0.699) 10%,
+            rgba(255, 215, 0, 0) 100%);
     opacity: 0;
 }
 
@@ -1532,9 +1648,9 @@ body {
     left: 50%;
     transform: translateX(-50%);
     background: linear-gradient(90deg,
-        rgba(255, 215, 0, 0) 0%,
-        rgba(255, 215, 0, 0.8) 50%,
-        rgba(255, 215, 0, 0) 100%);
+            rgba(255, 215, 0, 0) 0%,
+            rgba(255, 215, 0, 0.8) 50%,
+            rgba(255, 215, 0, 0) 100%);
 }
 
 /* 當 cases section 淡入時，觸發金線動畫 */
@@ -1550,6 +1666,7 @@ body {
         opacity: 0;
         width: 0;
     }
+
     100% {
         opacity: 1;
         width: 80px;
@@ -1562,6 +1679,7 @@ body {
         opacity: 0;
         width: 0;
     }
+
     100% {
         opacity: 1;
         width: 80px;
@@ -1573,23 +1691,25 @@ body {
     .section-title::after {
         width: 60px;
     }
-    
+
     @keyframes lineFadeIn {
         0% {
             opacity: 0;
             width: 0;
         }
+
         100% {
             opacity: 1;
             width: 60px;
         }
     }
-    
+
     @keyframes lineFadeInCenter {
         0% {
             opacity: 0;
             width: 0;
         }
+
         100% {
             opacity: 1;
             width: 60px;
@@ -1720,19 +1840,25 @@ body {
 }
 
 /* 社群媒體圖示顏色 */
-.floating-nav:not(.collapsed) .social-link:nth-child(1) i { 
-    color: #00B900 !important; /* LINE 官方綠色 */
+.floating-nav:not(.collapsed) .social-link:nth-child(1) i {
+    color: #00B900 !important;
+    /* LINE 官方綠色 */
 }
-.floating-nav:not(.collapsed) .social-link:nth-child(2) i { 
-    color: #4267B2; /* Facebook */
+
+.floating-nav:not(.collapsed) .social-link:nth-child(2) i {
+    color: #4267B2;
+    /* Facebook */
 }
-.floating-nav:not(.collapsed) .social-link:nth-child(3) i { 
-    color: #000000; /* Threads */
+
+.floating-nav:not(.collapsed) .social-link:nth-child(3) i {
+    color: #000000;
+    /* Threads */
 }
 
 /* 社群媒體圖示 hover 效果 */
 .floating-nav:not(.collapsed) .social-link:hover i.fa-line {
-    color: #00A000 !important; /* LINE hover 時深一點的綠色 */
+    color: #00A000 !important;
+    /* LINE hover 時深一點的綠色 */
 }
 
 /* 回到頂部按鈕 */
@@ -1845,7 +1971,7 @@ body {
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         z-index: 992;
         transition: transform 0.15s cubic-bezier(0.2, 0, 0.1, 1),
-                    background-color 0.15s ease;
+            background-color 0.15s ease;
     }
 
     .floating-nav-toggle:hover {
@@ -1963,9 +2089,21 @@ body {
     }
 
     /* 社群媒體圖示顏色 */
-    .floating-nav:not(.collapsed) .social-link:nth-child(1) i { color: #1DA1F2; } /* Twitter */
-    .floating-nav:not(.collapsed) .social-link:nth-child(2) i { color: #4267B2; } /* Facebook */
-    .floating-nav:not(.collapsed) .social-link:nth-child(3) i { color: #000000; } /* Threads */
+    .floating-nav:not(.collapsed) .social-link:nth-child(1) i {
+        color: #1DA1F2;
+    }
+
+    /* Twitter */
+    .floating-nav:not(.collapsed) .social-link:nth-child(2) i {
+        color: #4267B2;
+    }
+
+    /* Facebook */
+    .floating-nav:not(.collapsed) .social-link:nth-child(3) i {
+        color: #000000;
+    }
+
+    /* Threads */
 
     /* 當前頁面指示樣式 */
     .floating-nav-link.active {
@@ -1985,14 +2123,37 @@ body {
     }
 
     /* 為每個項目添加延遲動畫，減少延遲時間 */
-    .floating-nav:not(.collapsed) .floating-nav-link:nth-child(1) { animation-delay: 0.01s; }
-    .floating-nav:not(.collapsed) .floating-nav-link:nth-child(2) { animation-delay: 0.02s; }
-    .floating-nav:not(.collapsed) .floating-nav-link:nth-child(3) { animation-delay: 0.03s; }
-    .floating-nav:not(.collapsed) .floating-nav-link:nth-child(4) { animation-delay: 0.04s; }
-    .floating-nav:not(.collapsed) .floating-nav-link:nth-child(5) { animation-delay: 0.05s; }
-    .floating-nav:not(.collapsed) .social-link:nth-child(1) { animation-delay: 0.06s; }
-    .floating-nav:not(.collapsed) .social-link:nth-child(2) { animation-delay: 0.07s; }
-    .floating-nav:not(.collapsed) .social-link:nth-child(3) { animation-delay: 0.08s; }
+    .floating-nav:not(.collapsed) .floating-nav-link:nth-child(1) {
+        animation-delay: 0.01s;
+    }
+
+    .floating-nav:not(.collapsed) .floating-nav-link:nth-child(2) {
+        animation-delay: 0.02s;
+    }
+
+    .floating-nav:not(.collapsed) .floating-nav-link:nth-child(3) {
+        animation-delay: 0.03s;
+    }
+
+    .floating-nav:not(.collapsed) .floating-nav-link:nth-child(4) {
+        animation-delay: 0.04s;
+    }
+
+    .floating-nav:not(.collapsed) .floating-nav-link:nth-child(5) {
+        animation-delay: 0.05s;
+    }
+
+    .floating-nav:not(.collapsed) .social-link:nth-child(1) {
+        animation-delay: 0.06s;
+    }
+
+    .floating-nav:not(.collapsed) .social-link:nth-child(2) {
+        animation-delay: 0.07s;
+    }
+
+    .floating-nav:not(.collapsed) .social-link:nth-child(3) {
+        animation-delay: 0.08s;
+    }
 
     /* 滑入動畫 */
     @keyframes slideIn {
@@ -2000,6 +2161,7 @@ body {
             opacity: 0;
             transform: translateX(5px);
         }
+
         100% {
             opacity: 1;
             transform: translateX(0);
@@ -2027,7 +2189,8 @@ body {
 
 /* 社群媒體圖示官方品牌顏色 */
 .floating-nav .social-link i.fa-line {
-    color: #00B900; /* LINE 官方綠色 */
+    color: #00B900;
+    /* LINE 官方綠色 */
 }
 
 .floating-nav .social-link i.fa-instagram {
@@ -2037,7 +2200,8 @@ body {
 }
 
 .floating-nav .social-link i.fa-threads {
-    color: #000000; /* Threads 官方黑色 */
+    color: #000000;
+    /* Threads 官方黑色 */
 }
 
 .floating-nav .social-link:hover {
@@ -2045,15 +2209,18 @@ body {
 }
 
 .floating-nav .social-link:hover i.fa-line {
-    color: #00A000; /* LINE hover 時深一點的綠色 */
+    color: #00A000;
+    /* LINE hover 時深一點的綠色 */
 }
 
 .floating-nav .social-link:hover i.fa-instagram {
-    opacity: 0.8; /* Instagram hover 時降低透明度 */
+    opacity: 0.8;
+    /* Instagram hover 時降低透明度 */
 }
 
 .floating-nav .social-link:hover i.fa-threads {
-    color: #333333; /* Threads hover 時深一點的灰色 */
+    color: #333333;
+    /* Threads hover 時深一點的灰色 */
 }
 
 /* 手機版社群媒體圖示樣式 */
@@ -2070,7 +2237,8 @@ body {
 
     /* 手機版社群媒體圖示官方品牌顏色 */
     .floating-nav .social-link i.fa-line {
-        color: #00B900; /* LINE 官方綠色 */
+        color: #00B900;
+        /* LINE 官方綠色 */
     }
 
     .floating-nav .social-link i.fa-instagram {
@@ -2080,19 +2248,23 @@ body {
     }
 
     .floating-nav .social-link i.fa-threads {
-        color: #000000; /* Threads 官方黑色 */
+        color: #000000;
+        /* Threads 官方黑色 */
     }
 
     .floating-nav .social-link:hover i.fa-line {
-        color: #00A000; /* LINE hover 時深一點的綠色 */
+        color: #00A000;
+        /* LINE hover 時深一點的綠色 */
     }
 
     .floating-nav .social-link:hover i.fa-instagram {
-        opacity: 0.8; /* Instagram hover 時降低透明度 */
+        opacity: 0.8;
+        /* Instagram hover 時降低透明度 */
     }
 
     .floating-nav .social-link:hover i.fa-threads {
-        color: #333333; /* Threads hover 時深一點的灰色 */
+        color: #333333;
+        /* Threads hover 時深一點的灰色 */
     }
 }
 
@@ -2148,13 +2320,11 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(
-        circle at center,
-        rgba(255, 255, 255, 0.95) 0%,
-        rgba(255, 255, 255, 0.95) 40%,
-        rgba(255, 255, 255, 0.98) 60%,
-        rgba(255, 255, 255, 1) 100%
-    );
+    background: radial-gradient(circle at center,
+            rgba(255, 255, 255, 0.95) 0%,
+            rgba(255, 255, 255, 0.95) 40%,
+            rgba(255, 255, 255, 0.98) 60%,
+            rgba(255, 255, 255, 1) 100%);
     z-index: 1;
     transition: background 0.3s ease;
     pointer-events: none;
@@ -2169,13 +2339,11 @@ body {
 
 /* 懸停效果 */
 .service-item:hover::after {
-    background: radial-gradient(
-        circle at center,
-        rgba(255, 255, 255, 0.85) 0%,
-        rgba(255, 255, 255, 0.85) 40%,
-        rgba(255, 255, 255, 0.95) 60%,
-        rgba(255, 255, 255, 1) 100%
-    );
+    background: radial-gradient(circle at center,
+            rgba(255, 255, 255, 0.85) 0%,
+            rgba(255, 255, 255, 0.85) 40%,
+            rgba(255, 255, 255, 0.95) 60%,
+            rgba(255, 255, 255, 1) 100%);
 }
 
 .service-icon {
@@ -2205,7 +2373,8 @@ body {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    padding-left: 40px; /* 添加左側內距 */
+    padding-left: 40px;
+    /* 添加左側內距 */
 }
 
 .service-content h3 {
@@ -2224,10 +2393,11 @@ body {
     bottom: 0;
     left: 0;
     width: 40px;
-    height: 2px; /* 統一所有卡片標題裝飾線的粗細為 2px */
-    background: linear-gradient(90deg, 
-        rgba(255, 215, 0, 0.8) 0%,
-        rgba(255, 215, 0, 0.2) 100%);
+    height: 2px;
+    /* 統一所有卡片標題裝飾線的粗細為 2px */
+    background: linear-gradient(90deg,
+            rgba(255, 215, 0, 0.8) 0%,
+            rgba(255, 215, 0, 0.2) 100%);
 }
 
 .service-content p {
@@ -2284,25 +2454,21 @@ body {
     }
 
     .service-item::after {
-        background: radial-gradient(
-            circle at center,
-            rgba(255, 255, 255, 0.95) 0%,
-            rgba(255, 255, 255, 0.95) 40%,
-            rgba(255, 255, 255, 0.98) 60%,
-            rgba(255, 255, 255, 1) 100%
-        );
+        background: radial-gradient(circle at center,
+                rgba(255, 255, 255, 0.95) 0%,
+                rgba(255, 255, 255, 0.95) 40%,
+                rgba(255, 255, 255, 0.98) 60%,
+                rgba(255, 255, 255, 1) 100%);
     }
 
     /* 手機版點擊狀態 */
     .service-item:active::after,
     .service-item:focus::after {
-        background: radial-gradient(
-            circle at center,
-            rgba(255, 255, 255, 0.85) 0%,
-            rgba(255, 255, 255, 0.85) 40%,
-            rgba(255, 255, 255, 0.95) 60%,
-            rgba(255, 255, 255, 1) 100%
-        );
+        background: radial-gradient(circle at center,
+                rgba(255, 255, 255, 0.85) 0%,
+                rgba(255, 255, 255, 0.85) 40%,
+                rgba(255, 255, 255, 0.95) 60%,
+                rgba(255, 255, 255, 1) 100%);
     }
 
     /* 移除其他懸停效果 */
@@ -2313,7 +2479,8 @@ body {
     }
 
     .service-content {
-        padding-left: 0px; /* 手機版移除左側內距 */
+        padding-left: 0px;
+        /* 手機版移除左側內距 */
     }
 }
 
@@ -2348,7 +2515,8 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(247, 237, 247, 0.85); /* 淡藍灰色遮罩 */
+    background: rgba(247, 237, 247, 0.85);
+    /* 淡藍灰色遮罩 */
     z-index: 1;
 }
 
@@ -2375,7 +2543,8 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(254, 255, 247, 0.85); /* 淡紫色遮罩 */
+    background: rgba(254, 255, 247, 0.85);
+    /* 淡紫色遮罩 */
     z-index: 1;
 }
 
@@ -2402,7 +2571,8 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(237, 247, 242, 0.85); /* 淡綠色遮罩 */
+    background: rgba(237, 247, 242, 0.85);
+    /* 淡綠色遮罩 */
     z-index: 1;
 }
 
@@ -2413,10 +2583,12 @@ body {
 
 /* 手機版背景優化 */
 @media (max-width: 768px) {
+
     #about,
     #services,
     #contact {
-        background-attachment: scroll; /* 手機版取消固定背景 */
+        background-attachment: scroll;
+        /* 手機版取消固定背景 */
         padding: 60px 0;
     }
 
@@ -2437,7 +2609,8 @@ body {
     .text-column {
         width: 100%;
         text-align: left;
-        order: 1; /* 確保文字在上方 */
+        order: 1;
+        /* 確保文字在上方 */
     }
 
     .image-column {
@@ -2446,7 +2619,8 @@ body {
         justify-content: center;
         align-items: center;
         margin-top: 20px;
-        order: 2; /* 確保圖片在下方 */
+        order: 2;
+        /* 確保圖片在下方 */
     }
 
     .image-column img {
@@ -2475,7 +2649,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: 
+    background:
         linear-gradient(45deg, transparent 48%, rgba(0, 0, 0, 0.03) 49%, rgba(0, 0, 0, 0.03) 51%, transparent 52%),
         linear-gradient(-45deg, transparent 48%, rgba(0, 0, 0, 0.03) 49%, rgba(0, 0, 0, 0.03) 51%, transparent 52%);
     background-size: 30px 30px;
@@ -2527,17 +2701,16 @@ body {
         background-size: cover;
         background-position: center;
         background-attachment: local;
-        will-change: transform; /* 優化性能 */
+        will-change: transform;
+        /* 優化性能 */
     }
 
     .service-item::after {
-        background: radial-gradient(
-            circle at center,
-            rgba(255, 255, 255, 0.95) 0%,
-            rgba(255, 255, 255, 0.95) 40%,
-            rgba(255, 255, 255, 0.98) 60%,
-            rgba(255, 255, 255, 1) 100%
-        );
+        background: radial-gradient(circle at center,
+                rgba(255, 255, 255, 0.95) 0%,
+                rgba(255, 255, 255, 0.95) 40%,
+                rgba(255, 255, 255, 0.98) 60%,
+                rgba(255, 255, 255, 1) 100%);
     }
 
     /* 移除其他懸停效果 */
