@@ -187,9 +187,9 @@ body {
 .hero {
     background-image: url('../images/封面背景.jpg');
     background-size: cover;
-    background-position: center 30%;
+    background-position: center 10%;
     background-repeat: no-repeat;
-    height: 100vh;
+    height: 150vh;
     position: relative;
     display: flex;
     align-items: center;
